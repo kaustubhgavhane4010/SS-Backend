@@ -13,21 +13,21 @@
     "server": "node server/index.js"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.13",
+    "axios": "^1.4.0",
+    "clsx": "^1.2.1",
+    "date-fns": "^2.29.3",
+    "jwt-decode": "^3.1.2",
+    "lucide-react": "^0.263.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.1",
-    "react-hook-form": "^7.43.9",
-    "date-fns": "^2.29.3",
-    "lucide-react": "^0.263.1",
-    "@headlessui/react": "^1.7.13",
-    "clsx": "^1.2.1",
-    "tailwind-merge": "^1.14.0",
-    "jwt-decode": "^3.1.2",
-    "react-hot-toast": "^2.4.1",
     "react-dropzone": "^14.2.3",
+    "react-hook-form": "^7.43.9",
+    "react-hot-toast": "^2.4.1",
     "react-quill": "^2.0.0",
+    "react-router-dom": "^6.8.1",
     "recharts": "^2.7.2",
-    "axios": "^1.4.0"
+    "tailwind-merge": "^1.14.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
@@ -40,6 +40,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "postcss": "^8.4.24",
+    "serve": "^14.2.4",
     "tailwindcss": "^3.3.2",
     "typescript": "^4.9.3",
     "vite": "^4.2.0"
