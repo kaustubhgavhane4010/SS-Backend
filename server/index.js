@@ -62,6 +62,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Serve built frontend files
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// Handle React Router - serve index.html for all non-API routes
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -72,11 +82,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
-app.use('*', (req, res) => {
+// 404 handler for API routes only
+app.use('/api/*', (req, res) => {
   res.status(404).json({ 
     success: false, 
-    message: 'Route not found' 
+    message: 'API route not found' 
   });
 });
 
