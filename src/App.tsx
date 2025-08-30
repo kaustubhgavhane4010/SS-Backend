@@ -40,6 +40,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Navigate to="/enterprise" replace />} />
           <Route path="/enterprise" element={<EnterpriseDashboard />} />
+          <Route path="/enterprise/:tab" element={<EnterpriseDashboard />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/enterprise" replace />} />
         </Routes>

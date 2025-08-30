@@ -14,6 +14,8 @@ import {
   LogOut,
   ChevronDown,
   Search,
+  Building,
+  BarChart3,
 } from 'lucide-react';
 import { Menu as HeadlessMenu, Transition } from '@headlessui/react';
 
@@ -30,6 +32,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigation = user?.role === 'supreme_admin' 
     ? [
         { name: 'Enterprise Dashboard', href: '/enterprise', icon: Home },
+        { name: 'Organizations', href: '/enterprise?tab=organizations', icon: Building },
+        { name: 'Users', href: '/enterprise?tab=users', icon: Users },
+        { name: 'Teams', href: '/enterprise?tab=teams', icon: Users },
+        { name: 'Analytics', href: '/enterprise?tab=analytics', icon: BarChart3 },
         { name: 'Settings', href: '/settings', icon: Settings },
       ]
     : [

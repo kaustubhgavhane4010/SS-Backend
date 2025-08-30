@@ -3,17 +3,29 @@ import { User, Organization, EnterpriseStats } from '../types';
 import { api } from '../services/api';
 import Layout from '../components/Layout';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { Plus, Users, Building, BarChart3, Settings, UserPlus, Building2 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 const EnterpriseDashboard: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [stats, setStats] = useState<EnterpriseStats | null>(null);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'organizations' | 'users'>('overview');
+  
+  // Get initial tab from URL or default to overview
+  const initialTab = searchParams.get('tab') as 'overview' | 'organizations' | 'users' | 'teams' | 'analytics' || 'overview';
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   useEffect(() => {
     loadDashboardData();
   }, []);
+
+  // Update URL when tab changes
+  const handleTabChange = (tab: 'overview' | 'organizations' | 'users' | 'teams' | 'analytics') => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+  };
 
   const loadDashboardData = async () => {
     try {
@@ -73,39 +85,59 @@ const EnterpriseDashboard: React.FC = () => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+        {/* Header with Quick Actions */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Enterprise Dashboard</h1>
-          <p className="mt-2 text-gray-600">
-            Manage your enterprise organizations and users from a central location
-          </p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Enterprise Dashboard</h1>
+              <p className="mt-2 text-gray-600">
+                Manage your enterprise organizations and users from a central location
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+                <UserPlus size={20} />
+                Create User
+              </button>
+              <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2">
+                <Building2 size={20} />
+                Create Organization
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Navigation Tabs */}
         <div className="border-b border-gray-200 mb-8">
           <nav className="-mb-px flex space-x-8">
             {[
-              { id: 'overview', name: 'Overview', count: null },
-              { id: 'organizations', name: 'Organizations', count: stats?.organizations.total_organizations },
-              { id: 'users', name: 'Users', count: stats?.users.total_users }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                {tab.name}
-                {tab.count !== null && (
-                  <span className="ml-2 bg-gray-100 text-gray-900 py-0.5 px-2.5 rounded-full text-xs font-medium">
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            ))}
+              { id: 'overview', name: 'Overview', icon: BarChart3, count: null },
+              { id: 'organizations', name: 'Organizations', icon: Building, count: stats?.organizations.total_organizations },
+              { id: 'users', name: 'Users', icon: Users, count: stats?.users.total_users },
+              { id: 'teams', name: 'Teams', icon: Users, count: null },
+              { id: 'analytics', name: 'Analytics', icon: BarChart3, count: null }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabChange(tab.id as any)}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
+                    activeTab === tab.id
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <Icon size={16} />
+                  {tab.name}
+                  {tab.count !== null && (
+                    <span className="ml-2 bg-gray-100 text-gray-900 py-0.5 px-2.5 rounded-full text-xs font-medium">
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </nav>
         </div>
 
@@ -119,9 +151,7 @@ const EnterpriseDashboard: React.FC = () => {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
+                        <Building size={20} className="text-white" />
                       </div>
                     </div>
                     <div className="ml-5 w-0 flex-1">
@@ -139,9 +169,7 @@ const EnterpriseDashboard: React.FC = () => {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                        </svg>
+                        <Users size={20} className="text-white" />
                       </div>
                     </div>
                     <div className="ml-5 w-0 flex-1">
@@ -159,9 +187,7 @@ const EnterpriseDashboard: React.FC = () => {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        <Building2 size={20} className="text-white" />
                       </div>
                     </div>
                     <div className="ml-5 w-0 flex-1">
@@ -179,9 +205,7 @@ const EnterpriseDashboard: React.FC = () => {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
+                        <BarChart3 size={20} className="text-white" />
                       </div>
                     </div>
                     <div className="ml-5 w-0 flex-1">
@@ -255,7 +279,8 @@ const EnterpriseDashboard: React.FC = () => {
             <div className="px-4 py-5 sm:p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">Organizations</h3>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2">
+                  <Plus size={16} />
                   Add Organization
                 </button>
               </div>
@@ -301,7 +326,8 @@ const EnterpriseDashboard: React.FC = () => {
             <div className="px-4 py-5 sm:p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">Users</h3>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2">
+                  <Plus size={16} />
                   Add User
                 </button>
               </div>
@@ -353,6 +379,48 @@ const EnterpriseDashboard: React.FC = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Teams Tab */}
+        {activeTab === 'teams' && (
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">Team Structure</h3>
+                <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 flex items-center gap-2">
+                  <Plus size={16} />
+                  Create Team
+                </button>
+              </div>
+              <div className="text-center py-12">
+                <Users size={48} className="mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Team Management</h3>
+                <p className="text-gray-500">View and manage team structures across your organizations</p>
+                <p className="text-sm text-gray-400 mt-2">Coming soon...</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">Analytics & Reports</h3>
+                <button className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 flex items-center gap-2">
+                  <BarChart3 size={16} />
+                  Generate Report
+                </button>
+              </div>
+              <div className="text-center py-12">
+                <BarChart3 size={48} className="mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Advanced Analytics</h3>
+                <p className="text-gray-500">Enterprise-wide performance metrics and insights</p>
+                <p className="text-sm text-gray-400 mt-2">Coming soon...</p>
               </div>
             </div>
           </div>
