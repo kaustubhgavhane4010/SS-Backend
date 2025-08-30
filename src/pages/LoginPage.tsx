@@ -68,11 +68,18 @@ const LoginPage: React.FC = () => {
         
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center px-12 text-white">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-4">
-              Welcome to Campus Assist
+          <div className="mb-12">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-8 shadow-2xl">
+              <Sparkles className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="text-5xl font-bold mb-6 leading-tight">
+              Welcome to
+              <br />
+              <span className="gradient-text bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                Campus Assist
+              </span>
             </h1>
-            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+            <p className="text-xl text-white/80 leading-relaxed">
               Modern platform for seamless student assistance and support management.
             </p>
           </div>
