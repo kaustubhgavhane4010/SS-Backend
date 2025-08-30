@@ -149,20 +149,26 @@ const EnterpriseDashboard: React.FC = () => {
 
   // Edit and Delete handlers for Organizations
   const handleEditOrganization = (org: Organization) => {
+    console.log('Edit organization clicked:', org);
     setEditingOrg(org);
     setShowEditOrg(true);
   };
 
   const handleDeleteOrganization = async (orgId: string | number) => {
+    console.log('Delete organization clicked, ID:', orgId, 'Type:', typeof orgId);
+    
     if (confirm('Are you sure you want to delete this organization? This action cannot be undone.')) {
       try {
+        console.log('Making delete request to:', `/organizational/organizations/${orgId}`);
         const response = await api.delete(`/organizational/organizations/${orgId}`);
+        console.log('Delete response:', response);
+        
         if (response.data?.success) {
           alert('Organization deleted successfully!');
           loadDashboardData(); // Refresh data
         }
       } catch (error) {
-        console.error('Failed to delete organization:', error);
+        console.error('Delete organization error:', error);
         alert('Failed to delete organization. Please try again.');
       }
     }
@@ -170,20 +176,26 @@ const EnterpriseDashboard: React.FC = () => {
 
   // Edit and Delete handlers for Users
   const handleEditUser = (user: User) => {
+    console.log('Edit user clicked:', user);
     setEditingUser(user);
     setShowEditUser(true);
   };
 
   const handleDeleteUser = async (userId: string | number) => {
+    console.log('Delete user clicked, ID:', userId, 'Type:', typeof userId);
+    
     if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       try {
+        console.log('Making delete request to:', `/organizational/users/${userId}`);
         const response = await api.delete(`/organizational/users/${userId}`);
+        console.log('Delete response:', response);
+        
         if (response.data?.success) {
           alert('User deleted successfully!');
           loadDashboardData(); // Refresh data
         }
       } catch (error) {
-        console.error('Failed to delete user:', error);
+        console.error('Delete user error:', error);
         alert('Failed to delete user. Please try again.');
       }
     }
