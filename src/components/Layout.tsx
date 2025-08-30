@@ -101,11 +101,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex items-center justify-between h-16 px-6 border-b border-white/20">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white font-bold text-lg">NNU</span>
+                  <span className="text-white font-bold text-lg">CA</span>
                 </div>
                 <div>
-                  <h1 className="text-lg font-bold text-white">Student Support</h1>
-                  <p className="text-xs text-white/70">Nottinghamshire New University</p>
+                  <h1 className="text-lg font-bold text-white">Campus Assist</h1>
+                  <p className="text-xs text-white/70">Student Support System</p>
                 </div>
               </div>
               <button

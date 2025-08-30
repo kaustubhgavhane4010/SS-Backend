@@ -238,7 +238,7 @@ const NewTicketPage: React.FC = () => {
                     className={`w-full pl-10 pr-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
                       errors.student_email ? 'border-error-500' : ''
                     }`}
-                    placeholder="student@nnu.ac.uk"
+                    placeholder="student@campusassist.com"
                 />
               </div>
               {errors.student_email && (

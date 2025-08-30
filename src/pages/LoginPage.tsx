@@ -80,7 +80,7 @@ const LoginPage: React.FC = () => {
               </span>
             </h1>
             <p className="text-xl text-white/80 leading-relaxed">
-              Nottinghamshire New University's modern platform for seamless student assistance and support management.
+              Campus Assist's modern platform for seamless student assistance and support management.
             </p>
           </div>
 
@@ -136,7 +136,7 @@ const LoginPage: React.FC = () => {
             Welcome Back
           </h2>
             <p className="text-neutral-600">
-            Sign in to your Student Support account
+            Sign in to your Campus Assist account
           </p>
         </div>
 
@@ -238,7 +238,7 @@ const LoginPage: React.FC = () => {
                 </>
               ) : (
                   <>
-                    Sign In to Student Support
+                    Sign In to Campus Assist
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </>
               )}
@@ -248,7 +248,7 @@ const LoginPage: React.FC = () => {
           {/* Footer */}
             <div className="mt-8 pt-6 border-t border-white/20 text-center">
               <p className="text-sm text-white/80">
-              Nottinghamshire New University Student Support System
+              Campus Assist Student Support System
             </p>
               <p className="text-xs text-white/60 mt-1">
                 Modern • Secure • Always Available
