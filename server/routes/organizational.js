@@ -145,6 +145,46 @@ router.post('/organizations', [
   }
 });
 
+// Delete organization
+router.delete('/organizations/:id', [authenticateToken, requireSupremeAdmin], async (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = getDatabase();
+
+    // Check if organization exists
+    const existingOrg = await db.get('SELECT * FROM organizations WHERE id = ?', [id]);
+    if (!existingOrg) {
+      return res.status(404).json({
+        success: false,
+        message: 'Organization not found'
+      });
+    }
+
+    // Check if organization has users (prevent deletion if it does)
+    const userCount = await db.get('SELECT COUNT(*) as count FROM users WHERE organization_id = ?', [id]);
+    if (userCount.count > 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot delete organization that has users. Please remove all users first.'
+      });
+    }
+
+    // Soft delete - mark as inactive instead of hard delete
+    await db.run('UPDATE organizations SET status = ? WHERE id = ?', ['deleted', id]);
+
+    res.json({
+      success: true,
+      message: 'Organization deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete organization error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
 // Get all users (for Supreme Admin management)
 router.get('/users', [authenticateToken, requireSupremeAdmin], async (req, res) => {
   try {
@@ -251,6 +291,45 @@ router.post('/users', [
     });
   } catch (error) {
     console.error('Create user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Delete user
+router.delete('/users/:id', [authenticateToken, requireSupremeAdmin], async (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = getDatabase();
+
+    // Check if user exists
+    const existingUser = await db.get('SELECT * FROM users WHERE id = ?', [id]);
+    if (!existingUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Prevent deleting Supreme Admin
+    if (existingUser.role === 'supreme_admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot delete Supreme Admin user'
+      });
+    }
+
+    // Soft delete - mark as inactive instead of hard delete
+    await db.run('UPDATE users SET status = ? WHERE id = ?', ['deleted', id]);
+
+    res.json({
+      success: true,
+      message: 'User deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete user error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
