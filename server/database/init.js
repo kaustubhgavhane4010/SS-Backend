@@ -18,9 +18,13 @@ export const getDatabase = () => {
 };
 
 export const initDatabase = async () => {
-  // Create database file
+  // Use a consistent database path that won't get recreated
+  const dbPath = path.join(process.cwd(), 'campus-assist.db');
+  
+  console.log('🔍 Using database at:', dbPath);
+  
   db = await open({
-    filename: path.join(__dirname, 'ticketing.db'),
+    filename: dbPath,
     driver: sqlite3.Database
   });
 
@@ -30,7 +34,7 @@ export const initDatabase = async () => {
   // Create default admin user if no users exist
   await createDefaultAdmin();
   
-  console.log('Database initialized successfully');
+  console.log('✅ Database initialized successfully at:', dbPath);
 };
 
 const createTables = async () => {
