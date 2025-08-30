@@ -122,3 +122,26 @@ export const usersAPI = {
   updateNotificationSettings: (settings: any) =>
     api.put('/users/notifications', settings),
 };
+
+// Organizational API (Supreme Admin)
+export const organizationalAPI = {
+  getEnterpriseStats: () => api.get('/organizational/enterprise-stats'),
+  
+  getOrganizations: () => api.get('/organizational/organizations'),
+  
+  createOrganization: (orgData: any) => api.post('/organizational/organizations', orgData),
+  
+  updateOrganization: (orgId: string, orgData: any) =>
+    api.put(`/organizational/organizations/${orgId}`, orgData),
+  
+  deleteOrganization: (orgId: string) => api.delete(`/organizational/organizations/${orgId}`),
+  
+  getUsers: () => api.get('/organizational/users'),
+  
+  createUser: (userData: any) => api.post('/organizational/users', userData),
+  
+  updateUser: (userId: string, userData: any) =>
+    api.put(`/organizational/users/${userId}`, userData),
+  
+  deleteUser: (userId: string) => api.delete(`/organizational/users/${userId}`),
+};

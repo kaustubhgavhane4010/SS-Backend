@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
 import ticketRoutes from './routes/tickets.js';
 import userRoutes from './routes/users.js';
+import organizationalRoutes from './routes/organizational.js';
 
 // Import database
 import { initDatabase } from './database/init.js';
@@ -52,6 +53,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/organizational', organizationalRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
+import EnterpriseDashboard from './pages/EnterpriseDashboard';
 import TicketsPage from './pages/TicketsPage';
 import TicketDetailPage from './pages/TicketDetailPage';
 import NewTicketPage from './pages/NewTicketPage';
@@ -29,6 +30,20 @@ const App: React.FC = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+    );
+  }
+
+  // Supreme Admin sees Enterprise Dashboard instead of regular dashboard
+  if (user.role === 'supreme_admin') {
+    return (
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Navigate to="/enterprise" replace />} />
+          <Route path="/enterprise" element={<EnterpriseDashboard />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="*" element={<Navigate to="/enterprise" replace />} />
+        </Routes>
+      </Layout>
     );
   }
 

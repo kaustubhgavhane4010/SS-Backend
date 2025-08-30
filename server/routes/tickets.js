@@ -1,8 +1,9 @@
+
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult, query } from 'express-validator';
 import { getDatabase } from '../database/init.js';
-import { authenticateToken, requireStaff } from '../middleware/auth.js';
+import { authenticateToken, requireStaff, requireTicketAccess } from '../middleware/auth.js';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -44,6 +45,7 @@ const upload = multer({
 // Get all tickets with filtering and pagination
 router.get('/', [
   authenticateToken,
+  requireTicketAccess,
   requireStaff,
   query('page').optional().isInt({ min: 1 }),
   query('limit').optional().isInt({ min: 1, max: 100 }),
@@ -180,7 +182,7 @@ router.get('/', [
 });
 
 // Get dashboard stats
-router.get('/stats', authenticateToken, async (req, res) => {
+router.get('/stats', [authenticateToken, requireTicketAccess], async (req, res) => {
   try {
     const db = getDatabase();
     const userId = req.user.userId;
@@ -238,7 +240,7 @@ router.get('/stats', authenticateToken, async (req, res) => {
 });
 
 // Get single ticket
-router.get('/:id', [authenticateToken, requireStaff], async (req, res) => {
+router.get('/:id', [authenticateToken, requireTicketAccess, requireStaff], async (req, res) => {
   try {
     const { id } = req.params;
     const db = getDatabase();
@@ -285,6 +287,7 @@ router.get('/:id', [authenticateToken, requireStaff], async (req, res) => {
 // Create new ticket
 router.post('/', [
   authenticateToken,
+  requireTicketAccess,
   requireStaff,
   body('student_name').trim().isLength({ min: 2, max: 100 }),
   body('student_email').isEmail().normalizeEmail(),
@@ -361,6 +364,7 @@ router.post('/', [
 // Update ticket
 router.put('/:id', [
   authenticateToken,
+  requireTicketAccess,
   requireStaff,
   body('title').optional().trim().isLength({ min: 5, max: 200 }),
   body('description').optional().trim().isLength({ min: 10 }),
@@ -451,7 +455,7 @@ router.put('/:id', [
 });
 
 // Delete ticket (admin only)
-router.delete('/:id', [authenticateToken, requireStaff], async (req, res) => {
+router.delete('/:id', [authenticateToken, requireTicketAccess, requireStaff], async (req, res) => {
   try {
     const { id } = req.params;
     const db = getDatabase();
@@ -494,7 +498,7 @@ router.delete('/:id', [authenticateToken, requireStaff], async (req, res) => {
 });
 
 // Get ticket notes
-router.get('/:id/notes', [authenticateToken, requireStaff], async (req, res) => {
+router.get('/:id/notes', [authenticateToken, requireTicketAccess, requireStaff], async (req, res) => {
   try {
     const { id } = req.params;
     const db = getDatabase();
@@ -541,6 +545,7 @@ router.get('/:id/notes', [authenticateToken, requireStaff], async (req, res) => 
 // Create note
 router.post('/:id/notes', [
   authenticateToken,
+  requireTicketAccess,
   requireStaff,
   body('content').trim().isLength({ min: 1 }),
   body('note_type').isIn(['Internal', 'Student Communication', 'System Update'])
@@ -607,6 +612,7 @@ router.post('/:id/notes', [
 // Upload attachment
 router.post('/:id/attachments', [
   authenticateToken,
+  requireTicketAccess,
   requireStaff,
   upload.single('file')
 ], async (req, res) => {

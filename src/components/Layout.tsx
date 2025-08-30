@@ -26,18 +26,27 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: Home },
-    { name: 'All Tickets', href: '/tickets', icon: Ticket },
-    { name: 'New Ticket', href: '/tickets/new', icon: Plus },
-    { name: 'Team', href: '/team', icon: Users },
-    ...(user?.role === 'admin' ? [{ name: 'User Management', href: '/users', icon: UserCheck }] : []),
-    { name: 'Settings', href: '/settings', icon: Settings },
-  ];
+  // Different navigation for Supreme Admin
+  const navigation = user?.role === 'supreme_admin' 
+    ? [
+        { name: 'Enterprise Dashboard', href: '/enterprise', icon: Home },
+        { name: 'Settings', href: '/settings', icon: Settings },
+      ]
+    : [
+        { name: 'Dashboard', href: '/dashboard', icon: Home },
+        { name: 'All Tickets', href: '/tickets', icon: Ticket },
+        { name: 'New Ticket', href: '/tickets/new', icon: Plus },
+        { name: 'Team', href: '/team', icon: Users },
+        ...(user?.role === 'admin' ? [{ name: 'User Management', href: '/users', icon: UserCheck }] : []),
+        { name: 'Settings', href: '/settings', icon: Settings },
+      ];
 
   const isActive = (href: string) => {
     if (href === '/dashboard') {
       return location.pathname === '/dashboard';
+    }
+    if (href === '/enterprise') {
+      return location.pathname === '/enterprise';
     }
     if (href === '/tickets') {
       // Only active for /tickets, not /tickets/new

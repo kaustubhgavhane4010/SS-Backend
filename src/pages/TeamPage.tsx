@@ -173,7 +173,7 @@ const TeamPage: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-neutral-600">Support Staff</p>
                   <p className="text-2xl font-bold text-neutral-900">
-                    {teamMembers.filter(m => m.role === 'staff').length}
+                    {teamMembers.filter(m => m.role === 'team_member').length}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-gradient-to-r from-accent-500 to-accent-600 rounded-xl flex items-center justify-center">

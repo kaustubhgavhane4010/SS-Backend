@@ -2,15 +2,51 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'staff';
+  role: 'supreme_admin' | 'admin' | 'university_admin' | 'senior_leadership' | 'dean' | 'manager' | 'team_member';
   status: 'active' | 'inactive';
   phone?: string;
   department?: string;
   avatar?: string;
+  organization_id?: string;
   created_by?: string;
   created_at: string;
   updated_at: string;
   last_login?: string;
+  organization_name?: string;
+  created_by_name?: string;
+}
+
+export interface Organization {
+  id: string;
+  name: string;
+  type: 'company' | 'university' | 'department';
+  status: 'active' | 'inactive';
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  parent_organization_id?: string;
+  settings?: string;
+  created_by_name?: string;
+  parent_organization_name?: string;
+}
+
+export interface EnterpriseStats {
+  organizations: {
+    total_organizations: number;
+    companies: number;
+    universities: number;
+    departments: number;
+  };
+  users: {
+    total_users: number;
+    admins: number;
+    university_admins: number;
+    senior_leadership: number;
+    deans: number;
+    managers: number;
+    team_members: number;
+  };
+  recentUsers: User[];
 }
 
 export interface Ticket {
@@ -75,8 +111,11 @@ export interface CreateUserData {
   name: string;
   email: string;
   password: string;
-  role: 'admin' | 'staff';
+  role: 'supreme_admin' | 'admin' | 'university_admin' | 'senior_leadership' | 'dean' | 'manager' | 'team_member';
   status: 'active' | 'inactive';
+  organization_id?: string;
+  department?: string;
+  phone?: string;
 }
 
 export interface CreateTicketData {

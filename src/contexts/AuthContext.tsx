@@ -150,7 +150,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const value: AuthContextType = {
+  const contextValue = {
     user,
     loading,
     login,
@@ -159,12 +159,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     updateUser,
     updateCurrentUser,
     deleteUser,
-    isAdmin: user?.role === 'admin',
-    isStaff: user?.role === 'staff',
+    isAdmin: user?.role === 'admin' || user?.role === 'supreme_admin',
+    isSupremeAdmin: user?.role === 'supreme_admin',
+    isStaff: user?.role === 'team_member' || user?.role === 'manager' || user?.role === 'dean' || user?.role === 'senior_leadership' || user?.role === 'university_admin',
+    isAuthenticated: !!user,
   };
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

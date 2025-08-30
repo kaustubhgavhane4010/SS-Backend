@@ -70,7 +70,7 @@ export const authenticateToken = async (req, res, next) => {
 };
 
 export const requireAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
+  if (req.user.role !== 'admin' && req.user.role !== 'supreme_admin') {
     return res.status(403).json({
       success: false,
       message: 'Admin access required'
@@ -79,11 +79,32 @@ export const requireAdmin = (req, res, next) => {
   next();
 };
 
+export const requireSupremeAdmin = (req, res, next) => {
+  if (req.user.role !== 'supreme_admin') {
+    return res.status(403).json({
+      success: false,
+      message: 'Supreme Admin access required'
+    });
+  }
+  next();
+};
+
 export const requireStaff = (req, res, next) => {
-  if (req.user.role !== 'staff' && req.user.role !== 'admin') {
+  if (!['staff', 'admin', 'university_admin', 'senior_leadership', 'dean', 'manager', 'team_member'].includes(req.user.role)) {
     return res.status(403).json({
       success: false,
       message: 'Staff access required'
+    });
+  }
+  next();
+};
+
+export const requireTicketAccess = (req, res, next) => {
+  // Supreme Admin cannot access tickets
+  if (req.user.role === 'supreme_admin') {
+    return res.status(403).json({
+      success: false,
+      message: 'Supreme Admin cannot access ticket system'
     });
   }
   next();

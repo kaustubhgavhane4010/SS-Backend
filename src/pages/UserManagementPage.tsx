@@ -28,7 +28,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onSu
     name: '',
     email: '',
     password: '',
-    role: 'staff',
+    role: 'team_member',
     status: 'active',
   });
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onSu
         toast.success('User created successfully');
         onSuccess();
         onClose();
-        setFormData({ name: '', email: '', password: '', role: 'staff', status: 'active' });
+        setFormData({ name: '', email: '', password: '', role: 'team_member', status: 'active' });
       }
     } catch (error) {
       console.error('Error creating user:', error);
@@ -124,10 +124,10 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onSu
             </label>
             <select
               value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value as 'admin' | 'staff' })}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value as 'admin' | 'team_member' })}
               className="input-field"
             >
-              <option value="staff">Staff</option>
+              <option value="team_member">Team Member</option>
               <option value="admin">Admin</option>
             </select>
           </div>

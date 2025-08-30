@@ -34,20 +34,41 @@ export const initDatabase = async () => {
 };
 
 const createTables = async () => {
-  // Users table
+  // Users table with new hierarchy system
   await db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
-      role TEXT NOT NULL CHECK (role IN ('admin', 'staff')),
+      role TEXT NOT NULL CHECK (role IN ('supreme_admin', 'admin', 'university_admin', 'senior_leadership', 'dean', 'manager', 'team_member')),
       status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
       created_by TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       last_login DATETIME,
+      organization_id TEXT,
+      department TEXT,
+      phone TEXT,
+      avatar TEXT,
       FOREIGN KEY (created_by) REFERENCES users (id)
+    )
+  `);
+
+  // Organizations table for enterprise management
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS organizations (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL CHECK (type IN ('company', 'university', 'department')),
+      status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+      created_by TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      parent_organization_id TEXT,
+      settings TEXT,
+      FOREIGN KEY (created_by) REFERENCES users (id),
+      FOREIGN KEY (parent_organization_id) REFERENCES organizations (id)
     )
   `);
 
@@ -134,18 +155,26 @@ const createDefaultAdmin = async () => {
   const userCount = await db.get('SELECT COUNT(*) as count FROM users');
   
   if (userCount.count === 0) {
-    // Create default admin user
-    const adminId = uuidv4();
-    const hashedPassword = await bcrypt.hash('admin123', 12);
+    // Create default supreme admin user
+    const supremeAdminId = uuidv4();
+    const hashedPassword = await bcrypt.hash('supreme123', 12);
     
+    // Create default company organization
+    const companyId = uuidv4();
     await db.run(`
-      INSERT INTO users (id, name, email, password_hash, role, status, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-    `, [adminId, 'System Administrator', 'admin@bnu.ac.uk', hashedPassword, 'admin', 'active']);
+      INSERT INTO organizations (id, name, type, status, created_by, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    `, [companyId, 'BNU Enterprise', 'company', 'active', supremeAdminId]);
     
-    console.log('Default admin user created:');
-    console.log('Email: admin@bnu.ac.uk');
-    console.log('Password: admin123');
+    // Create supreme admin user
+    await db.run(`
+      INSERT INTO users (id, name, email, password_hash, role, status, organization_id, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    `, [supremeAdminId, 'Supreme Administrator', 'supreme@bnu.ac.uk', hashedPassword, 'supreme_admin', 'active', companyId]);
+    
+    console.log('Default Supreme Admin user created:');
+    console.log('Email: supreme@bnu.ac.uk');
+    console.log('Password: supreme123');
     console.log('Please change the password after first login!');
   }
 };
