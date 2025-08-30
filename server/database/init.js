@@ -18,10 +18,20 @@ export const getDatabase = () => {
 };
 
 export const initDatabase = async () => {
-  // Use a consistent database path that won't get recreated
-  const dbPath = path.join(process.cwd(), 'campus-assist.db');
+  // Use environment variable for Railway, fallback to local path
+  let dbPath;
   
-  console.log('🔍 Using database at:', dbPath);
+  if (process.env.RAILWAY_ENVIRONMENT) {
+    // Railway environment - use persistent path
+    dbPath = '/tmp/campus-assist.db';
+    console.log('🚀 Railway detected - using persistent database path:', dbPath);
+  } else {
+    // Local environment - use project root
+    dbPath = path.join(process.cwd(), 'campus-assist.db');
+    console.log('💻 Local environment - using database path:', dbPath);
+  }
+  
+  console.log('🔍 Database will be created/used at:', dbPath);
   
   db = await open({
     filename: dbPath,
