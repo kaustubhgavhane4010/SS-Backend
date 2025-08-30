@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Organization, EnterpriseStats } from '../types';
 import { api } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { Plus, Users, Building, BarChart3, UserPlus, Building2, X } from 'lucide-react';
+import { Plus, Users, Building, BarChart3, UserPlus, Building2, X, Edit, Trash2 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 const EnterpriseDashboard: React.FC = () => {
@@ -16,6 +16,12 @@ const EnterpriseDashboard: React.FC = () => {
   const [showCreateUser, setShowCreateUser] = useState(false);
   const [showCreateOrg, setShowCreateOrg] = useState(false);
   const [showCreateTeam, setShowCreateTeam] = useState(false);
+  const [showEditUser, setShowEditUser] = useState(false);
+  const [showEditOrg, setShowEditOrg] = useState(false);
+  
+  // Edit data states
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
   
   // Form states
   const [newUser, setNewUser] = useState({
@@ -138,6 +144,48 @@ const EnterpriseDashboard: React.FC = () => {
     } catch (error) {
       console.error('Failed to create team:', error);
       alert('Failed to create team. Please try again.');
+    }
+  };
+
+  // Edit and Delete handlers for Organizations
+  const handleEditOrganization = (org: Organization) => {
+    setEditingOrg(org);
+    setShowEditOrg(true);
+  };
+
+  const handleDeleteOrganization = async (orgId: string | number) => {
+    if (confirm('Are you sure you want to delete this organization? This action cannot be undone.')) {
+      try {
+        const response = await api.delete(`/organizational/organizations/${orgId}`);
+        if (response.data?.success) {
+          alert('Organization deleted successfully!');
+          loadDashboardData(); // Refresh data
+        }
+      } catch (error) {
+        console.error('Failed to delete organization:', error);
+        alert('Failed to delete organization. Please try again.');
+      }
+    }
+  };
+
+  // Edit and Delete handlers for Users
+  const handleEditUser = (user: User) => {
+    setEditingUser(user);
+    setShowEditUser(true);
+  };
+
+  const handleDeleteUser = async (userId: string | number) => {
+    if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      try {
+        const response = await api.delete(`/organizational/users/${userId}`);
+        if (response.data?.success) {
+          alert('User deleted successfully!');
+          loadDashboardData(); // Refresh data
+        }
+      } catch (error) {
+        console.error('Failed to delete user:', error);
+        alert('Failed to delete user. Please try again.');
+      }
     }
   };
 
@@ -334,6 +382,7 @@ const EnterpriseDashboard: React.FC = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created By</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -351,6 +400,24 @@ const EnterpriseDashboard: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{org.created_by_name}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(org.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEditOrganization(org)}
+                            className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-2 py-1 rounded text-xs flex items-center gap-1"
+                          >
+                            <Edit size={12} />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteOrganization(org.id)}
+                            className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-2 py-1 rounded text-xs flex items-center gap-1"
+                          >
+                            <Trash2 size={12} />
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -384,6 +451,7 @@ const EnterpriseDashboard: React.FC = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organization</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -417,6 +485,24 @@ const EnterpriseDashboard: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(user.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEditUser(user)}
+                            className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-2 py-1 rounded text-xs flex items-center gap-1"
+                          >
+                            <Edit size={12} />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(user.id)}
+                            className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-2 py-1 rounded text-xs flex items-center gap-1"
+                          >
+                            <Trash2 size={12} />
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -509,7 +595,6 @@ const EnterpriseDashboard: React.FC = () => {
                   value={newUser.password}
                   onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  required
                 />
               </div>
               <div>
