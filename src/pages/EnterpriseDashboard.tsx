@@ -805,6 +805,157 @@ const EnterpriseDashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Edit User Modal */}
+      {showEditUser && editingUser && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-md max-h-full">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium text-gray-900">Edit User</h3>
+              <button onClick={() => setShowEditUser(false)} className="text-gray-400 hover:text-gray-500">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="editName" className="block text-sm font-medium text-gray-700">Name <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  id="editName"
+                  defaultValue={editingUser.name}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label htmlFor="editEmail" className="block text-sm font-medium text-gray-700">Email <span className="text-red-500">*</span></label>
+                <input
+                  type="email"
+                  id="editEmail"
+                  defaultValue={editingUser.email}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label htmlFor="editRole" className="block text-sm font-medium text-gray-700">Role <span className="text-red-500">*</span></label>
+                <select
+                  id="editRole"
+                  defaultValue={editingUser.role}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option value="team_member">Team Member</option>
+                  <option value="manager">Manager</option>
+                  <option value="dean">Dean</option>
+                  <option value="senior_leadership">Senior Leadership</option>
+                  <option value="university_admin">University Admin</option>
+                  <option value="admin">Admin</option>
+                  <option value="supreme_admin">Supreme Admin</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="editDepartment" className="block text-sm font-medium text-gray-700">Department</label>
+                <input
+                  type="text"
+                  id="editDepartment"
+                  defaultValue={editingUser.department || ''}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label htmlFor="editPhone" className="block text-sm font-medium text-gray-700">Phone</label>
+                <input
+                  type="text"
+                  id="editPhone"
+                  defaultValue={editingUser.phone || ''}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <button
+                  onClick={() => setShowEditUser(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    alert('Edit functionality coming soon!');
+                    setShowEditUser(false);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                >
+                  Update User
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Organization Modal */}
+      {showEditOrg && editingOrg && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-md max-h-full">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium text-gray-900">Edit Organization</h3>
+              <button onClick={() => setShowEditOrg(false)} className="text-gray-400 hover:text-gray-500">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="editOrgName" className="block text-sm font-medium text-gray-700">Organization Name <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  id="editOrgName"
+                  defaultValue={editingOrg.name}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label htmlFor="editOrgType" className="block text-sm font-medium text-gray-700">Type <span className="text-red-500">*</span></label>
+                <select
+                  id="editOrgType"
+                  defaultValue={editingOrg.type}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option value="company">Company</option>
+                  <option value="university">University</option>
+                  <option value="government">Government</option>
+                  <option value="non-profit">Non-Profit</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="editOrgStatus" className="block text-sm font-medium text-gray-700">Status <span className="text-red-500">*</span></label>
+                <select
+                  id="editOrgStatus"
+                  defaultValue={editingOrg.status}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+              <div className="flex justify-end space-x-2">
+                <button
+                  onClick={() => setShowEditOrg(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    alert('Edit functionality coming soon!');
+                    setShowEditOrg(false);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
+                >
+                  Update Organization
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
