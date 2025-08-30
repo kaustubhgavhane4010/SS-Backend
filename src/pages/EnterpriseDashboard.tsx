@@ -436,7 +436,7 @@ const EnterpriseDashboard: React.FC = () => {
       {/* Create User Modal */}
       {showCreateUser && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-          <div className="relative p-8 border w-full max-w-md max-h-full">
+          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-md max-h-full">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">Add New User</h3>
               <button onClick={() => setShowCreateUser(false)} className="text-gray-400 hover:text-gray-500">
@@ -536,7 +536,7 @@ const EnterpriseDashboard: React.FC = () => {
       {/* Create Organization Modal */}
       {showCreateOrg && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-          <div className="relative p-8 border w-full max-w-md max-h-full">
+          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-md max-h-full">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">Add New Organization</h3>
               <button onClick={() => setShowCreateOrg(false)} className="text-gray-400 hover:text-gray-500">
@@ -602,7 +602,7 @@ const EnterpriseDashboard: React.FC = () => {
       {/* Create Team Modal */}
       {showCreateTeam && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-          <div className="relative p-8 border w-full max-w-md max-h-full">
+          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-md max-h-full">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">Create New Team</h3>
               <button onClick={() => setShowCreateTeam(false)} className="text-gray-400 hover:text-gray-500">
