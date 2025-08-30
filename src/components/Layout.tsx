@@ -52,7 +52,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       return location.pathname === '/dashboard';
     }
     if (href === '/enterprise') {
-      return location.pathname === '/enterprise';
+      // Only highlight Enterprise Dashboard when no specific tab is selected
+      return location.pathname === '/enterprise' && !location.search.includes('tab=');
     }
     if (href.startsWith('/enterprise?tab=')) {
       const currentTab = new URLSearchParams(location.search).get('tab');

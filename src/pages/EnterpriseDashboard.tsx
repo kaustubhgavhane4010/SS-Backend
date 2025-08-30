@@ -74,22 +74,6 @@ const EnterpriseDashboard: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Quick Actions */}
-      <div className="mb-8">
-        <div className="flex justify-end">
-          <div className="flex gap-3">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
-              <UserPlus size={20} />
-              Create User
-            </button>
-            <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2">
-              <Building2 size={20} />
-              Create Organization
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Content based on current tab */}
       {currentTab === 'overview' && stats && (
         <div className="space-y-6">
