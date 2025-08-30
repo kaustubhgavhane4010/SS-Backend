@@ -74,32 +74,29 @@ const EnterpriseDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <Layout>
-        <div className="flex justify-center items-center h-64">
-          <LoadingSpinner />
-        </div>
-      </Layout>
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner />
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <div className="flex justify-end">
-            <div className="flex gap-3">
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
-                <UserPlus size={20} />
-                Create User
-              </button>
-              <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2">
-                <Building2 size={20} />
-                Create Organization
-              </button>
-            </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Quick Actions */}
+      <div className="mb-8">
+        <div className="flex justify-end">
+          <div className="flex gap-3">
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+              <UserPlus size={20} />
+              Create User
+            </button>
+            <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2">
+              <Building2 size={20} />
+              Create Organization
+            </button>
           </div>
         </div>
+      </div>
 
         {/* Navigation Tabs */}
         <div className="border-b border-gray-200 mb-8">
@@ -419,8 +416,7 @@ const EnterpriseDashboard: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
-    </Layout>
+    </div>
   );
 };
 
