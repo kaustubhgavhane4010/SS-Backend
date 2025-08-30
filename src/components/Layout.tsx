@@ -11,11 +11,11 @@ import {
   Menu,
   X,
   Bell,
-  LogOut,
   ChevronDown,
   Search,
   Building,
   BarChart3,
+  LogOut,
 } from 'lucide-react';
 import { Menu as HeadlessMenu, Transition } from '@headlessui/react';
 
@@ -53,6 +53,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
     if (href === '/enterprise') {
       return location.pathname === '/enterprise';
+    }
+    if (href.startsWith('/enterprise?tab=')) {
+      const currentTab = new URLSearchParams(location.search).get('tab');
+      const hrefTab = new URLSearchParams(href.split('?')[1]).get('tab');
+      return location.pathname === '/enterprise' && currentTab === hrefTab;
     }
     if (href === '/tickets') {
       // Only active for /tickets, not /tickets/new
@@ -198,7 +203,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Menu size={24} />
               </button>
               <h2 className="text-xl font-semibold text-neutral-900">
-                {navigation.find(item => isActive(item.href))?.name || 'Dashboard'}
+                {user?.role === 'supreme_admin' && location.pathname === '/enterprise' 
+                  ? (() => {
+                      const tab = new URLSearchParams(location.search).get('tab');
+                      const tabNames: Record<string, string> = {
+                        'organizations': 'Organizations',
+                        'users': 'Users',
+                        'teams': 'Teams',
+                        'analytics': 'Analytics'
+                      };
+                      return tabNames[tab || ''] || 'Enterprise Dashboard';
+                    })()
+                  : navigation.find(item => isActive(item.href))?.name || 'Dashboard'
+                }
               </h2>
             </div>
 

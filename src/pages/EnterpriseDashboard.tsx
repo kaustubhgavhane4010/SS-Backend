@@ -85,15 +85,9 @@ const EnterpriseDashboard: React.FC = () => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header with Quick Actions */}
+        {/* Quick Actions */}
         <div className="mb-8">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Enterprise Dashboard</h1>
-              <p className="mt-2 text-gray-600">
-                Manage your enterprise organizations and users from a central location
-              </p>
-            </div>
+          <div className="flex justify-end">
             <div className="flex gap-3">
               <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
                 <UserPlus size={20} />
