@@ -21,6 +21,7 @@ const EnterpriseDashboard: React.FC = () => {
   const [newUser, setNewUser] = useState({
     name: '',
     email: '',
+    password: '',
     role: 'team_member',
     organization_id: '',
     department: '',
@@ -63,12 +64,31 @@ const EnterpriseDashboard: React.FC = () => {
   };
 
   const handleCreateUser = async () => {
+    // Validate required fields
+    if (!newUser.name.trim() || !newUser.email.trim() || !newUser.password.trim() || !newUser.role || !newUser.organization_id) {
+      alert('Please fill in all required fields: Name, Email, Password, Role, and Organization are mandatory.');
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newUser.email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    // Validate password length
+    if (newUser.password.length < 6) {
+      alert('Password must be at least 6 characters long.');
+      return;
+    }
+
     try {
       const response = await api.post('/organizational/users', newUser);
       if (response.data?.success) {
         alert('User created successfully!');
         setShowCreateUser(false);
-        setNewUser({ name: '', email: '', role: 'team_member', organization_id: '', department: '', phone: '' });
+        setNewUser({ name: '', email: '', password: '', role: 'team_member', organization_id: '', department: '', phone: '' });
         loadDashboardData(); // Refresh data
       }
     } catch (error) {
@@ -445,7 +465,7 @@ const EnterpriseDashboard: React.FC = () => {
             </div>
             <div className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   id="name"
@@ -455,7 +475,7 @@ const EnterpriseDashboard: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email <span className="text-red-500">*</span></label>
                 <input
                   type="email"
                   id="email"
@@ -465,7 +485,18 @@ const EnterpriseDashboard: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password <span className="text-red-500">*</span></label>
+                <input
+                  type="password"
+                  id="password"
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role <span className="text-red-500">*</span></label>
                 <select
                   id="role"
                   value={newUser.role}
@@ -482,7 +513,7 @@ const EnterpriseDashboard: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label htmlFor="organization_id" className="block text-sm font-medium text-gray-700">Organization</label>
+                <label htmlFor="organization_id" className="block text-sm font-medium text-gray-700">Organization <span className="text-red-500">*</span></label>
                 <select
                   id="organization_id"
                   value={newUser.organization_id}
@@ -545,7 +576,7 @@ const EnterpriseDashboard: React.FC = () => {
             </div>
             <div className="space-y-4">
               <div>
-                <label htmlFor="orgName" className="block text-sm font-medium text-gray-700">Organization Name</label>
+                <label htmlFor="orgName" className="block text-sm font-medium text-gray-700">Organization Name <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   id="orgName"
@@ -555,7 +586,7 @@ const EnterpriseDashboard: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="orgType" className="block text-sm font-medium text-gray-700">Type</label>
+                <label htmlFor="orgType" className="block text-sm font-medium text-gray-700">Type <span className="text-red-500">*</span></label>
                 <select
                   id="orgType"
                   value={newOrganization.type}
@@ -569,7 +600,7 @@ const EnterpriseDashboard: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label htmlFor="orgStatus" className="block text-sm font-medium text-gray-700">Status</label>
+                <label htmlFor="orgStatus" className="block text-sm font-medium text-gray-700">Status <span className="text-red-500">*</span></label>
                 <select
                   id="orgStatus"
                   value={newOrganization.status}
@@ -611,7 +642,7 @@ const EnterpriseDashboard: React.FC = () => {
             </div>
             <div className="space-y-4">
               <div>
-                <label htmlFor="teamName" className="block text-sm font-medium text-gray-700">Team Name</label>
+                <label htmlFor="teamName" className="block text-sm font-medium text-gray-700">Team Name <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   id="teamName"
@@ -630,7 +661,7 @@ const EnterpriseDashboard: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="organizationForTeam" className="block text-sm font-medium text-gray-700">Organization</label>
+                <label htmlFor="organizationForTeam" className="block text-sm font-medium text-gray-700">Organization <span className="text-red-500">*</span></label>
                 <select
                   id="organizationForTeam"
                   value={newTeam.organization_id}
