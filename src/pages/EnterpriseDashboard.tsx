@@ -44,6 +44,13 @@ const EnterpriseDashboard: React.FC = () => {
     loadDashboardData();
   }, []);
 
+  // Set default organization when organizations are loaded
+  useEffect(() => {
+    if (organizations.length > 0 && !newUser.organization_id) {
+      setNewUser(prev => ({ ...prev, organization_id: organizations[0].id }));
+    }
+  }, [organizations, newUser.organization_id]);
+
   const loadDashboardData = async () => {
     try {
       setLoading(true);
@@ -64,8 +71,18 @@ const EnterpriseDashboard: React.FC = () => {
   };
 
   const handleCreateUser = async () => {
+    // Debug: Log the current form state
+    console.log('Form data:', newUser);
+    
     // Validate required fields
     if (!newUser.name.trim() || !newUser.email.trim() || !newUser.password.trim() || !newUser.role || !newUser.organization_id) {
+      console.log('Validation failed:', {
+        name: newUser.name.trim(),
+        email: newUser.email.trim(),
+        password: newUser.password.trim(),
+        role: newUser.role,
+        organization_id: newUser.organization_id
+      });
       alert('Please fill in all required fields: Name, Email, Password, Role, and Organization are mandatory.');
       return;
     }
