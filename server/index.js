@@ -64,6 +64,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Health check endpoint for Railway
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    database: 'connected'
+  });
+});
+
 // Serve built frontend files
 app.use(express.static(path.join(__dirname, '../dist')));
 

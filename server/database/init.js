@@ -18,11 +18,23 @@ export const getDatabase = () => {
 };
 
 export const initDatabase = async () => {
-  // ALWAYS use the consolidated database in project root
-  const dbPath = path.join(process.cwd(), 'campus-assist.db');
-  const pathStrategy = 'consolidated-root';
+  // CRITICAL FIX: Handle Railway environment properly
+  let dbPath;
+  let pathStrategy = 'unknown';
   
-  console.log('🎯 Using consolidated database strategy');
+  if (process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_STATIC_URL || process.env.PORT) {
+    // Railway/Production environment - use absolute path
+    dbPath = '/app/campus-assist.db';  // Railway app directory
+    pathStrategy = 'railway-absolute';
+    console.log('🚀 Railway/Production detected - using absolute path:', dbPath);
+  } else {
+    // Local development - use project root
+    dbPath = path.join(process.cwd(), 'campus-assist.db');
+    pathStrategy = 'local-project-root';
+    console.log('💻 Local development - using project root:', dbPath);
+  }
+  
+  console.log('🎯 Database strategy:', pathStrategy);
   console.log('📁 Database path:', dbPath);
   console.log('🛡️ This ensures data consistency across all environments');
   
@@ -51,11 +63,33 @@ export const initDatabase = async () => {
   } catch (error) {
     console.error('❌ Database initialization failed:', error.message);
     console.error('🔍 Attempted path:', dbPath);
+    console.error('🔍 Strategy:', pathStrategy);
     
-    // This should never happen now, but if it does, show clear error
-    console.error('🚨 CRITICAL: Database initialization failed!');
-    console.error('🔧 Please ensure campus-assist.db exists in project root');
-    throw error;
+    // CRITICAL: If Railway path fails, try project root as fallback
+    if (pathStrategy === 'railway-absolute') {
+      console.log('🔄 Railway path failed, trying project root fallback...');
+      const fallbackPath = path.join(process.cwd(), 'campus-assist.db');
+      console.log('📁 Fallback path:', fallbackPath);
+      
+      try {
+        db = await open({
+          filename: fallbackPath,
+          driver: sqlite3.Database
+        });
+        
+        await createTables();
+        await createDefaultAdmin();
+        
+        console.log('✅ Database initialized with fallback path');
+        console.log('📍 Final database location:', fallbackPath);
+        
+      } catch (fallbackError) {
+        console.error('❌ Fallback also failed:', fallbackError.message);
+        throw fallbackError;
+      }
+    } else {
+      throw error;
+    }
   }
 };
 

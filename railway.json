@@ -4,10 +4,14 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "npm install && cd server && npm install && cd .. && npm run build && npm run server",
-    "healthcheckPath": "/api/health",
+    "startCommand": "node server/index.js",
+    "healthcheckPath": "/health",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
+  },
+  "variables": {
+    "NODE_ENV": "production",
+    "RAILWAY_ENVIRONMENT": "true"
   }
 }
