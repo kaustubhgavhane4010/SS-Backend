@@ -253,7 +253,6 @@ const EnterpriseDashboard: React.FC = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Total Organizations</p>
                   <p className="text-2xl font-semibold text-gray-900">{stats.organizations.total_organizations}</p>
-                  <p className="text-xs text-green-600">✅ Active</p>
                 </div>
               </div>
             </div>
@@ -266,7 +265,6 @@ const EnterpriseDashboard: React.FC = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Total Users</p>
                   <p className="text-2xl font-semibold text-gray-900">{stats.users.total_users}</p>
-                  <p className="text-xs text-green-600">✅ Active</p>
                 </div>
               </div>
             </div>
@@ -279,7 +277,6 @@ const EnterpriseDashboard: React.FC = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Companies</p>
                   <p className="text-2xl font-semibold text-gray-900">{stats.organizations.companies}</p>
-                  <p className="text-xs text-green-600">✅ Active</p>
                 </div>
               </div>
             </div>
@@ -292,7 +289,6 @@ const EnterpriseDashboard: React.FC = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Universities</p>
                   <p className="text-2xl font-semibold text-gray-900">{stats.organizations.universities}</p>
-                  <p className="text-xs text-green-600">✅ Active</p>
                 </div>
               </div>
             </div>
