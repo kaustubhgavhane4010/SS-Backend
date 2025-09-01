@@ -18,25 +18,42 @@ export const getDatabase = () => {
 };
 
 export const initDatabase = async () => {
-  // Use environment variable for Railway, fallback to local path
+  // Multiple fallback strategies for database path
   let dbPath;
+  let pathStrategy = 'unknown';
   
-  if (process.env.RAILWAY_ENVIRONMENT) {
-    // Railway environment - use persistent path
+  // Strategy 1: Check for Railway environment
+  if (process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_STATIC_URL) {
     dbPath = '/tmp/campus-assist.db';
-    console.log('🚀 Railway detected - using persistent database path:', dbPath);
-  } else {
-    // Local environment - use project root
+    pathStrategy = 'railway-tmp';
+    console.log('🚀 Railway detected - using /tmp/ path:', dbPath);
+  }
+  // Strategy 2: Check for other cloud environments
+  else if (process.env.NODE_ENV === 'production' || process.env.PORT) {
+    dbPath = '/tmp/campus-assist.db';
+    pathStrategy = 'production-tmp';
+    console.log('☁️ Production environment - using /tmp/ path:', dbPath);
+  }
+  // Strategy 3: Local development
+  else {
     dbPath = path.join(process.cwd(), 'campus-assist.db');
-    console.log('💻 Local environment - using database path:', dbPath);
+    pathStrategy = 'local-project-root';
+    console.log('💻 Local development - using project root:', dbPath);
   }
   
-  console.log('🔍 Database will be created/used at:', dbPath);
+  console.log('🔍 Database strategy:', pathStrategy);
+  console.log('📁 Database will be created/used at:', dbPath);
   
+  try {
   db = await open({
-    filename: dbPath,
+      filename: dbPath,
     driver: sqlite3.Database
   });
+
+    // Test database write access
+    await db.exec('CREATE TABLE IF NOT EXISTS _test_write (id INTEGER)');
+    await db.exec('DROP TABLE _test_write');
+    console.log('✅ Database write access confirmed');
 
   // Create tables
   await createTables();
@@ -44,7 +61,41 @@ export const initDatabase = async () => {
   // Create default admin user if no users exist
   await createDefaultAdmin();
   
-  console.log('✅ Database initialized successfully at:', dbPath);
+    console.log('🎉 Database initialized successfully!');
+    console.log('📍 Final database location:', dbPath);
+    console.log('🛡️ Data persistence strategy:', pathStrategy);
+    
+  } catch (error) {
+    console.error('❌ Database initialization failed:', error.message);
+    console.error('🔍 Attempted path:', dbPath);
+    console.error('🔍 Strategy:', pathStrategy);
+    
+    // Fallback to local path if all else fails
+    if (pathStrategy !== 'local-project-root') {
+      console.log('🔄 Falling back to local project root...');
+      const fallbackPath = path.join(process.cwd(), 'campus-assist.db');
+      console.log('📁 Fallback path:', fallbackPath);
+      
+      try {
+        db = await open({
+          filename: fallbackPath,
+          driver: sqlite3.Database
+        });
+        
+        await createTables();
+        await createDefaultAdmin();
+        
+        console.log('✅ Database initialized with fallback path');
+        console.log('📍 Final database location:', fallbackPath);
+        
+      } catch (fallbackError) {
+        console.error('❌ Fallback also failed:', fallbackError.message);
+        throw fallbackError;
+      }
+    } else {
+      throw error;
+    }
+  }
 };
 
 const createTables = async () => {

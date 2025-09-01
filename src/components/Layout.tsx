@@ -39,13 +39,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         { name: 'Settings', href: '/settings', icon: Settings },
       ]
     : [
-        { name: 'Dashboard', href: '/dashboard', icon: Home },
-        { name: 'All Tickets', href: '/tickets', icon: Ticket },
-        { name: 'New Ticket', href: '/tickets/new', icon: Plus },
-        { name: 'Team', href: '/team', icon: Users },
-        ...(user?.role === 'admin' ? [{ name: 'User Management', href: '/users', icon: UserCheck }] : []),
-        { name: 'Settings', href: '/settings', icon: Settings },
-      ];
+    { name: 'Dashboard', href: '/dashboard', icon: Home },
+    { name: 'All Tickets', href: '/tickets', icon: Ticket },
+    { name: 'New Ticket', href: '/tickets/new', icon: Plus },
+    { name: 'Team', href: '/team', icon: Users },
+    ...(user?.role === 'admin' ? [{ name: 'User Management', href: '/users', icon: UserCheck }] : []),
+    { name: 'Settings', href: '/settings', icon: Settings },
+  ];
 
   const isActive = (href: string) => {
     if (href === '/dashboard') {
