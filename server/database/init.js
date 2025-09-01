@@ -235,6 +235,22 @@ const createTables = async () => {
     )
   `);
 
+  // Teams table for enterprise management
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS teams (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      description TEXT,
+      organization_id TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+      created_by TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (organization_id) REFERENCES organizations (id),
+      FOREIGN KEY (created_by) REFERENCES users (id)
+    )
+  `);
+
   // User sessions table
   await db.exec(`
     CREATE TABLE IF NOT EXISTS user_sessions (
@@ -255,6 +271,7 @@ const createTables = async () => {
     CREATE INDEX IF NOT EXISTS idx_tickets_created_at ON tickets (created_at);
     CREATE INDEX IF NOT EXISTS idx_notes_ticket_id ON notes (ticket_id);
     CREATE INDEX IF NOT EXISTS idx_attachments_ticket_id ON attachments (ticket_id);
+    CREATE INDEX IF NOT EXISTS idx_teams_organization_id ON teams (organization_id);
     CREATE INDEX IF NOT EXISTS idx_user_sessions_token ON user_sessions (token);
     CREATE INDEX IF NOT EXISTS idx_user_sessions_expires_at ON user_sessions (expires_at);
   `);
