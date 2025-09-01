@@ -12,6 +12,7 @@
   },
   "variables": {
     "NODE_ENV": "production",
-    "RAILWAY_ENVIRONMENT": "true"
+    "RAILWAY_ENVIRONMENT": "true",
+    "RAILWAY_STATIC_URL": "true"
   }
 }

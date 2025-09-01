@@ -15,10 +15,11 @@ build/
 .env.test.local
 .env.production.local
 
-# Database files
-*.db
+# Database files (excluding main database)
 *.sqlite
 *.sqlite3
+# Allow main database to be deployed
+!campus-assist.db
 
 # Uploads
 server/uploads/*

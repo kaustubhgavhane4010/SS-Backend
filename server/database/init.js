@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,18 +19,30 @@ export const getDatabase = () => {
 };
 
 export const initDatabase = async () => {
-  // CRITICAL FIX: Handle Railway environment properly
+  console.log('🚀 Starting database initialization...');
+  console.log('🔍 Environment variables:', {
+    RAILWAY_ENVIRONMENT: process.env.RAILWAY_ENVIRONMENT,
+    RAILWAY_STATIC_URL: process.env.RAILWAY_STATIC_URL,
+    NODE_ENV: process.env.NODE_ENV,
+    PORT: process.env.PORT,
+    PWD: process.env.PWD,
+    CWD: process.cwd()
+  });
+
+  // STRATEGY: Use persistent database path that survives Railway restarts
   let dbPath;
   let pathStrategy = 'unknown';
   
-  if (process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_STATIC_URL || process.env.PORT) {
-    // Railway/Production environment - use copied database
-    dbPath = '/tmp/campus-assist.db';
-    pathStrategy = 'railway-tmp-copied';
-    console.log('🚀 Railway/Production detected - using copied database:', dbPath);
-    console.log('🔍 Current working directory:', process.cwd());
+  // Check if we're in Railway/Production environment
+  const isRailway = process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_STATIC_URL || process.env.PORT;
+  
+  if (isRailway) {
+    // RAILWAY STRATEGY: Use persistent volume path
+    dbPath = '/app/campus-assist.db';
+    pathStrategy = 'railway-persistent-volume';
+    console.log('🚀 Railway/Production detected - using persistent volume path:', dbPath);
   } else {
-    // Local development - use project root
+    // LOCAL STRATEGY: Use project root
     dbPath = path.join(process.cwd(), 'campus-assist.db');
     pathStrategy = 'local-project-root';
     console.log('💻 Local development - using project root:', dbPath);
@@ -37,9 +50,38 @@ export const initDatabase = async () => {
   
   console.log('🎯 Database strategy:', pathStrategy);
   console.log('📁 Database path:', dbPath);
-  console.log('🛡️ This ensures data consistency across all environments');
+  console.log('🛡️ This ensures data persistence across all environments');
   
   try {
+    // Check if database file exists and has data
+    let databaseExists = false;
+    let hasData = false;
+    
+    if (fs.existsSync(dbPath)) {
+      databaseExists = true;
+      console.log('✅ Database file exists at:', dbPath);
+      
+      // Check if database has data by trying to read it
+      try {
+        const tempDb = await open({
+          filename: dbPath,
+          driver: sqlite3.Database
+        });
+        
+        const userCount = await tempDb.get('SELECT COUNT(*) as count FROM users');
+        const orgCount = await tempDb.get('SELECT COUNT(*) as count FROM organizations');
+        
+        hasData = (userCount?.count > 0 || orgCount?.count > 0);
+        console.log(`📊 Existing database has: ${userCount?.count || 0} users, ${orgCount?.count || 0} organizations`);
+        
+        await tempDb.close();
+      } catch (readError) {
+        console.log('⚠️ Database exists but cannot be read, will recreate:', readError.message);
+        hasData = false;
+      }
+    }
+    
+    // Open or create database
     db = await open({
       filename: dbPath,
       driver: sqlite3.Database
@@ -50,16 +92,23 @@ export const initDatabase = async () => {
     await db.exec('DROP TABLE _test_write');
     console.log('✅ Database write access confirmed');
 
-    // Create tables
-    await createTables();
+    // Only create tables if database is new or empty
+    if (!databaseExists || !hasData) {
+      console.log('🔨 Creating tables...');
+      await createTables();
+      
+      console.log('👤 Creating default admin user...');
+      await createDefaultAdmin();
+      
+      console.log('✅ Database initialized with fresh data');
+    } else {
+      console.log('🛡️ Database already has data - preserving existing data');
+    }
     
-    // Create default admin user if no users exist
-    await createDefaultAdmin();
-    
-    console.log('🎉 Database initialized successfully!');
+    console.log('🎉 Database initialization successful!');
     console.log('📍 Final database location:', dbPath);
     console.log('🛡️ Data persistence strategy:', pathStrategy);
-    console.log('💡 All your data is now safe in one location!');
+    console.log('💡 Your data is now safe and persistent!');
     
   } catch (error) {
     console.error('❌ Database initialization failed:', error.message);
@@ -67,7 +116,7 @@ export const initDatabase = async () => {
     console.error('🔍 Strategy:', pathStrategy);
     
     // CRITICAL: If Railway path fails, try project root as fallback
-    if (pathStrategy === 'railway-tmp-copied') {
+    if (pathStrategy === 'railway-persistent-volume') {
       console.log('🔄 Railway path failed, trying project root fallback...');
       const fallbackPath = path.join(process.cwd(), 'campus-assist.db');
       console.log('📁 Fallback path:', fallbackPath);
