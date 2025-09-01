@@ -18,83 +18,44 @@ export const getDatabase = () => {
 };
 
 export const initDatabase = async () => {
-  // Multiple fallback strategies for database path
-  let dbPath;
-  let pathStrategy = 'unknown';
+  // ALWAYS use the consolidated database in project root
+  const dbPath = path.join(process.cwd(), 'campus-assist.db');
+  const pathStrategy = 'consolidated-root';
   
-  // Strategy 1: Check for Railway environment
-  if (process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_STATIC_URL) {
-    dbPath = '/tmp/campus-assist.db';
-    pathStrategy = 'railway-tmp';
-    console.log('🚀 Railway detected - using /tmp/ path:', dbPath);
-  }
-  // Strategy 2: Check for other cloud environments
-  else if (process.env.NODE_ENV === 'production' || process.env.PORT) {
-    dbPath = '/tmp/campus-assist.db';
-    pathStrategy = 'production-tmp';
-    console.log('☁️ Production environment - using /tmp/ path:', dbPath);
-  }
-  // Strategy 3: Local development
-  else {
-    dbPath = path.join(process.cwd(), 'campus-assist.db');
-    pathStrategy = 'local-project-root';
-    console.log('💻 Local development - using project root:', dbPath);
-  }
-  
-  console.log('🔍 Database strategy:', pathStrategy);
-  console.log('📁 Database will be created/used at:', dbPath);
+  console.log('🎯 Using consolidated database strategy');
+  console.log('📁 Database path:', dbPath);
+  console.log('🛡️ This ensures data consistency across all environments');
   
   try {
-  db = await open({
+    db = await open({
       filename: dbPath,
-    driver: sqlite3.Database
-  });
+      driver: sqlite3.Database
+    });
 
     // Test database write access
     await db.exec('CREATE TABLE IF NOT EXISTS _test_write (id INTEGER)');
     await db.exec('DROP TABLE _test_write');
     console.log('✅ Database write access confirmed');
 
-  // Create tables
-  await createTables();
-  
-  // Create default admin user if no users exist
-  await createDefaultAdmin();
-  
+    // Create tables
+    await createTables();
+    
+    // Create default admin user if no users exist
+    await createDefaultAdmin();
+    
     console.log('🎉 Database initialized successfully!');
     console.log('📍 Final database location:', dbPath);
     console.log('🛡️ Data persistence strategy:', pathStrategy);
+    console.log('💡 All your data is now safe in one location!');
     
   } catch (error) {
     console.error('❌ Database initialization failed:', error.message);
     console.error('🔍 Attempted path:', dbPath);
-    console.error('🔍 Strategy:', pathStrategy);
     
-    // Fallback to local path if all else fails
-    if (pathStrategy !== 'local-project-root') {
-      console.log('🔄 Falling back to local project root...');
-      const fallbackPath = path.join(process.cwd(), 'campus-assist.db');
-      console.log('📁 Fallback path:', fallbackPath);
-      
-      try {
-        db = await open({
-          filename: fallbackPath,
-          driver: sqlite3.Database
-        });
-        
-        await createTables();
-        await createDefaultAdmin();
-        
-        console.log('✅ Database initialized with fallback path');
-        console.log('📍 Final database location:', fallbackPath);
-        
-      } catch (fallbackError) {
-        console.error('❌ Fallback also failed:', fallbackError.message);
-        throw fallbackError;
-      }
-    } else {
-      throw error;
-    }
+    // This should never happen now, but if it does, show clear error
+    console.error('🚨 CRITICAL: Database initialization failed!');
+    console.error('🔧 Please ensure campus-assist.db exists in project root');
+    throw error;
   }
 };
 
