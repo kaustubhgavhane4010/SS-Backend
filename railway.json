@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "cd /app && npm install && cd server && npm install && cd .. && node server/scripts/init-railway-db.js && node server/index.js",
+    "startCommand": "cd /app && npm install && cd server && npm install && cd .. && node server/index.js",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
