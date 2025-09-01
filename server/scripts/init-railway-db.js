@@ -2,14 +2,41 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
 
-console.log('🚀 Initializing Railway database with actual data...');
+console.log('🚀 Checking Railway database...');
 
 async function initRailwayDatabase() {
   try {
-    // Create database in Railway working directory
+    // Check if database already exists
     const dbPath = '/tmp/campus-assist.db';
-    console.log('📁 Creating database at:', dbPath);
+    
+    if (fs.existsSync(dbPath)) {
+      console.log('✅ Database already exists, checking if it has data...');
+      
+      // Open existing database to check data
+      const existingDb = await open({
+        filename: dbPath,
+        driver: sqlite3.Database
+      });
+      
+      // Check if database has data
+      const userCount = await existingDb.get('SELECT COUNT(*) as count FROM users');
+      const orgCount = await existingDb.get('SELECT COUNT(*) as count FROM organizations');
+      
+      console.log(`📊 Existing database has: ${userCount.count} users, ${orgCount.count} organizations`);
+      
+      if (userCount.count > 0 && orgCount.count > 0) {
+        console.log('✅ Database already has data, skipping initialization');
+        await existingDb.close();
+        return;
+      }
+      
+      await existingDb.close();
+      console.log('⚠️ Database exists but is empty, will initialize...');
+    }
+    
+    console.log('📁 Creating/initializing database at:', dbPath);
     
     const db = await open({
       filename: dbPath,
@@ -75,8 +102,8 @@ async function initRailwayDatabase() {
 
     console.log('✅ Tables created successfully');
 
-    // Insert actual data
-    console.log('📊 Inserting actual data...');
+    // Insert initial seed data ONLY if no data exists
+    console.log('📊 Inserting initial seed data...');
 
     // Create Supreme Admin user
     const supremeAdminId = uuidv4();
@@ -94,7 +121,7 @@ async function initRailwayDatabase() {
       VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `, [bnuOrgId, 'BNU Enterprise', 'company', 'active', supremeAdminId]);
 
-    // Create additional organizations (your actual data)
+    // Create additional organizations (initial seed data)
     const org2Id = uuidv4();
     await db.run(`
       INSERT OR REPLACE INTO organizations (id, name, type, status, created_by, created_at, updated_at)
@@ -107,7 +134,7 @@ async function initRailwayDatabase() {
       VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `, [org3Id, 'Innovation Hub', 'company', 'active', supremeAdminId]);
 
-    // Create additional users
+    // Create additional users (initial seed data)
     const adminId = uuidv4();
     const adminPassword = await bcrypt.hash('admin123', 10);
     
@@ -124,7 +151,7 @@ async function initRailwayDatabase() {
       VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `, [managerId, 'Sarah Manager', 'sarah@innovationhub.com', managerPassword, 'manager', 'active', org3Id]);
 
-    console.log('✅ Data inserted successfully');
+    console.log('✅ Initial seed data inserted successfully');
 
     // Verify data
     const userCount = await db.get('SELECT COUNT(*) as count FROM users');
@@ -137,7 +164,7 @@ async function initRailwayDatabase() {
     await db.close();
     
     console.log('🎉 Railway database initialization complete!');
-    console.log('🛡️ Your data is now available on Railway!');
+    console.log('🛡️ Your existing data is preserved!');
     
   } catch (error) {
     console.error('❌ Railway database initialization failed:', error.message);
