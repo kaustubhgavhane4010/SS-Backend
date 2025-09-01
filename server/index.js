@@ -55,21 +55,21 @@ app.use('/api/tickets', ticketRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/organizational', organizationalRoutes);
 
+// Health check endpoint for Railway (simple, no database dependency)
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    message: 'Server is running'
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
     message: 'BNU Student Support Ticketing System API is running'
-  });
-});
-
-// Health check endpoint for Railway
-app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'healthy', 
-    timestamp: new Date().toISOString(),
-    database: 'connected'
   });
 });
 

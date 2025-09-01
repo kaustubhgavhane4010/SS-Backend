@@ -23,10 +23,11 @@ export const initDatabase = async () => {
   let pathStrategy = 'unknown';
   
   if (process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_STATIC_URL || process.env.PORT) {
-    // Railway/Production environment - use absolute path
-    dbPath = '/app/campus-assist.db';  // Railway app directory
-    pathStrategy = 'railway-absolute';
-    console.log('🚀 Railway/Production detected - using absolute path:', dbPath);
+    // Railway/Production environment - use working directory
+    dbPath = path.join(process.cwd(), 'campus-assist.db');
+    pathStrategy = 'railway-working-dir';
+    console.log('🚀 Railway/Production detected - using working directory:', dbPath);
+    console.log('🔍 Current working directory:', process.cwd());
   } else {
     // Local development - use project root
     dbPath = path.join(process.cwd(), 'campus-assist.db');
@@ -66,7 +67,7 @@ export const initDatabase = async () => {
     console.error('🔍 Strategy:', pathStrategy);
     
     // CRITICAL: If Railway path fails, try project root as fallback
-    if (pathStrategy === 'railway-absolute') {
+    if (pathStrategy === 'railway-working-dir') {
       console.log('🔄 Railway path failed, trying project root fallback...');
       const fallbackPath = path.join(process.cwd(), 'campus-assist.db');
       console.log('📁 Fallback path:', fallbackPath);
