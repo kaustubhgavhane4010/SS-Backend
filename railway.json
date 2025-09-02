@@ -12,6 +12,11 @@
   },
   "variables": {
     "NODE_ENV": "production",
-    "RAILWAY_ENVIRONMENT": "true"
+    "RAILWAY_ENVIRONMENT": "true",
+    "DB_HOST": "db5018543224.hosting-data.io",
+    "DB_PORT": "3306",
+    "DB_USER": "dbu1839369",
+    "DB_PASSWORD": "Sai@40104010",
+    "DB_NAME": "dbs14720204"
   }
 }
