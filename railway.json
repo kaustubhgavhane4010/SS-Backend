@@ -12,6 +12,10 @@
   },
   "variables": {
     "NODE_ENV": "production",
-    "RAILWAY_ENVIRONMENT": "true"
+    "RAILWAY_ENVIRONMENT": "true",
+    "MYSQL_HOST": "yamabiko.proxy.rlwy.net",
+    "MYSQL_PORT": "48437",
+    "MYSQL_USER": "root",
+    "MYSQL_DATABASE": "railway"
   }
 }
