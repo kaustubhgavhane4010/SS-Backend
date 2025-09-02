@@ -22,6 +22,10 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+console.log('🔧 Environment check:');
+console.log('  PORT:', process.env.PORT || '5000 (default)');
+console.log('  NODE_ENV:', process.env.NODE_ENV || 'development');
+console.log('  MYSQL_HOST:', process.env.MYSQL_HOST ? 'Set' : 'Not set');
 
 // Security middleware
 app.use(helmet());
@@ -57,10 +61,13 @@ app.use('/api/organizational', organizationalRoutes);
 
 // Health check endpoint for Railway (simple, no database dependency)
 app.get('/health', (req, res) => {
+  console.log('🏥 Health check requested at:', new Date().toISOString());
   res.status(200).json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    message: 'Server is running'
+    message: 'Server is running',
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
