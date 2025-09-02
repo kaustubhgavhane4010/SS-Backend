@@ -8,6 +8,12 @@ export const initMySQLDatabase = async () => {
     
     const pool = await getConnection();
     
+    // Test connection before proceeding
+    const connection = await pool.getConnection();
+    await connection.ping();
+    connection.release();
+    console.log('✅ MySQL connection verified');
+    
     // Create tables
     await createTables(pool);
     
@@ -18,6 +24,12 @@ export const initMySQLDatabase = async () => {
     
   } catch (error) {
     console.error('❌ MySQL database initialization failed:', error.message);
+    console.error('🔍 Error details:', {
+      code: error.code,
+      errno: error.errno,
+      sqlState: error.sqlState,
+      sqlMessage: error.sqlMessage
+    });
     throw error;
   }
 };
@@ -25,121 +37,128 @@ export const initMySQLDatabase = async () => {
 const createTables = async (pool) => {
   console.log('🔨 Creating MySQL tables...');
   
-  // Users table with new hierarchy system
-  await pool.execute(`
-    CREATE TABLE IF NOT EXISTS users (
-      id VARCHAR(36) PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) UNIQUE NOT NULL,
-      password VARCHAR(255) NOT NULL,
-      role ENUM('supreme_admin', 'admin', 'university_admin', 'senior_leadership', 'dean', 'manager', 'team_member') NOT NULL,
-      organization_id VARCHAR(36),
-      department VARCHAR(255),
-      phone VARCHAR(50),
-      avatar VARCHAR(255),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      created_by VARCHAR(36),
-      is_active BOOLEAN DEFAULT TRUE,
-      INDEX idx_email (email),
-      INDEX idx_role (role),
-      INDEX idx_organization (organization_id)
-    )
-  `);
-  
-  // Organizations table
-  await pool.execute(`
-    CREATE TABLE IF NOT EXISTS organizations (
-      id VARCHAR(36) PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      type ENUM('company', 'university', 'department') NOT NULL,
-      status ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
-      description TEXT,
-      address TEXT,
-      phone VARCHAR(50),
-      email VARCHAR(255),
-      website VARCHAR(255),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      created_by VARCHAR(36),
-      is_active BOOLEAN DEFAULT TRUE,
-      INDEX idx_name (name),
-      INDEX idx_type (type),
-      INDEX idx_status (status)
-    )
-  `);
-  
-  // Teams table
-  await pool.execute(`
-    CREATE TABLE IF NOT EXISTS teams (
-      id VARCHAR(36) PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      description TEXT,
-      organization_id VARCHAR(36) NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      created_by VARCHAR(36),
-      is_active BOOLEAN DEFAULT TRUE,
-      INDEX idx_organization (organization_id),
-      INDEX idx_name (name)
-    )
-  `);
-  
-  // Tickets table (keeping existing structure)
-  await pool.execute(`
-    CREATE TABLE IF NOT EXISTS tickets (
-      id VARCHAR(36) PRIMARY KEY,
-      title VARCHAR(255) NOT NULL,
-      description TEXT,
-      status ENUM('open', 'in_progress', 'resolved', 'closed') DEFAULT 'open',
-      priority ENUM('low', 'medium', 'high', 'urgent') DEFAULT 'medium',
-      category VARCHAR(100),
-      assigned_to VARCHAR(36),
-      created_by VARCHAR(36) NOT NULL,
-      organization_id VARCHAR(36),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      resolved_at TIMESTAMP NULL,
-      INDEX idx_status (status),
-      INDEX idx_priority (priority),
-      INDEX idx_assigned_to (assigned_to),
-      INDEX idx_created_by (created_by),
-      INDEX idx_organization (organization_id)
-    )
-  `);
-  
-  // Notes table
-  await pool.execute(`
-    CREATE TABLE IF NOT EXISTS notes (
-      id VARCHAR(36) PRIMARY KEY,
-      ticket_id VARCHAR(36) NOT NULL,
-      content TEXT NOT NULL,
-      created_by VARCHAR(36) NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      INDEX idx_ticket (ticket_id),
-      INDEX idx_created_by (created_by)
-    )
-  `);
-  
-  // Attachments table
-  await pool.execute(`
-    CREATE TABLE IF NOT EXISTS attachments (
-      id VARCHAR(36) PRIMARY KEY,
-      ticket_id VARCHAR(36) NOT NULL,
-      filename VARCHAR(255) NOT NULL,
-      original_name VARCHAR(255) NOT NULL,
-      mime_type VARCHAR(100),
-      size BIGINT,
-      path VARCHAR(500) NOT NULL,
-      created_by VARCHAR(36) NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      INDEX idx_ticket (ticket_id),
-      INDEX idx_created_by (created_by)
-    )
-  `);
-  
-  console.log('✅ All tables created successfully');
+  try {
+    // Users table with new hierarchy system
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS users (
+        id VARCHAR(36) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        role ENUM('supreme_admin', 'admin', 'university_admin', 'senior_leadership', 'dean', 'manager', 'team_member') NOT NULL,
+        organization_id VARCHAR(36),
+        department VARCHAR(255),
+        phone VARCHAR(50),
+        avatar VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        created_by VARCHAR(36),
+        is_active BOOLEAN DEFAULT TRUE,
+        INDEX idx_email (email),
+        INDEX idx_role (role),
+        INDEX idx_organization (organization_id)
+      )
+    `);
+    
+    // Organizations table
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS organizations (
+        id VARCHAR(36) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        type ENUM('company', 'university', 'department') NOT NULL,
+        status ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
+        description TEXT,
+        address TEXT,
+        phone VARCHAR(50),
+        email VARCHAR(255),
+        website VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        created_by VARCHAR(36),
+        is_active BOOLEAN DEFAULT TRUE,
+        INDEX idx_name (name),
+        INDEX idx_type (type),
+        INDEX idx_status (status)
+      )
+    `);
+    
+    // Teams table
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS teams (
+        id VARCHAR(36) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        organization_id VARCHAR(36) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        created_by VARCHAR(36),
+        is_active BOOLEAN DEFAULT TRUE,
+        INDEX idx_organization (organization_id),
+        INDEX idx_name (name)
+      )
+    `);
+    
+    // Tickets table (keeping existing structure)
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS tickets (
+        id VARCHAR(36) PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        status ENUM('open', 'in_progress', 'resolved', 'closed') DEFAULT 'open',
+        priority ENUM('low', 'medium', 'high', 'urgent') DEFAULT 'medium',
+        category VARCHAR(100),
+        assigned_to VARCHAR(36),
+        created_by VARCHAR(36) NOT NULL,
+        organization_id VARCHAR(36),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        resolved_at TIMESTAMP NULL,
+        is_active BOOLEAN DEFAULT TRUE,
+        INDEX idx_status (status),
+        INDEX idx_priority (priority),
+        INDEX idx_assigned_to (assigned_to),
+        INDEX idx_created_by (created_by),
+        INDEX idx_organization (organization_id)
+      )
+    `);
+    
+    // Notes table
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS notes (
+        id VARCHAR(36) PRIMARY KEY,
+        ticket_id VARCHAR(36) NOT NULL,
+        content TEXT NOT NULL,
+        created_by VARCHAR(36) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_ticket (ticket_id),
+        INDEX idx_created_by (created_by)
+      )
+    `);
+    
+    // Attachments table
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS attachments (
+        id VARCHAR(36) PRIMARY KEY,
+        ticket_id VARCHAR(36) NOT NULL,
+        filename VARCHAR(255) NOT NULL,
+        original_name VARCHAR(255) NOT NULL,
+        mime_type VARCHAR(100),
+        size BIGINT,
+        path VARCHAR(500) NOT NULL,
+        created_by VARCHAR(36) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_ticket (ticket_id),
+        INDEX idx_created_by (created_by)
+      )
+    `);
+    
+    console.log('✅ All tables created successfully');
+    
+  } catch (error) {
+    console.error('❌ Table creation failed:', error.message);
+    throw error;
+  }
 };
 
 const createDefaultAdmin = async (pool) => {

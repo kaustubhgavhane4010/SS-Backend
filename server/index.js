@@ -1,9 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { initMySQLDatabase } from './database/mysql-init.js';
-import ticketRoutes from './routes/tickets.js';
-import organizationalRoutes from './routes/organizational.js';
+import { initMySQLDatabase, testConnection } from './database/mysql-init.js';
+import { initFallbackDatabase } from './database/fallback-db.js';
 
 dotenv.config();
 
@@ -24,33 +23,78 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Routes
-app.use('/api/tickets', ticketRoutes);
-app.use('/api/organizational', organizationalRoutes);
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'healthy', 
-    timestamp: new Date().toISOString(),
-    message: 'Server is running'
-  });
-});
+// Import routes after database initialization
+let ticketRoutes, organizationalRoutes;
 
 // Initialize database and start server
 const startServer = async () => {
   try {
-    await initMySQLDatabase();
-    console.log('MySQL database initialized successfully');
+    console.log('🚀 Starting server with smart database selection...');
+    
+    // Try MySQL first
+    let databaseType = 'unknown';
+    
+    try {
+      console.log('🔌 Attempting MySQL connection...');
+      const mysqlConnected = await testConnection();
+      
+      if (mysqlConnected) {
+        console.log('✅ MySQL connection successful, initializing...');
+        await initMySQLDatabase();
+        databaseType = 'mysql';
+        console.log('🎉 Using MySQL database');
+      } else {
+        throw new Error('MySQL connection test failed');
+      }
+      
+    } catch (mysqlError) {
+      console.error('❌ MySQL failed:', mysqlError.message);
+      console.log('🔄 Falling back to SQLite...');
+      
+      try {
+        await initFallbackDatabase();
+        databaseType = 'sqlite-fallback';
+        console.log('🎉 Using SQLite fallback database');
+      } catch (sqliteError) {
+        console.error('❌ SQLite fallback also failed:', sqliteError.message);
+        throw new Error('Both MySQL and SQLite failed');
+      }
+    }
+    
+    // Import routes based on database type
+    if (databaseType === 'mysql') {
+      ticketRoutes = (await import('./routes/tickets.js')).default;
+      organizationalRoutes = (await import('./routes/organizational.js')).default;
+    } else {
+      // Use simplified routes for fallback
+      ticketRoutes = (await import('./routes/tickets-fallback.js')).default;
+      organizationalRoutes = (await import('./routes/organizational-fallback.js')).default;
+    }
+    
+    // Apply routes
+    app.use('/api/tickets', ticketRoutes);
+    app.use('/api/organizational', organizationalRoutes);
+    
+    // Health check endpoint
+    app.get('/api/health', (req, res) => {
+      res.status(200).json({ 
+        status: 'healthy', 
+        timestamp: new Date().toISOString(),
+        message: 'Server is running',
+        database: databaseType
+      });
+    });
     
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📊 API available at http://localhost:${PORT}/api`);
       console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
-      console.log(`🔌 Connected to MySQL database: ${process.env.DB_HOST || 'db5018543224.hosting-data.io'}`);
+      console.log(`🗄️ Database: ${databaseType}`);
     });
+    
   } catch (error) {
-    console.error('Failed to start server:', error);
+    console.error('❌ Failed to start server:', error.message);
+    console.error('🔍 Full error:', error);
     process.exit(1);
   }
 };

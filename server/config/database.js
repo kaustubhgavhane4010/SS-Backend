@@ -12,18 +12,59 @@ const dbConfig = {
   queueLimit: 0,
   acquireTimeout: 60000,
   timeout: 60000,
-  reconnect: true
+  reconnect: true,
+  // Add SSL configuration for IONOS
+  ssl: {
+    rejectUnauthorized: false
+  }
 };
 
 // Create connection pool
 let pool;
 
 export const getConnection = async () => {
-  if (!pool) {
-    pool = mysql.createPool(dbConfig);
-    console.log('🔌 MySQL connection pool created');
+  try {
+    if (!pool) {
+      console.log('🔌 Creating MySQL connection pool...');
+      console.log('📡 Connecting to:', dbConfig.host);
+      console.log('🗄️ Database:', dbConfig.database);
+      console.log('👤 User:', dbConfig.user);
+      
+      pool = mysql.createPool(dbConfig);
+      
+      // Test the connection immediately
+      const testConnection = await pool.getConnection();
+      console.log('✅ MySQL connection test successful!');
+      testConnection.release();
+      
+      console.log('🔌 MySQL connection pool created successfully');
+    }
+    return pool;
+  } catch (error) {
+    console.error('❌ MySQL connection failed:', error.message);
+    console.error('🔍 Connection details:', {
+      host: dbConfig.host,
+      port: dbConfig.port,
+      user: dbConfig.user,
+      database: dbConfig.database,
+      ssl: dbConfig.ssl ? 'enabled' : 'disabled'
+    });
+    throw error;
   }
-  return pool;
+};
+
+export const testConnection = async () => {
+  try {
+    const pool = await getConnection();
+    const connection = await pool.getConnection();
+    await connection.ping();
+    connection.release();
+    console.log('✅ MySQL connection test passed');
+    return true;
+  } catch (error) {
+    console.error('❌ MySQL connection test failed:', error.message);
+    return false;
+  }
 };
 
 export const closeConnection = async () => {
