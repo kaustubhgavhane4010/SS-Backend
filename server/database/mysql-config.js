@@ -1,19 +1,44 @@
 import mysql from 'mysql2/promise';
-import dotenv from 'dotenv';
 
-dotenv.config();
+// Try to get MySQL connection from Railway service discovery
+const getRailwayMySQLConfig = () => {
+  // Railway automatically provides these when services are linked
+  if (process.env.RAILWAY_MYSQL_HOST) {
+    return {
+      host: process.env.RAILWAY_MYSQL_HOST,
+      port: process.env.RAILWAY_MYSQL_PORT || 3306,
+      user: process.env.RAILWAY_MYSQL_USER || 'root',
+      password: process.env.RAILWAY_MYSQL_PASSWORD || '',
+      database: process.env.RAILWAY_MYSQL_DATABASE || 'railway'
+    };
+  }
+  
+  // Fallback to manual environment variables
+  return {
+    host: process.env.MYSQL_HOST || 'localhost',
+    port: process.env.MYSQL_PORT || 3306,
+    user: process.env.MYSQL_USER || 'root',
+    password: process.env.MYSQL_PASSWORD || '',
+    database: process.env.MYSQL_DATABASE || 'campus_assist'
+  };
+};
 
 // MySQL connection configuration
 const mysqlConfig = {
-  host: process.env.MYSQL_HOST || 'localhost',
-  port: process.env.MYSQL_PORT || 3306,
-  user: process.env.MYSQL_USER || 'root',
-  password: process.env.MYSQL_PASSWORD || '',
-  database: process.env.MYSQL_DATABASE || 'campus_assist',
+  ...getRailwayMySQLConfig(),
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 };
+
+// Debug environment variables
+console.log('🔧 MySQL Config Debug:');
+console.log('  MYSQL_HOST:', process.env.MYSQL_HOST || 'NOT SET (defaulting to localhost)');
+console.log('  MYSQL_PORT:', process.env.MYSQL_PORT || 'NOT SET (defaulting to 3306)');
+console.log('  MYSQL_USER:', process.env.MYSQL_USER || 'NOT SET (defaulting to root)');
+console.log('  MYSQL_PASSWORD:', process.env.MYSQL_PASSWORD ? 'SET' : 'NOT SET');
+console.log('  MYSQL_DATABASE:', process.env.MYSQL_DATABASE || 'NOT SET (defaulting to campus_assist)');
+console.log('  Final config:', mysqlConfig);
 
 // Create connection pool
 let pool;
