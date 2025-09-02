@@ -64,15 +64,6 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Root health check for Railway deployment
-app.get('/', (req, res) => {
-  res.status(200).json({ 
-    status: 'healthy', 
-    timestamp: new Date().toISOString(),
-    message: 'BNU Student Support Ticketing System is running'
-  });
-});
-
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
@@ -87,7 +78,7 @@ app.use(express.static(path.join(__dirname, '../dist')));
 
 // Handle React Router - serve index.html for all non-API routes
 app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api')) {
+  if (!req.path.startsWith('/api') && req.path !== '/health') {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
   }
 });
