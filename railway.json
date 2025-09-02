@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "cd /app && npm install && cd server && npm install && cd .. && node server/scripts/init-mysql.js && node server/index.js",
+    "startCommand": "cd /app && npm install && cd server && npm install && cd .. && node server/index.js",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
@@ -12,8 +12,6 @@
   },
   "variables": {
     "NODE_ENV": "production",
-    "RAILWAY_ENVIRONMENT": "true",
-    "RAILWAY_STATIC_URL": "true",
-    "MYSQL_PASSWORD": "Sai@40104010"
+    "RAILWAY_ENVIRONMENT": "true"
   }
 }

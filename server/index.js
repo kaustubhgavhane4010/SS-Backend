@@ -13,7 +13,7 @@ import userRoutes from './routes/users.js';
 import organizationalRoutes from './routes/organizational.js';
 
 // Import database
-import { initDatabase } from './database/mysql.js';
+import { initDatabase } from './database/init.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

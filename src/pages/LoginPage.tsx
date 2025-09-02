@@ -27,13 +27,7 @@ const LoginPage: React.FC = () => {
     try {
       const success = await login(data);
       if (success) {
-        // Check user role and navigate accordingly
-        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-        if (currentUser.role === 'supreme_admin') {
-          navigate('/enterprise');
-        } else {
-          navigate('/dashboard');
-        }
+        navigate('/dashboard');
       }
     } finally {
       setIsLoading(false);

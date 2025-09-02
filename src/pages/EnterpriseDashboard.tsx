@@ -78,7 +78,7 @@ const EnterpriseDashboard: React.FC = () => {
 
   const handleCreateUser = async () => {
     // Debug: Log the current form state
-    console.log('Form data v2.1:', newUser);
+    console.log('Form data:', newUser);
     
     // Validate required fields
     if (!newUser.name.trim() || !newUser.email.trim() || !newUser.password.trim() || !newUser.role || !newUser.organization_id) {

@@ -41,48 +41,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const checkAuthStatus = async () => {
     try {
       const token = localStorage.getItem('token');
-      const userData = localStorage.getItem('user');
-      
-      if (token && userData) {
-        // Try to use cached user data first
-        try {
-          const user = JSON.parse(userData);
-          setUser(user);
-          setLoading(false);
-          
-          // Verify token is still valid in background
-          const response = await api.get('/auth/me');
-          if (response.data.success) {
-            const updatedUser = response.data.data;
-            setUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-          } else {
-            // Token invalid, clear everything
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            setUser(null);
-          }
-        } catch (parseError) {
-          // Invalid user data, clear and re-authenticate
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          setUser(null);
-        }
-      } else if (token) {
-        // Only token exists, try to get user data
+      if (token) {
         const response = await api.get('/auth/me');
         if (response.data.success) {
-          const user = response.data.data;
-          setUser(user);
-          localStorage.setItem('user', JSON.stringify(user));
+          setUser(response.data.data);
         } else {
           localStorage.removeItem('token');
         }
       }
     } catch (error) {
       localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -96,7 +64,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.data.success) {
         const { token, user: userData } = response.data.data;
         localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
         toast.success(`Welcome back, ${userData.name}!`);
         return true;
@@ -114,7 +81,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
     setUser(null);
     toast.success('Logged out successfully');
   };
