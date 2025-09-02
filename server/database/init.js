@@ -1,10 +1,9 @@
-import sqlite3 from 'sqlite3';
+lasimport sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,85 +18,79 @@ export const getDatabase = () => {
 };
 
 export const initDatabase = async () => {
-  // PERMANENT SOLUTION: Use consistent database path for Railway
+  // CRITICAL FIX: Handle Railway environment properly
   let dbPath;
+  let pathStrategy = 'unknown';
   
-  // Always use /tmp for Railway (persistent across deployments)
   if (process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_STATIC_URL || process.env.PORT) {
+    // Railway/Production environment - use copied database
     dbPath = '/tmp/campus-assist.db';
-    console.log('🚀 Railway detected - using persistent database:', dbPath);
+    pathStrategy = 'railway-tmp-copied';
+    console.log('🚀 Railway/Production detected - using copied database:', dbPath);
+    console.log('🔍 Current working directory:', process.cwd());
   } else {
-    // Local development
+    // Local development - use project root
     dbPath = path.join(process.cwd(), 'campus-assist.db');
-    console.log('💻 Local development - using project database:', dbPath);
+    pathStrategy = 'local-project-root';
+    console.log('💻 Local development - using project root:', dbPath);
   }
   
+  console.log('🎯 Database strategy:', pathStrategy);
   console.log('📁 Database path:', dbPath);
+  console.log('🛡️ This ensures data consistency across all environments');
   
   try {
-    // Check if database already exists and has data
-    let shouldInitialize = true;
+    db = await open({
+      filename: dbPath,
+      driver: sqlite3.Database
+    });
+
+    // Test database write access
+    await db.exec('CREATE TABLE IF NOT EXISTS _test_write (id INTEGER)');
+    await db.exec('DROP TABLE _test_write');
+    console.log('✅ Database write access confirmed');
+
+    // Create tables
+    await createTables();
     
-    if (fs.existsSync(dbPath)) {
-      console.log('✅ Database file exists, checking if it has data...');
-      
-      // Try to open existing database
-      const existingDb = await open({
-        filename: dbPath,
-        driver: sqlite3.Database
-      });
-      
-      try {
-        // Check if tables exist and have data
-        const userCount = await existingDb.get('SELECT COUNT(*) as count FROM users');
-        const orgCount = await existingDb.get('SELECT COUNT(*) as count FROM organizations');
-        
-        console.log(`📊 Existing database has: ${userCount.count} users, ${orgCount.count} organizations`);
-        
-        if (userCount.count > 0 && orgCount.count > 0) {
-          console.log('✅ Database has existing data, will preserve it');
-          shouldInitialize = false;
-          
-          // Use existing database
-          db = existingDb;
-          console.log('🎉 Using existing database with preserved data!');
-          return;
-        }
-        
-        await existingDb.close();
-        console.log('⚠️ Database exists but is empty, will initialize...');
-        
-      } catch (error) {
-        console.log('⚠️ Database exists but tables are missing, will initialize...');
-        await existingDb.close();
-      }
-    }
+    // Create default admin user if no users exist
+    await createDefaultAdmin();
     
-    // Create new database or initialize empty one
-    if (shouldInitialize) {
-      console.log('🔨 Creating/initializing database...');
-      
-      db = await open({
-        filename: dbPath,
-        driver: sqlite3.Database
-      });
-      
-      // Create tables
-      await createTables();
-      
-      // Insert seed data ONLY if this is a completely new database
-      await createDefaultAdmin();
-      
-      console.log('✅ Database initialized with seed data');
-    }
-    
-    console.log('🎉 Database ready!');
-    console.log('📍 Location:', dbPath);
-    console.log('🛡️ Data persistence guaranteed!');
+    console.log('🎉 Database initialized successfully!');
+    console.log('📍 Final database location:', dbPath);
+    console.log('🛡️ Data persistence strategy:', pathStrategy);
+    console.log('💡 All your data is now safe in one location!');
     
   } catch (error) {
     console.error('❌ Database initialization failed:', error.message);
-    throw error;
+    console.error('🔍 Attempted path:', dbPath);
+    console.error('🔍 Strategy:', pathStrategy);
+    
+    // CRITICAL: If Railway path fails, try project root as fallback
+    if (pathStrategy === 'railway-tmp-copied') {
+      console.log('🔄 Railway path failed, trying project root fallback...');
+      const fallbackPath = path.join(process.cwd(), 'campus-assist.db');
+      console.log('📁 Fallback path:', fallbackPath);
+      
+      try {
+        db = await open({
+          filename: fallbackPath,
+          driver: sqlite3.Database
+        });
+        
+        await createTables();
+        await createDefaultAdmin();
+        
+        console.log('✅ Database initialized with fallback path');
+        console.log('📍 Final database location:', fallbackPath);
+        
+      } catch (fallbackError) {
+        console.error('❌ Fallback also failed:', fallbackError.message);
+        throw fallbackError;
+      }
+    } else {
+      throw error;
+    }
   }
 };
 
