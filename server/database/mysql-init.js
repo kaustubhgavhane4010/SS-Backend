@@ -179,11 +179,11 @@ const createDefaultAdmin = async (pool) => {
       `, [defaultOrgId, 'BNU Enterprise', 'company', 'active', 'Default organization for system administration', defaultOrgId]);
       
       // Create Supreme Admin user
-      const hashedPassword = await bcrypt.hash('admin123', 10);
+      const hashedPassword = await bcrypt.hash('supreme123', 10);
       await pool.execute(`
         INSERT INTO users (id, name, email, password, role, organization_id, created_by)
         VALUES (?, ?, ?, ?, ?, ?, ?)
-      `, [defaultOrgId, 'Supreme Administrator', 'supreme@bnu.ac.uk', hashedPassword, 'supreme_admin', defaultOrgId, defaultOrgId]);
+      `, [defaultOrgId, 'Supreme Administrator', 'supreme@campusassist.com', hashedPassword, 'supreme_admin', defaultOrgId, defaultOrgId]);
       
       console.log('✅ Default Supreme Admin user created');
     } else {
