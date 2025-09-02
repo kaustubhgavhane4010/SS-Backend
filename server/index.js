@@ -111,14 +111,22 @@ app.use('/api/*', (req, res) => {
 // Initialize database and start server
 const startServer = async () => {
   try {
-    await initDatabase();
-    console.log('Database initialized successfully');
-    
-    app.listen(PORT, () => {
+    // Start server first, then initialize database
+    const server = app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📊 API available at http://localhost:${PORT}/api`);
-      console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
+      console.log(`🏥 Health check: http://localhost:${PORT}/health`);
+      console.log(`🏥 API Health check: http://localhost:${PORT}/api/health`);
     });
+    
+    // Initialize database in background
+    try {
+      await initDatabase();
+      console.log('✅ Database initialized successfully');
+    } catch (dbError) {
+      console.error('⚠️ Database initialization failed, but server is running:', dbError.message);
+      console.log('🔧 Health check will still work, but database features may not function');
+    }
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);
