@@ -10,9 +10,10 @@ const dbConfig = {
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  acquireTimeout: 60000,
-  timeout: 60000,
-  reconnect: true,
+  // Remove invalid options that cause warnings
+  // acquireTimeout: 60000,
+  // timeout: 60000,
+  // reconnect: true,
   // Add SSL configuration for IONOS
   ssl: {
     rejectUnauthorized: false
@@ -29,6 +30,16 @@ export const getConnection = async () => {
       console.log('📡 Connecting to:', dbConfig.host);
       console.log('🗄️ Database:', dbConfig.database);
       console.log('👤 User:', dbConfig.user);
+      
+      // Test DNS resolution first
+      try {
+        const dns = require('dns').promises;
+        await dns.lookup(dbConfig.host);
+        console.log('✅ DNS resolution successful');
+      } catch (dnsError) {
+        console.error('❌ DNS resolution failed:', dnsError.message);
+        console.log('🔄 This suggests a network connectivity issue');
+      }
       
       pool = mysql.createPool(dbConfig);
       
@@ -49,6 +60,16 @@ export const getConnection = async () => {
       database: dbConfig.database,
       ssl: dbConfig.ssl ? 'enabled' : 'disabled'
     });
+    
+    // Provide specific guidance based on error type
+    if (error.code === 'ENOTFOUND') {
+      console.error('🚨 DNS Resolution Failed - Possible causes:');
+      console.error('   1. IONOS database hostname is incorrect');
+      console.error('   2. Railway cannot reach IONOS servers');
+      console.error('   3. Firewall blocking outbound connections');
+      console.error('   4. IONOS database is not accessible from Railway');
+    }
+    
     throw error;
   }
 };

@@ -17,6 +17,7 @@
     "DB_PORT": "3306",
     "DB_USER": "dbu1839369",
     "DB_PASSWORD": "Sai@40104010",
-    "DB_NAME": "dbs14720204"
+    "DB_NAME": "dbs14720204",
+    "DB_SSL": "true"
   }
 }
