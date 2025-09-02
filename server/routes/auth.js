@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult } from 'express-validator';
-import { getDatabase } from '../database/simple-init.js';
+import { getDatabase } from '../database/bulletproof.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -383,44 +383,6 @@ router.delete('/users/:id', [authenticateToken, requireAdmin], async (req, res) 
   }
 });
 
-// DEBUG: Check existing users (remove in production)
-router.get('/debug/users', async (req, res) => {
-  try {
-    const db = getDatabase();
-    const users = await db.all('SELECT id, name, email, role, status FROM users');
-    res.json({
-      success: true,
-      data: users
-    });
-  } catch (error) {
-    console.error('Debug users error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
 
-// DEBUG: Reset supreme admin password (remove in production)
-router.post('/debug/reset-supreme', async (req, res) => {
-  try {
-    const db = getDatabase();
-    const newPassword = 'supreme123';
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
-    
-    await db.run('UPDATE users SET password_hash = ? WHERE role = ?', [hashedPassword, 'supreme_admin']);
-    
-    res.json({
-      success: true,
-      message: 'Supreme admin password reset to: supreme123'
-    });
-  } catch (error) {
-    console.error('Reset supreme admin error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
 
 export default router;
