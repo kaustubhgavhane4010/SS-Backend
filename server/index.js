@@ -13,7 +13,7 @@ import userRoutes from './routes/users.js';
 import organizationalRoutes from './routes/organizational.js';
 
 // Import database
-import { initDatabase } from './database/bulletproof.js';
+import { initDatabase } from './database/ultra-simple.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -104,9 +104,12 @@ app.use('/api/*', (req, res) => {
 // Initialize database and start server
 const startServer = async () => {
   try {
-    await initDatabase();
-    console.log('Database initialized successfully');
+    // Initialize database (non-blocking)
+    initDatabase().catch(error => {
+      console.error('⚠️ Database initialization failed, but continuing:', error.message);
+    });
     
+    // Start server immediately
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📊 API available at http://localhost:${PORT}/api`);
