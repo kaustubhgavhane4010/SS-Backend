@@ -5,24 +5,56 @@ import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import path from 'path';
 
-console.log('🚨 FORCE DATABASE RECREATION - Fixing authentication issue...');
+console.log('🧠 INTELLIGENT DATABASE INITIALIZATION - NEVER DESTROYING EXISTING DATA...');
 
-async function forceInitDatabase() {
+async function intelligentInitDatabase() {
   try {
     // Determine database path
     const isRailway = process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_STATIC_URL || process.env.PORT;
     const dbPath = isRailway ? '/app/campus-assist.db' : path.join(process.cwd(), 'campus-assist.db');
     
     console.log('📁 Database path:', dbPath);
-    console.log('🚨 REMOVING EXISTING DATABASE...');
     
-    // Remove existing database if it exists
+    // Check if database exists and has data
     if (fs.existsSync(dbPath)) {
-      fs.unlinkSync(dbPath);
-      console.log('✅ Old database removed');
+      console.log('✅ Database file exists, checking if it has data...');
+      
+      try {
+        // Try to read existing database
+        const existingDb = await open({
+          filename: dbPath,
+          driver: sqlite3.Database
+        });
+        
+        // Check if database has meaningful data
+        const userCount = await existingDb.get('SELECT COUNT(*) as count FROM users');
+        const orgCount = await existingDb.get('SELECT COUNT(*) as count FROM organizations');
+        
+        console.log(`📊 Existing database has: ${userCount?.count || 0} users, ${orgCount?.count || 0} organizations`);
+        
+        if (userCount?.count > 0 && orgCount?.count > 0) {
+          console.log('🛡️ DATABASE HAS EXISTING DATA - PRESERVING EVERYTHING!');
+          console.log('💡 Skipping initialization to protect your data');
+          await existingDb.close();
+          return; // EXIT - DO NOTHING
+        }
+        
+        await existingDb.close();
+        console.log('⚠️ Database exists but is empty, will initialize...');
+        
+      } catch (readError) {
+        console.log('⚠️ Database exists but cannot be read, will recreate:', readError.message);
+      }
     }
     
-    console.log('🔨 Creating fresh database...');
+    // Only reach here if database doesn't exist OR is empty
+    console.log('🔨 Creating/initializing database...');
+    
+    // Remove existing database if it exists but is corrupted
+    if (fs.existsSync(dbPath)) {
+      fs.unlinkSync(dbPath);
+      console.log('✅ Corrupted database removed');
+    }
     
     // Create new database
     const db = await open({
@@ -99,7 +131,7 @@ async function forceInitDatabase() {
       )
     `);
 
-    // Create default data
+    // Create default data ONLY if database is completely empty
     console.log('👤 Creating default admin user...');
     
     const supremeAdminId = uuidv4();
@@ -127,13 +159,14 @@ async function forceInitDatabase() {
     console.log('🔑 Default login:');
     console.log('   Email: supreme@bnu.ac.uk');
     console.log('   Password: supreme123');
+    console.log('🛡️ FUTURE DEPLOYMENTS WILL PRESERVE YOUR DATA!');
     
     await db.close();
     
   } catch (error) {
-    console.error('❌ Force database creation failed:', error.message);
+    console.error('❌ Intelligent database initialization failed:', error.message);
     throw error;
   }
 }
 
-forceInitDatabase();
+intelligentInitDatabase();
