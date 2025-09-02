@@ -16,7 +16,11 @@ import LoadingSpinner from './components/LoadingSpinner';
 const App: React.FC = () => {
   const { user, loading } = useAuth();
 
+  // Debug logging
+  console.log('🔍 App.tsx Debug:', { user, loading, userRole: user?.role });
+
   if (loading) {
+    console.log('⏳ App is loading...');
     return (
       <div className="min-h-screen flex items-center justify-center bg-bnu-light-grey">
         <LoadingSpinner size="lg" />
@@ -25,6 +29,7 @@ const App: React.FC = () => {
   }
 
   if (!user) {
+    console.log('❌ No user found, redirecting to login');
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
@@ -33,8 +38,11 @@ const App: React.FC = () => {
     );
   }
 
+  console.log('✅ User authenticated:', user.name, 'Role:', user.role);
+
   // Supreme Admin sees Enterprise Dashboard instead of regular dashboard
   if (user.role === 'supreme_admin') {
+    console.log('👑 Supreme Admin detected, routing to Enterprise Dashboard');
     return (
       <Layout>
         <Routes>
@@ -48,6 +56,7 @@ const App: React.FC = () => {
     );
   }
 
+  console.log('👤 Regular user detected, routing to Dashboard');
   return (
     <Layout>
       <Routes>
