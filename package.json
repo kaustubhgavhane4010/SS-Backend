@@ -10,6 +10,7 @@
     "deploy": "node deploy.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
+    "start": "node server/index-simple.js",
     "server": "node server/index.js",
     "serve": "npx serve -s dist -l $PORT"
   },
