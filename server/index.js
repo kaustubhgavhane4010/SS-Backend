@@ -33,34 +33,16 @@ const startServer = async () => {
   try {
     console.log('🚀 Starting server with smart database selection...');
     
-    // Try MySQL first
-    let databaseType = 'unknown';
+    // Skip MySQL entirely - go straight to SQLite fallback
+    let databaseType = 'sqlite-fallback';
     
     try {
-      console.log('🔌 Attempting MySQL connection...');
-      const mysqlConnected = await testConnection();
-      
-      if (mysqlConnected) {
-        console.log('✅ MySQL connection successful, initializing...');
-        await initMySQLDatabase();
-        databaseType = 'mysql';
-        console.log('🎉 Using MySQL database');
-      } else {
-        throw new Error('MySQL connection test failed');
-      }
-      
-    } catch (mysqlError) {
-      console.error('❌ MySQL failed:', mysqlError.message);
-      console.log('🔄 Falling back to SQLite...');
-      
-      try {
-        await initFallbackDatabase();
-        databaseType = 'sqlite-fallback';
-        console.log('🎉 Using SQLite fallback database');
-      } catch (sqliteError) {
-        console.error('❌ SQLite fallback also failed:', sqliteError.message);
-        throw new Error('Both MySQL and SQLite failed');
-      }
+      console.log('🔄 Initializing SQLite fallback database...');
+      await initFallbackDatabase();
+      console.log('🎉 Using SQLite fallback database');
+    } catch (sqliteError) {
+      console.error('❌ SQLite fallback failed:', sqliteError.message);
+      throw new Error('SQLite fallback failed');
     }
     
     // Import routes based on database type
