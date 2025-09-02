@@ -64,6 +64,15 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Root health check for Railway deployment
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    message: 'BNU Student Support Ticketing System is running'
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
