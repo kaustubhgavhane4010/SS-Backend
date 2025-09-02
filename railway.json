@@ -13,5 +13,16 @@
   "variables": {
     "NODE_ENV": "production",
     "RAILWAY_ENVIRONMENT": "true"
+  },
+  "services": {
+    "SS-Backend": {
+      "variables": {
+        "MYSQLHOST": "${{MySQL.MYSQLHOST}}",
+        "MYSQLPORT": "${{MySQL.MYSQLPORT}}",
+        "MYSQLUSER": "${{MySQL.MYSQLUSER}}",
+        "MYSQLPASSWORD": "${{MySQL.MYSQLPASSWORD}}",
+        "MYSQLDATABASE": "${{MySQL.MYSQLDATABASE}}"
+      }
+    }
   }
 }
