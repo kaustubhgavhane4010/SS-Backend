@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { initMySQLDatabase, testConnection } from './database/mysql-init.js';
 import { initFallbackDatabase } from './database/fallback-db.js';
 
@@ -83,6 +85,20 @@ const startServer = async () => {
         message: 'Server is running',
         database: databaseType
       });
+    });
+    
+    // Serve static frontend files
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    
+    // Serve built frontend files
+    app.use(express.static(path.join(__dirname, '../dist')));
+    
+    // Handle React Router - serve index.html for all non-API routes
+    app.get('*', (req, res) => {
+      if (!req.path.startsWith('/api')) {
+        res.sendFile(path.join(__dirname, '../dist/index.html'));
+      }
     });
     
     app.listen(PORT, () => {
