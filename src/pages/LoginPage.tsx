@@ -11,7 +11,7 @@ interface LoginFormData {
 }
 
 const LoginPage: React.FC = () => {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +27,12 @@ const LoginPage: React.FC = () => {
     try {
       const success = await login(data);
       if (success) {
-        navigate('/dashboard');
+        // Redirect based on user role
+        if (user?.role === 'supreme_admin') {
+          navigate('/enterprise');
+        } else {
+          navigate('/dashboard');
+        }
       }
     } finally {
       setIsLoading(false);
