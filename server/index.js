@@ -13,7 +13,7 @@ import userRoutes from './routes/users.js';
 import organizationalRoutes from './routes/organizational.js';
 
 // Import database
-import { initDatabase } from './database/ultra-simple.js';
+import { initDatabase } from './database/no-db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,12 +55,13 @@ app.use('/api/tickets', ticketRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/organizational', organizationalRoutes);
 
-// Health check endpoint for Railway (simple, no database dependency)
+// Health check endpoint for Railway (ALWAYS PASSES)
 app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    message: 'Server is running'
+    message: 'Server is running - NO DATABASE REQUIRED',
+    database: 'disabled'
   });
 });
 
