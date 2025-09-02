@@ -6,7 +6,7 @@ const dbConfig = {
   port: 3306,
   user: 'dbu1839369',
   password: process.env.MYSQL_PASSWORD || 'Sai@40104010',
-  database: 'Campus Asssit',
+  database: 'dbs14720204',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
