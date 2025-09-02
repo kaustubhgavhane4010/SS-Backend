@@ -1,4 +1,4 @@
-lasimport sqlite3 from 'sqlite3';
+import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
