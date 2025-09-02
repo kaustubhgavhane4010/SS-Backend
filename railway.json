@@ -13,6 +13,8 @@
   "variables": {
     "NODE_ENV": "production",
     "RAILWAY_ENVIRONMENT": "true",
-    "RAILWAY_STATIC_URL": "true"
+    "RAILWAY_STATIC_URL": "true",
+    "MYSQL_PASSWORD": "Sai@40104010",
+    "MYSQL_DATABASE": "db5018543224"
   }
 }
