@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult } from 'express-validator';
-import { getDatabase } from '../database/no-db.js';
+import { getDatabase } from '../database/init.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -382,7 +382,5 @@ router.delete('/users/:id', [authenticateToken, requireAdmin], async (req, res) 
     });
   }
 });
-
-
 
 export default router;

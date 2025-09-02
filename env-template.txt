@@ -1,0 +1,9 @@
+# MySQL Database Configuration
+MYSQL_PASSWORD=your_actual_mysql_password_here
+
+# JWT Secret
+JWT_SECRET=your_jwt_secret_here
+
+# Server Configuration
+PORT=3000
+NODE_ENV=development

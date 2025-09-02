@@ -13,7 +13,7 @@ import userRoutes from './routes/users.js';
 import organizationalRoutes from './routes/organizational.js';
 
 // Import database
-import { initDatabase } from './database/mysql-simple.js';
+import { initDatabase } from './database/mysql.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,13 +55,12 @@ app.use('/api/tickets', ticketRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/organizational', organizationalRoutes);
 
-// Health check endpoint for Railway (ALWAYS PASSES)
+// Health check endpoint for Railway (simple, no database dependency)
 app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    message: 'Server is running - NO DATABASE REQUIRED',
-    database: 'disabled'
+    message: 'Server is running'
   });
 });
 
@@ -105,12 +104,9 @@ app.use('/api/*', (req, res) => {
 // Initialize database and start server
 const startServer = async () => {
   try {
-    // Initialize database (non-blocking)
-    initDatabase().catch(error => {
-      console.error('⚠️ Database initialization failed, but continuing:', error.message);
-    });
+    await initDatabase();
+    console.log('Database initialized successfully');
     
-    // Start server immediately
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📊 API available at http://localhost:${PORT}/api`);
