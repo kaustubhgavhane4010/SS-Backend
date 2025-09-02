@@ -1,23 +1,15 @@
 import mysql from 'mysql2/promise';
 
-// MySQL Database Configuration
+// MySQL Database Configuration for Railway
 const dbConfig = {
-  host: process.env.DB_HOST || 'db5018543224.hosting-data.io',
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER || 'dbu1839369',
-  password: process.env.DB_PASSWORD || 'Sai@40104010',
-  database: process.env.DB_NAME || 'dbs14720204',
+  host: process.env.MYSQLHOST || 'localhost',
+  port: process.env.MYSQLPORT || 3306,
+  user: process.env.MYSQLUSER || 'root',
+  password: process.env.MYSQLPASSWORD || '',
+  database: process.env.MYSQLDATABASE || 'railway',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0,
-  // Remove invalid options that cause warnings
-  // acquireTimeout: 60000,
-  // timeout: 60000,
-  // reconnect: true,
-  // Add SSL configuration for IONOS
-  ssl: {
-    rejectUnauthorized: false
-  }
+  queueLimit: 0
 };
 
 // Create connection pool
@@ -55,8 +47,8 @@ export const getConnection = async () => {
     
     // Provide specific guidance based on error type
     if (error.code === 'ENOTFOUND') {
-      console.error('🚨 DNS Resolution Failed - Railway cannot reach IONOS database');
-      console.error('💡 SOLUTION: IONOS databases are typically not accessible from external services like Railway');
+      console.error('🚨 DNS Resolution Failed - Cannot reach MySQL database');
+      console.error('💡 SOLUTION: Check if MySQL service is running and accessible');
       console.error('🔄 FALLBACK: System will use SQLite fallback database');
     }
     

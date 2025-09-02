@@ -33,26 +33,48 @@ const startServer = async () => {
   try {
     console.log('🚀 Starting server with smart database selection...');
     
-    // Skip MySQL entirely - go straight to SQLite fallback
-    let databaseType = 'sqlite-fallback';
+    // Try MySQL first (Railway's built-in MySQL)
+    let databaseType = 'unknown';
     
     try {
-      console.log('🔄 Initializing SQLite fallback database...');
-      await initFallbackDatabase();
-      console.log('🎉 Using SQLite fallback database');
-    } catch (sqliteError) {
-      console.error('❌ SQLite fallback failed:', sqliteError.message);
-      throw new Error('SQLite fallback failed');
+      console.log('🔌 Attempting MySQL connection (Railway)...');
+      const mysqlConnected = await testConnection();
+      
+      if (mysqlConnected) {
+        console.log('✅ MySQL connection successful, initializing...');
+        await initMySQLDatabase();
+        databaseType = 'mysql';
+        console.log('🎉 Using Railway MySQL database');
+      } else {
+        throw new Error('MySQL connection test failed');
+      }
+      
+    } catch (mysqlError) {
+      console.error('❌ MySQL failed:', mysqlError.message);
+      console.log('🔄 Falling back to SQLite...');
+      
+      try {
+        await initFallbackDatabase();
+        databaseType = 'sqlite-fallback';
+        console.log('🎉 Using SQLite fallback database');
+      } catch (sqliteError) {
+        console.error('❌ SQLite fallback also failed:', sqliteError.message);
+        throw new Error('Both MySQL and SQLite failed');
+      }
     }
     
     // Import routes based on database type
     if (databaseType === 'mysql') {
       ticketRoutes = (await import('./routes/tickets.js')).default;
       organizationalRoutes = (await import('./routes/organizational.js')).default;
+      const authRoutes = (await import('./routes/auth.js')).default;
+      app.use('/api/auth', authRoutes);
     } else {
       // Use simplified routes for fallback
       ticketRoutes = (await import('./routes/tickets-fallback.js')).default;
       organizationalRoutes = (await import('./routes/organizational-fallback.js')).default;
+      const authRoutes = (await import('./routes/auth-fallback.js')).default;
+      app.use('/api/auth', authRoutes);
     }
     
     // Apply routes
