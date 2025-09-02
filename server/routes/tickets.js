@@ -2,7 +2,7 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult, query } from 'express-validator';
-import { getDatabase } from '../database/init.js';
+import { getDatabase } from '../database/simple-init.js';
 import { authenticateToken, requireStaff, requireTicketAccess } from '../middleware/auth.js';
 import multer from 'multer';
 import path from 'path';
@@ -673,3 +673,5 @@ router.post('/:id/attachments', [
 });
 
 export default router;
+
+   

@@ -1,7 +1,7 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult } from 'express-validator';
-import { getDatabase } from '../database/init.js';
+import { getDatabase } from '../database/simple-init.js';
 import { authenticateToken, requireSupremeAdmin } from '../middleware/auth.js';
 import bcrypt from 'bcryptjs';
 
