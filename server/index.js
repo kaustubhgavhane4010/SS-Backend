@@ -95,15 +95,21 @@ const startServer = async () => {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
     
-    // Serve built frontend files
-    app.use(express.static(path.join(__dirname, '../dist')));
-    
-    // Handle React Router - serve index.html for all non-API routes
-    app.get('*', (req, res) => {
-      if (!req.path.startsWith('/api')) {
-        res.sendFile(path.join(__dirname, '../dist/index.html'));
-      }
-    });
+    // Serve built frontend files (only if dist folder exists)
+    const distPath = path.join(__dirname, '../dist');
+    try {
+      app.use(express.static(distPath));
+      
+      // Handle React Router - serve index.html for all non-API routes
+      app.get('*', (req, res) => {
+        if (!req.path.startsWith('/api')) {
+          res.sendFile(path.join(distPath, 'index.html'));
+        }
+      });
+      console.log('✅ Frontend files served from dist/');
+    } catch (error) {
+      console.log('⚠️ No frontend dist/ folder found - running backend only');
+    }
     
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
