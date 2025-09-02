@@ -2,7 +2,7 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult, query } from 'express-validator';
-import { getDatabase } from '../database/init.js';
+import { dbGet, dbRun, dbQuery, dbInsert } from '../database/mysql-helpers.js';
 import { authenticateToken, requireStaff, requireTicketAccess } from '../middleware/auth.js';
 import multer from 'multer';
 import path from 'path';
@@ -79,7 +79,7 @@ router.get('/', [
       order = 'desc'
     } = req.query;
 
-    const db = getDatabase();
+    
     let whereConditions = [];
     let params = [];
 
@@ -139,7 +139,7 @@ router.get('/', [
       FROM tickets t 
       ${whereClause}
     `;
-    const countResult = await db.get(countQuery, params);
+    const countResult = await dbGet(countQuery, params);
     const total = countResult.total;
 
     // Calculate pagination
@@ -160,7 +160,7 @@ router.get('/', [
       LIMIT ? OFFSET ?
     `;
 
-    const tickets = await db.all(ticketsQuery, [...params, limit, offset]);
+    const tickets = await dbQuery(ticketsQuery, [...params, limit, offset]);
 
     res.json({
       success: true,
@@ -184,7 +184,7 @@ router.get('/', [
 // Get dashboard stats
 router.get('/stats', [authenticateToken, requireTicketAccess], async (req, res) => {
   try {
-    const db = getDatabase();
+    
     const userId = req.user.userId;
 
     // Get stats based on user role
@@ -192,32 +192,32 @@ router.get('/stats', [authenticateToken, requireTicketAccess], async (req, res) 
 
     if (req.user.role === 'admin') {
       // Admin sees all tickets
-      totalOpenTickets = await db.get(
+      totalOpenTickets = await dbGet(
         'SELECT COUNT(*) as count FROM tickets WHERE status != "Closed"'
       );
       
-      highPriorityTickets = await db.get(
+      highPriorityTickets = await dbGet(
         'SELECT COUNT(*) as count FROM tickets WHERE priority IN ("High", "Urgent") AND status != "Closed"'
       );
     } else {
       // Staff sees only their assigned tickets
-      totalOpenTickets = await db.get(
+      totalOpenTickets = await dbGet(
         'SELECT COUNT(*) as count FROM tickets WHERE assigned_to = ? AND status != "Closed"',
         [userId]
       );
       
-      highPriorityTickets = await db.get(
+      highPriorityTickets = await dbGet(
         'SELECT COUNT(*) as count FROM tickets WHERE assigned_to = ? AND priority IN ("High", "Urgent") AND status != "Closed"',
         [userId]
       );
     }
 
-    myAssignedTickets = await db.get(
+    myAssignedTickets = await dbGet(
       'SELECT COUNT(*) as count FROM tickets WHERE assigned_to = ? AND status != "Closed"',
       [userId]
     );
 
-    resolvedToday = await db.get(
+    resolvedToday = await dbGet(
       'SELECT COUNT(*) as count FROM tickets WHERE status = "Closed" AND DATE(updated_at) = DATE("now")',
     );
 
@@ -243,9 +243,9 @@ router.get('/stats', [authenticateToken, requireTicketAccess], async (req, res) 
 router.get('/:id', [authenticateToken, requireTicketAccess, requireStaff], async (req, res) => {
   try {
     const { id } = req.params;
-    const db = getDatabase();
+    
 
-    const ticket = await db.get(`
+    const ticket = await dbGet(`
       SELECT 
         t.*,
         u1.name as assigned_to_name,
@@ -323,10 +323,10 @@ router.post('/', [
       due_date
     } = req.body;
 
-    const db = getDatabase();
+    
     const ticketId = uuidv4();
 
-    await db.run(`
+    await dbRun(`
       INSERT INTO tickets (
         id, student_name, student_email, student_id, course, category, 
         title, description, priority, assigned_to, created_by, due_date
@@ -336,7 +336,7 @@ router.post('/', [
       title, description, priority, assigned_to, req.user.userId, due_date
     ]);
 
-    const newTicket = await db.get(`
+    const newTicket = await dbGet(`
       SELECT 
         t.*,
         u1.name as assigned_to_name,
@@ -385,10 +385,10 @@ router.put('/:id', [
 
     const { id } = req.params;
     const updateData = req.body;
-    const db = getDatabase();
+    
 
     // Check if ticket exists and user has access
-    const existingTicket = await db.get('SELECT * FROM tickets WHERE id = ?', [id]);
+    const existingTicket = await dbGet('SELECT * FROM tickets WHERE id = ?', [id]);
     if (!existingTicket) {
       return res.status(404).json({
         success: false,
@@ -421,15 +421,15 @@ router.put('/:id', [
       });
     }
 
-    updates.push('updated_at = CURRENT_TIMESTAMP');
+    updates.push('updated_at = NOW()');
     params.push(id);
 
-    await db.run(
+    await dbRun(
       `UPDATE tickets SET ${updates.join(', ')} WHERE id = ?`,
       params
     );
 
-    const updatedTicket = await db.get(`
+    const updatedTicket = await dbGet(`
       SELECT 
         t.*,
         u1.name as assigned_to_name,
@@ -458,10 +458,10 @@ router.put('/:id', [
 router.delete('/:id', [authenticateToken, requireTicketAccess, requireStaff], async (req, res) => {
   try {
     const { id } = req.params;
-    const db = getDatabase();
+    
 
     // Check if ticket exists
-    const ticket = await db.get('SELECT * FROM tickets WHERE id = ?', [id]);
+    const ticket = await dbGet('SELECT * FROM tickets WHERE id = ?', [id]);
     if (!ticket) {
       return res.status(404).json({
         success: false,
@@ -478,11 +478,11 @@ router.delete('/:id', [authenticateToken, requireTicketAccess, requireStaff], as
     }
 
     // Delete related data first
-    await db.run('DELETE FROM notes WHERE ticket_id = ?', [id]);
-    await db.run('DELETE FROM attachments WHERE ticket_id = ?', [id]);
+    await dbRun('DELETE FROM notes WHERE ticket_id = ?', [id]);
+    await dbRun('DELETE FROM attachments WHERE ticket_id = ?', [id]);
     
     // Delete ticket
-    await db.run('DELETE FROM tickets WHERE id = ?', [id]);
+    await dbRun('DELETE FROM tickets WHERE id = ?', [id]);
 
     res.json({
       success: true,
@@ -501,10 +501,10 @@ router.delete('/:id', [authenticateToken, requireTicketAccess, requireStaff], as
 router.get('/:id/notes', [authenticateToken, requireTicketAccess, requireStaff], async (req, res) => {
   try {
     const { id } = req.params;
-    const db = getDatabase();
+    
 
     // Check if ticket exists and user has access
-    const ticket = await db.get('SELECT * FROM tickets WHERE id = ?', [id]);
+    const ticket = await dbGet('SELECT * FROM tickets WHERE id = ?', [id]);
     if (!ticket) {
       return res.status(404).json({
         success: false,
@@ -519,7 +519,7 @@ router.get('/:id/notes', [authenticateToken, requireTicketAccess, requireStaff],
       });
     }
 
-    const notes = await db.all(`
+    const notes = await dbQuery(`
       SELECT 
         n.*,
         u.name as user_name
@@ -562,10 +562,10 @@ router.post('/:id/notes', [
 
     const { id } = req.params;
     const { content, note_type } = req.body;
-    const db = getDatabase();
+    
 
     // Check if ticket exists and user has access
-    const ticket = await db.get('SELECT * FROM tickets WHERE id = ?', [id]);
+    const ticket = await dbGet('SELECT * FROM tickets WHERE id = ?', [id]);
     if (!ticket) {
       return res.status(404).json({
         success: false,
@@ -581,12 +581,12 @@ router.post('/:id/notes', [
     }
 
     const noteId = uuidv4();
-    await db.run(`
+    await dbRun(`
       INSERT INTO notes (id, ticket_id, user_id, content, note_type)
       VALUES (?, ?, ?, ?, ?)
     `, [noteId, id, req.user.userId, content, note_type]);
 
-    const newNote = await db.get(`
+    const newNote = await dbGet(`
       SELECT 
         n.*,
         u.name as user_name
@@ -618,7 +618,7 @@ router.post('/:id/attachments', [
 ], async (req, res) => {
   try {
     const { id } = req.params;
-    const db = getDatabase();
+    
 
     if (!req.file) {
       return res.status(400).json({
@@ -628,7 +628,7 @@ router.post('/:id/attachments', [
     }
 
     // Check if ticket exists and user has access
-    const ticket = await db.get('SELECT * FROM tickets WHERE id = ?', [id]);
+    const ticket = await dbGet('SELECT * FROM tickets WHERE id = ?', [id]);
     if (!ticket) {
       return res.status(404).json({
         success: false,
@@ -644,7 +644,7 @@ router.post('/:id/attachments', [
     }
 
     const attachmentId = uuidv4();
-    await db.run(`
+    await dbRun(`
       INSERT INTO attachments (id, ticket_id, filename, file_path, file_size, uploaded_by)
       VALUES (?, ?, ?, ?, ?, ?)
     `, [
@@ -656,7 +656,7 @@ router.post('/:id/attachments', [
       req.user.userId
     ]);
 
-    const newAttachment = await db.get('SELECT * FROM attachments WHERE id = ?', [attachmentId]);
+    const newAttachment = await dbGet('SELECT * FROM attachments WHERE id = ?', [attachmentId]);
 
     res.status(201).json({
       success: true,

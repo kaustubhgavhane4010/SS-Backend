@@ -1,7 +1,7 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult } from 'express-validator';
-import { getDatabase } from '../database/init.js';
+import { dbGet, dbRun, dbQuery } from '../database/mysql-helpers.js';
 import { authenticateToken, requireSupremeAdmin } from '../middleware/auth.js';
 import bcrypt from 'bcryptjs';
 
@@ -10,10 +10,10 @@ const router = express.Router();
 // Get enterprise dashboard stats
 router.get('/enterprise-stats', [authenticateToken, requireSupremeAdmin], async (req, res) => {
   try {
-    const db = getDatabase();
+    
     
     // Get organization stats
-    const organizationStats = await db.get(`
+    const organizationStats = await dbGet(`
       SELECT 
         COUNT(*) as total_organizations,
         SUM(CASE WHEN type = 'company' THEN 1 ELSE 0 END) as companies,
@@ -24,7 +24,7 @@ router.get('/enterprise-stats', [authenticateToken, requireSupremeAdmin], async 
     `);
 
     // Get user stats by role
-    const userStats = await db.get(`
+    const userStats = await dbGet(`
       SELECT 
         COUNT(*) as total_users,
         SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as admins,
@@ -38,7 +38,7 @@ router.get('/enterprise-stats', [authenticateToken, requireSupremeAdmin], async 
     `);
 
     // Get recent activity
-    const recentUsers = await db.all(`
+    const recentUsers = await dbQuery(`
       SELECT u.id, u.name, u.email, u.role, u.created_at, o.name as organization_name
       FROM users u
       LEFT JOIN organizations o ON u.organization_id = o.id
@@ -67,9 +67,9 @@ router.get('/enterprise-stats', [authenticateToken, requireSupremeAdmin], async 
 // Get all organizations
 router.get('/organizations', [authenticateToken, requireSupremeAdmin], async (req, res) => {
   try {
-    const db = getDatabase();
     
-    const organizations = await db.all(`
+    
+    const organizations = await dbQuery(`
       SELECT 
         o.*,
         u.name as created_by_name,
@@ -112,15 +112,15 @@ router.post('/organizations', [
     }
 
     const { name, type, parent_organization_id, settings } = req.body;
-    const db = getDatabase();
+    
     const organizationId = uuidv4();
 
-    await db.run(`
+    await dbRun(`
       INSERT INTO organizations (id, name, type, status, created_by, parent_organization_id, settings)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `, [organizationId, name, type, 'active', req.user.userId, parent_organization_id, settings || null]);
 
-    const newOrganization = await db.get(`
+    const newOrganization = await dbGet(`
       SELECT 
         o.*,
         u.name as created_by_name,
@@ -149,10 +149,10 @@ router.post('/organizations', [
 router.delete('/organizations/:id', [authenticateToken, requireSupremeAdmin], async (req, res) => {
   try {
     const { id } = req.params;
-    const db = getDatabase();
+    
 
     // Check if organization exists
-    const existingOrg = await db.get('SELECT * FROM organizations WHERE id = ?', [id]);
+    const existingOrg = await dbGet('SELECT * FROM organizations WHERE id = ?', [id]);
     if (!existingOrg) {
       return res.status(404).json({
         success: false,
@@ -161,7 +161,7 @@ router.delete('/organizations/:id', [authenticateToken, requireSupremeAdmin], as
     }
 
     // Check if organization has users (prevent deletion if it does)
-    const userCount = await db.get('SELECT COUNT(*) as count FROM users WHERE organization_id = ?', [id]);
+    const userCount = await dbGet('SELECT COUNT(*) as count FROM users WHERE organization_id = ?', [id]);
     if (userCount.count > 0) {
       return res.status(400).json({
         success: false,
@@ -170,7 +170,7 @@ router.delete('/organizations/:id', [authenticateToken, requireSupremeAdmin], as
     }
 
     // Soft delete - mark as inactive instead of hard delete
-    await db.run('UPDATE organizations SET status = ? WHERE id = ?', ['deleted', id]);
+    await dbRun('UPDATE organizations SET status = ? WHERE id = ?', ['deleted', id]);
 
     res.json({
       success: true,
@@ -188,9 +188,9 @@ router.delete('/organizations/:id', [authenticateToken, requireSupremeAdmin], as
 // Get all users (for Supreme Admin management)
 router.get('/users', [authenticateToken, requireSupremeAdmin], async (req, res) => {
   try {
-    const db = getDatabase();
     
-    const users = await db.all(`
+    
+    const users = await dbQuery(`
       SELECT 
         u.*,
         o.name as organization_name,
@@ -237,10 +237,10 @@ router.post('/users', [
     }
 
     const { name, email, password, role, organization_id, department, phone } = req.body;
-    const db = getDatabase();
+    
 
     // Check if email already exists
-    const existingUser = await db.get('SELECT id FROM users WHERE email = ?', [email]);
+    const existingUser = await dbGet('SELECT id FROM users WHERE email = ?', [email]);
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -249,7 +249,7 @@ router.post('/users', [
     }
 
     // Check if organization exists
-    const organization = await db.get('SELECT id, type FROM organizations WHERE id = ?', [organization_id]);
+    const organization = await dbGet('SELECT id, type FROM organizations WHERE id = ?', [organization_id]);
     if (!organization) {
       return res.status(400).json({
         success: false,
@@ -268,12 +268,12 @@ router.post('/users', [
     const userId = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    await db.run(`
+    await dbRun(`
       INSERT INTO users (id, name, email, password_hash, role, status, organization_id, department, phone, created_by)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [userId, name, email, hashedPassword, role, 'active', organization_id, department, phone, req.user.userId]);
 
-    const newUser = await db.get(`
+    const newUser = await dbGet(`
       SELECT 
         u.*,
         o.name as organization_name,
@@ -302,10 +302,10 @@ router.post('/users', [
 router.delete('/users/:id', [authenticateToken, requireSupremeAdmin], async (req, res) => {
   try {
     const { id } = req.params;
-    const db = getDatabase();
+    
 
     // Check if user exists
-    const existingUser = await db.get('SELECT * FROM users WHERE id = ?', [id]);
+    const existingUser = await dbGet('SELECT * FROM users WHERE id = ?', [id]);
     if (!existingUser) {
       return res.status(404).json({
         success: false,
@@ -322,7 +322,7 @@ router.delete('/users/:id', [authenticateToken, requireSupremeAdmin], async (req
     }
 
     // Soft delete - mark as inactive instead of hard delete
-    await db.run('UPDATE users SET status = ? WHERE id = ?', ['deleted', id]);
+    await dbRun('UPDATE users SET status = ? WHERE id = ?', ['deleted', id]);
 
     res.json({
       success: true,
@@ -361,10 +361,10 @@ router.put('/users/:id', [
 
     const { id } = req.params;
     const updateData = req.body;
-    const db = getDatabase();
+    
 
     // Check if user exists
-    const existingUser = await db.get('SELECT * FROM users WHERE id = ?', [id]);
+    const existingUser = await dbGet('SELECT * FROM users WHERE id = ?', [id]);
     if (!existingUser) {
       return res.status(404).json({
         success: false,
@@ -398,15 +398,15 @@ router.put('/users/:id', [
       });
     }
 
-    updates.push('updated_at = CURRENT_TIMESTAMP');
+    updates.push('updated_at = NOW()');
     params.push(id);
 
-    await db.run(
+    await dbRun(
       `UPDATE users SET ${updates.join(', ')} WHERE id = ?`,
       params
     );
 
-    const updatedUser = await db.get(`
+    const updatedUser = await dbGet(`
       SELECT 
         u.*,
         o.name as organization_name,

@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult } from 'express-validator';
-import { getDatabase } from '../database/init.js';
+import { dbGet, dbRun, dbQuery } from '../database/mysql-helpers.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -26,10 +26,9 @@ router.post('/login', [
     }
 
     const { email, password } = req.body;
-    const db = getDatabase();
 
     // Find user by email
-    const user = await db.get(
+    const user = await dbGet(
       'SELECT * FROM users WHERE email = ? AND status = "active"',
       [email]
     );
@@ -51,8 +50,8 @@ router.post('/login', [
     }
 
     // Update last login
-    await db.run(
-      'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?',
+    await dbRun(
+      'UPDATE users SET last_login = NOW() WHERE id = ?',
       [user.id]
     );
 
@@ -71,9 +70,9 @@ router.post('/login', [
     const sessionId = uuidv4();
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-    await db.run(
+    await dbRun(
       'INSERT INTO user_sessions (id, user_id, token, expires_at) VALUES (?, ?, ?, ?)',
-      [sessionId, user.id, token, expiresAt.toISOString()]
+      [sessionId, user.id, token, expiresAt]
     );
 
     // Remove password from response
@@ -99,8 +98,7 @@ router.post('/login', [
 // Get current user
 router.get('/me', authenticateToken, async (req, res) => {
   try {
-    const db = getDatabase();
-    const user = await db.get(
+    const user = await dbGet(
       'SELECT id, name, email, role, status, created_at, updated_at, last_login FROM users WHERE id = ?',
       [req.user.userId]
     );
@@ -128,12 +126,11 @@ router.get('/me', authenticateToken, async (req, res) => {
 // Logout route
 router.post('/logout', authenticateToken, async (req, res) => {
   try {
-    const db = getDatabase();
     const token = req.headers.authorization?.split(' ')[1];
 
     if (token) {
       // Remove session
-      await db.run(
+      await dbRun(
         'DELETE FROM user_sessions WHERE token = ?',
         [token]
       );
@@ -173,10 +170,10 @@ router.post('/users', [
     }
 
     const { name, email, password, role, status = 'active' } = req.body;
-    const db = getDatabase();
+    
 
     // Check if email already exists
-    const existingUser = await db.get('SELECT id FROM users WHERE email = ?', [email]);
+    const existingUser = await dbGet('SELECT id FROM users WHERE email = ?', [email]);
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -189,14 +186,14 @@ router.post('/users', [
 
     // Create user
     const userId = uuidv4();
-    await db.run(
+    await dbRun(
       `INSERT INTO users (id, name, email, password_hash, role, status, created_by, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
       [userId, name, email, hashedPassword, role, status, req.user.userId]
     );
 
     // Get created user (without password)
-    const newUser = await db.get(
+    const newUser = await dbGet(
       'SELECT id, name, email, role, status, created_at, updated_at FROM users WHERE id = ?',
       [userId]
     );
@@ -218,8 +215,8 @@ router.post('/users', [
 // Get all users (admin only)
 router.get('/users', [authenticateToken, requireAdmin], async (req, res) => {
   try {
-    const db = getDatabase();
-    const users = await db.all(
+    
+    const users = await dbQuery(
       'SELECT id, name, email, role, status, created_at, updated_at, last_login FROM users ORDER BY created_at DESC'
     );
 
@@ -257,10 +254,10 @@ router.put('/users/:id', [
 
     const { id } = req.params;
     const { name, email, role, status } = req.body;
-    const db = getDatabase();
+    
 
     // Check if user exists
-    const existingUser = await db.get('SELECT id FROM users WHERE id = ?', [id]);
+    const existingUser = await dbGet('SELECT id FROM users WHERE id = ?', [id]);
     if (!existingUser) {
       return res.status(404).json({
         success: false,
@@ -270,7 +267,7 @@ router.put('/users/:id', [
 
     // Check if email is being changed and if it already exists
     if (email) {
-      const emailExists = await db.get(
+      const emailExists = await dbGet(
         'SELECT id FROM users WHERE email = ? AND id != ?',
         [email, id]
       );
@@ -310,16 +307,16 @@ router.put('/users/:id', [
       });
     }
 
-    updates.push('updated_at = CURRENT_TIMESTAMP');
+    updates.push('updated_at = NOW()');
     params.push(id);
 
-    await db.run(
+    await dbRun(
       `UPDATE users SET ${updates.join(', ')} WHERE id = ?`,
       params
     );
 
     // Get updated user
-    const updatedUser = await db.get(
+    const updatedUser = await dbGet(
       'SELECT id, name, email, role, status, created_at, updated_at, last_login FROM users WHERE id = ?',
       [id]
     );
@@ -342,10 +339,10 @@ router.put('/users/:id', [
 router.delete('/users/:id', [authenticateToken, requireAdmin], async (req, res) => {
   try {
     const { id } = req.params;
-    const db = getDatabase();
+    
 
     // Check if user exists
-    const user = await db.get('SELECT id, role FROM users WHERE id = ?', [id]);
+    const user = await dbGet('SELECT id, role FROM users WHERE id = ?', [id]);
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -355,7 +352,7 @@ router.delete('/users/:id', [authenticateToken, requireAdmin], async (req, res) 
 
     // Prevent deleting the last admin
     if (user.role === 'admin') {
-      const adminCount = await db.get('SELECT COUNT(*) as count FROM users WHERE role = "admin" AND status = "active"');
+      const adminCount = await dbGet('SELECT COUNT(*) as count FROM users WHERE role = "admin" AND status = "active"');
       if (adminCount.count <= 1) {
         return res.status(400).json({
           success: false,
@@ -365,10 +362,10 @@ router.delete('/users/:id', [authenticateToken, requireAdmin], async (req, res) 
     }
 
     // Delete user sessions
-    await db.run('DELETE FROM user_sessions WHERE user_id = ?', [id]);
+    await dbRun('DELETE FROM user_sessions WHERE user_id = ?', [id]);
 
     // Delete user
-    await db.run('DELETE FROM users WHERE id = ?', [id]);
+    await dbRun('DELETE FROM users WHERE id = ?', [id]);
 
     res.json({
       success: true,

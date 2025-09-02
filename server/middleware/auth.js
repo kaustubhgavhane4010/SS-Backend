@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { getDatabase } from '../database/init.js';
+import { dbGet } from '../database/mysql-helpers.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
@@ -19,9 +19,8 @@ export const authenticateToken = async (req, res, next) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     
     // Check if session exists and is valid
-    const db = getDatabase();
-    const session = await db.get(
-      'SELECT * FROM user_sessions WHERE token = ? AND expires_at > CURRENT_TIMESTAMP',
+    const session = await dbGet(
+      'SELECT * FROM user_sessions WHERE token = ? AND expires_at > NOW()',
       [token]
     );
 
@@ -33,7 +32,7 @@ export const authenticateToken = async (req, res, next) => {
     }
 
     // Check if user is still active
-    const user = await db.get(
+    const user = await dbGet(
       'SELECT id, status FROM users WHERE id = ?',
       [decoded.userId]
     );
@@ -117,14 +116,13 @@ export const optionalAuth = async (req, res, next) => {
 
     if (token) {
       const decoded = jwt.verify(token, JWT_SECRET);
-      const db = getDatabase();
-      const session = await db.get(
-        'SELECT * FROM user_sessions WHERE token = ? AND expires_at > CURRENT_TIMESTAMP',
+      const session = await dbGet(
+        'SELECT * FROM user_sessions WHERE token = ? AND expires_at > NOW()',
         [token]
       );
 
       if (session) {
-        const user = await db.get(
+        const user = await dbGet(
           'SELECT id, status FROM users WHERE id = ?',
           [decoded.userId]
         );

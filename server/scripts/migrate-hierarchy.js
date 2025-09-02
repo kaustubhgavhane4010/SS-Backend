@@ -1,4 +1,4 @@
-import { getDatabase } from '../database/init.js';
+import { getDatabase } from '../database/mysql-init.js';
 
 const migrateHierarchy = async () => {
   try {

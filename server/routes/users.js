@@ -1,5 +1,5 @@
 import express from 'express';
-import { getDatabase } from '../database/init.js';
+import { dbGet, dbRun, dbQuery, dbInsert } from '../database/mysql-helpers.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -7,8 +7,8 @@ const router = express.Router();
 // Get all users (admin only)
 router.get('/', [authenticateToken, requireAdmin], async (req, res) => {
   try {
-    const db = getDatabase();
-    const users = await db.all(`
+    
+    const users = await dbQuery(`
       SELECT 
         u.id, u.name, u.email, u.role, u.status, u.created_at, u.updated_at, u.last_login,
         c.name as created_by_name
@@ -34,9 +34,9 @@ router.get('/', [authenticateToken, requireAdmin], async (req, res) => {
 router.get('/:id', [authenticateToken, requireAdmin], async (req, res) => {
   try {
     const { id } = req.params;
-    const db = getDatabase();
+    
 
-    const user = await db.get(`
+    const user = await dbGet(`
       SELECT 
         u.id, u.name, u.email, u.role, u.status, u.created_at, u.updated_at, u.last_login,
         c.name as created_by_name
@@ -69,10 +69,10 @@ router.get('/:id', [authenticateToken, requireAdmin], async (req, res) => {
 router.get('/:id/stats', [authenticateToken, requireAdmin], async (req, res) => {
   try {
     const { id } = req.params;
-    const db = getDatabase();
+    
 
     // Check if user exists
-    const user = await db.get('SELECT id FROM users WHERE id = ?', [id]);
+    const user = await dbGet('SELECT id FROM users WHERE id = ?', [id]);
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -81,7 +81,7 @@ router.get('/:id/stats', [authenticateToken, requireAdmin], async (req, res) => 
     }
 
     // Get user statistics
-    const stats = await db.get(`
+    const stats = await dbGet(`
       SELECT 
         COUNT(*) as total_tickets,
         SUM(CASE WHEN status != 'Closed' THEN 1 ELSE 0 END) as open_tickets,
@@ -95,7 +95,7 @@ router.get('/:id/stats', [authenticateToken, requireAdmin], async (req, res) => 
     `, [id]);
 
     // Get recent activity
-    const recentActivity = await db.all(`
+    const recentActivity = await dbQuery(`
       SELECT 
         'ticket_created' as type,
         t.title as description,
