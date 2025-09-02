@@ -1,16 +1,41 @@
 import mysql from 'mysql2/promise';
 
 // MySQL Database Configuration for Railway
-const dbConfig = {
-  host: process.env.MYSQLHOST || 'localhost',
-  port: process.env.MYSQLPORT || 3306,
-  user: process.env.MYSQLUSER || 'root',
-  password: process.env.MYSQLPASSWORD || '',
-  database: process.env.MYSQLDATABASE || 'railway',
+const parseMySQLURL = (url) => {
+  if (!url) return null;
+  
+  try {
+    // Parse mysql://user:password@host:port/database
+    const match = url.match(/mysql:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)/);
+    if (match) {
+      return {
+        host: match[3],
+        port: parseInt(match[4]),
+        user: match[1],
+        password: match[2],
+        database: match[5]
+      };
+    }
+  } catch (error) {
+    console.error('❌ Failed to parse MYSQL_URL:', error.message);
+  }
+  return null;
+};
+
+const dbConfig = parseMySQLURL(process.env.MYSQL_URL) || {
+  host: 'localhost',
+  port: 3306,
+  user: 'root',
+  password: '',
+  database: 'railway'
+};
+
+// Add connection pool settings
+Object.assign(dbConfig, {
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
-};
+});
 
 // Create connection pool
 let pool;

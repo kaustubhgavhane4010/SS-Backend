@@ -17,11 +17,7 @@
   "services": {
     "SS-Backend": {
       "variables": {
-        "MYSQLHOST": "${{MySQL.MYSQLHOST}}",
-        "MYSQLPORT": "${{MySQL.MYSQLPORT}}",
-        "MYSQLUSER": "${{MySQL.MYSQLUSER}}",
-        "MYSQLPASSWORD": "${{MySQL.MYSQLPASSWORD}}",
-        "MYSQLDATABASE": "${{MySQL.MYSQLDATABASE}}"
+        "MYSQL_URL": "${{MySQL.MYSQL_URL}}"
       }
     }
   }
