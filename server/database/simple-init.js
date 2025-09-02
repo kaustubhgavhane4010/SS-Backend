@@ -80,6 +80,10 @@ export const initDatabase = async () => {
 
     console.log('✅ Tables created successfully');
 
+    // Check what users already exist
+    const existingUsers = await db.all('SELECT id, name, email, role FROM users');
+    console.log('📊 Existing users:', existingUsers);
+
     // Check if admin user exists
     const adminExists = await db.get('SELECT COUNT(*) as count FROM users WHERE role = ?', ['supreme_admin']);
     
@@ -106,6 +110,19 @@ export const initDatabase = async () => {
       console.log('🔑 Login: supreme@bnu.ac.uk / supreme123');
     } else {
       console.log('✅ Admin user already exists');
+      
+      // Check what the actual supreme admin credentials are
+      const supremeAdmin = await db.get('SELECT email, name FROM users WHERE role = ?', ['supreme_admin']);
+      if (supremeAdmin) {
+        console.log('🔍 Found existing supreme admin:', supremeAdmin);
+        
+        // Update password to known value
+        const newPassword = 'supreme123';
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
+        
+        await db.run('UPDATE users SET password_hash = ? WHERE role = ?', [hashedPassword, 'supreme_admin']);
+        console.log('🔑 Updated supreme admin password to: supreme123');
+      }
     }
     
     // Verify database
