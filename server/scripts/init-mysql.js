@@ -8,7 +8,7 @@ const dbConfig = {
   host: 'db5018543224.hosting-data.io',
   port: 3306,
   user: 'dbu1839369',
-  password: process.env.MYSQL_PASSWORD || 'your_mysql_password_here',
+  password: process.env.MYSQL_PASSWORD || 'Sai@40104010',
   database: 'Campus Asssit',
   waitForConnections: true,
   connectionLimit: 10,

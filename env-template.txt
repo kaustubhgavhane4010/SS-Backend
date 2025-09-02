@@ -1,5 +1,5 @@
 # MySQL Database Configuration
-MYSQL_PASSWORD=your_actual_mysql_password_here
+MYSQL_PASSWORD=Sai@40104010
 
 # JWT Secret
 JWT_SECRET=your_jwt_secret_here

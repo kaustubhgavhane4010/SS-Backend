@@ -14,6 +14,6 @@
     "NODE_ENV": "production",
     "RAILWAY_ENVIRONMENT": "true",
     "RAILWAY_STATIC_URL": "true",
-    "MYSQL_PASSWORD": "your_actual_mysql_password_here"
+    "MYSQL_PASSWORD": "Sai@40104010"
   }
 }
