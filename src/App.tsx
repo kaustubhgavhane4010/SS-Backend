@@ -17,6 +17,10 @@ import LoadingSpinner from './components/LoadingSpinner';
 
 const App: React.FC = () => {
   const { user, loading } = useAuth();
+  
+  // Debug logging
+  console.log('App.tsx - User role:', user?.role);
+  console.log('App.tsx - User:', user);
 
   if (loading) {
     return (
@@ -56,6 +60,7 @@ const App: React.FC = () => {
       <Layout>
         <Routes>
           <Route path="/" element={<Navigate to="/admin" replace />} />
+          <Route path="/dashboard" element={<Navigate to="/admin" replace />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/tickets" element={<TicketsPage />} />
