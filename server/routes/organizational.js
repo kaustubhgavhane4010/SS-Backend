@@ -108,7 +108,7 @@ router.post('/organizations', [
       headers: req.headers
     });
     
-    const errors = validationResult(req);
+x    const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log('❌ Validation errors:', errors.array());
       return res.status(400).json({
@@ -188,7 +188,7 @@ router.delete('/organizations/:id', [authenticateToken, requireSupremeAdmin], as
     }
 
     // Soft delete - mark as inactive instead of hard delete
-    await dbRun('UPDATE organizations SET status = ? WHERE id = ?', ['deleted', id]);
+    await dbRun('UPDATE organizations SET status = ? WHERE id = ?', ['inactive', id]);
 
     res.json({
       success: true,
@@ -340,7 +340,7 @@ router.delete('/users/:id', [authenticateToken, requireSupremeAdmin], async (req
     }
 
     // Soft delete - mark as inactive instead of hard delete
-    await dbRun('UPDATE users SET status = ? WHERE id = ?', ['deleted', id]);
+    await dbRun('UPDATE users SET status = ? WHERE id = ?', ['inactive', id]);
 
     res.json({
       success: true,
