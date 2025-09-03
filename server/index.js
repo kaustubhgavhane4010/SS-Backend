@@ -21,8 +21,11 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-console.log('🔧 COMPREHENSIVE ENVIRONMENT DEBUG:');
+const PORT = process.env.PORT || 5000; // Railway deployment trigger
+
+// Trust Railway's proxy for rate limiting - CRITICAL FIX
+app.set('trust proxy', true);
+console.log('🔧 COMPREHENSIVE ENVIRONMENT DEBUG - Railway Proxy Fix:');
 console.log('  PORT:', process.env.PORT || '5000 (default)');
 console.log('  NODE_ENV:', process.env.NODE_ENV || 'development');
 console.log('  RAILWAY_ENVIRONMENT:', process.env.RAILWAY_ENVIRONMENT || 'Not set');
