@@ -11,6 +11,7 @@ import authRoutes from './routes/auth.js';
 import ticketRoutes from './routes/tickets.js';
 import userRoutes from './routes/users.js';
 import organizationalRoutes from './routes/organizational.js';
+import adminRoutes from './routes/admin.js';
 
 // Import database
 import { initDatabase } from './database/mysql-init.js';
@@ -97,6 +98,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/organizational', organizationalRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check endpoint for Railway (simple, no database dependency)
 app.get('/health', (req, res) => {

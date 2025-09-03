@@ -28,7 +28,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Different navigation for Supreme Admin
+  // Different navigation based on user role
   const navigation = user?.role === 'supreme_admin' 
     ? [
         { name: 'Enterprise Dashboard', href: '/enterprise', icon: Home },
@@ -38,14 +38,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         { name: 'Analytics', href: '/enterprise?tab=analytics', icon: BarChart3 },
         { name: 'Settings', href: '/settings', icon: Settings },
       ]
+    : user?.role === 'admin'
+    ? [
+        { name: 'Admin Dashboard', href: '/admin', icon: Home },
+        { name: 'Users', href: '/admin/users', icon: Users },
+        { name: 'All Tickets', href: '/tickets', icon: Ticket },
+        { name: 'New Ticket', href: '/tickets/new', icon: Plus },
+        { name: 'Team', href: '/team', icon: Users },
+        { name: 'Settings', href: '/settings', icon: Settings },
+      ]
     : [
-    { name: 'Dashboard', href: '/dashboard', icon: Home },
-    { name: 'All Tickets', href: '/tickets', icon: Ticket },
-    { name: 'New Ticket', href: '/tickets/new', icon: Plus },
-    { name: 'Team', href: '/team', icon: Users },
-    ...(user?.role === 'admin' ? [{ name: 'User Management', href: '/users', icon: UserCheck }] : []),
-    { name: 'Settings', href: '/settings', icon: Settings },
-  ];
+        { name: 'Dashboard', href: '/dashboard', icon: Home },
+        { name: 'All Tickets', href: '/tickets', icon: Ticket },
+        { name: 'New Ticket', href: '/tickets/new', icon: Plus },
+        { name: 'Team', href: '/team', icon: Users },
+        { name: 'Settings', href: '/settings', icon: Settings },
+      ];
 
   const isActive = (href: string) => {
     if (href === '/dashboard') {

@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import EnterpriseDashboard from './pages/EnterpriseDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminUsersPage from './pages/AdminUsersPage';
 import TicketsPage from './pages/TicketsPage';
 import TicketDetailPage from './pages/TicketDetailPage';
 import NewTicketPage from './pages/NewTicketPage';
@@ -49,14 +50,18 @@ const App: React.FC = () => {
     );
   }
 
-  // Admin sees Admin Dashboard instead of regular dashboard
+  // Admin sees Admin Dashboard with organization-scoped access
   if (user.role === 'admin') {
     return (
       <Layout>
         <Routes>
           <Route path="/" element={<Navigate to="/admin" replace />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/:tab" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/tickets" element={<TicketsPage />} />
+          <Route path="/tickets/new" element={<NewTicketPage />} />
+          <Route path="/tickets/:id" element={<TicketDetailPage />} />
+          <Route path="/team" element={<TeamPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>
@@ -64,6 +69,7 @@ const App: React.FC = () => {
     );
   }
 
+  // Regular users (non-admin, non-supreme_admin)
   return (
     <Layout>
       <Routes>
@@ -74,9 +80,6 @@ const App: React.FC = () => {
         <Route path="/tickets/:id" element={<TicketDetailPage />} />
         <Route path="/team" element={<TeamPage />} />
         <Route path="/settings" element={<SettingsPage />} />
-        {((user.role as string) === 'admin' || (user.role as string) === 'supreme_admin') && (
-          <Route path="/users" element={<UserManagementPage />} />
-        )}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Layout>
