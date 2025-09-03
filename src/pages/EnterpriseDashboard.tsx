@@ -370,38 +370,40 @@ const EnterpriseDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Recent Users */}
-          <div className="bg-white shadow rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Recent Users</h3>
-              <div className="flow-root">
-                <ul className="-my-5 divide-y divide-gray-200">
-                  {stats.recentUsers.map((user) => (
-                    <li key={user.id} className="py-4">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex-shrink-0">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getRoleColor(user.role)}`}>
-                            <span className="text-white text-sm font-medium">
-                              {user.name.charAt(0).toUpperCase()}
+          {/* Recent Users - Hidden for Admin users to protect privacy */}
+          {!isAdmin && (
+            <div className="bg-white shadow rounded-lg">
+              <div className="px-4 py-5 sm:p-6">
+                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Recent Users</h3>
+                <div className="flow-root">
+                  <ul className="-my-5 divide-y divide-gray-200">
+                    {stats.recentUsers.map((user) => (
+                      <li key={user.id} className="py-4">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex-shrink-0">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getRoleColor(user.role)}`}>
+                              <span className="text-white text-sm font-medium">
+                                {user.name.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+                            <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                          </div>
+                          <div className="flex-shrink-0">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(user.role)} text-white`}>
+                              {getRoleDisplayName(user.role)}
                             </span>
                           </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-                          <p className="text-sm text-gray-500 truncate">{user.email}</p>
-                        </div>
-                        <div className="flex-shrink-0">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(user.role)} text-white`}>
-                            {getRoleDisplayName(user.role)}
-                          </span>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       )}
 
