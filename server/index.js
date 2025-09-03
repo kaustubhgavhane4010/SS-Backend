@@ -26,6 +26,9 @@ console.log('🔧 Environment check:');
 console.log('  PORT:', process.env.PORT || '5000 (default)');
 console.log('  NODE_ENV:', process.env.NODE_ENV || 'development');
 console.log('  MYSQL_HOST:', process.env.MYSQL_HOST ? 'Set' : 'Not set');
+console.log('  RAILWAY_MYSQL_HOST:', process.env.RAILWAY_MYSQL_HOST ? 'Set' : 'Not set');
+console.log('  All env vars starting with MYSQL:', Object.keys(process.env).filter(key => key.startsWith('MYSQL')));
+console.log('  All env vars starting with RAILWAY:', Object.keys(process.env).filter(key => key.startsWith('RAILWAY')));
 
 // Security middleware
 app.use(helmet());
@@ -42,7 +45,12 @@ app.use(cors({
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
+  message: 'Too many requests from this IP, please try again later.',
+  trustProxy: true, // Trust Railway's proxy
+  skip: (req) => {
+    // Skip rate limiting for health checks
+    return req.path === '/health' || req.path === '/api/health';
+  }
 });
 app.use('/api/', limiter);
 
