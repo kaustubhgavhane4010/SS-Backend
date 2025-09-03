@@ -74,7 +74,7 @@ const App: React.FC = () => {
         <Route path="/tickets/:id" element={<TicketDetailPage />} />
         <Route path="/team" element={<TeamPage />} />
         <Route path="/settings" element={<SettingsPage />} />
-        {user.role === 'admin' && (
+        {((user.role as string) === 'admin' || (user.role as string) === 'supreme_admin') && (
           <Route path="/users" element={<UserManagementPage />} />
         )}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
