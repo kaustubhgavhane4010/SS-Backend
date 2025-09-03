@@ -22,13 +22,41 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-console.log('🔧 Environment check:');
+console.log('🔧 COMPREHENSIVE ENVIRONMENT DEBUG:');
 console.log('  PORT:', process.env.PORT || '5000 (default)');
 console.log('  NODE_ENV:', process.env.NODE_ENV || 'development');
-console.log('  MYSQL_HOST:', process.env.MYSQL_HOST ? 'Set' : 'Not set');
-console.log('  RAILWAY_MYSQL_HOST:', process.env.RAILWAY_MYSQL_HOST ? 'Set' : 'Not set');
-console.log('  All env vars starting with MYSQL:', Object.keys(process.env).filter(key => key.startsWith('MYSQL')));
-console.log('  All env vars starting with RAILWAY:', Object.keys(process.env).filter(key => key.startsWith('RAILWAY')));
+console.log('  RAILWAY_ENVIRONMENT:', process.env.RAILWAY_ENVIRONMENT || 'Not set');
+
+// Check all possible MySQL environment variable patterns
+const mysqlVars = Object.keys(process.env).filter(key => 
+  key.includes('MYSQL') || 
+  key.includes('DATABASE') || 
+  key.includes('DB_')
+);
+
+console.log('  All MySQL-related env vars:', mysqlVars);
+mysqlVars.forEach(key => {
+  console.log(`    ${key}:`, process.env[key] ? 'SET' : 'NOT SET');
+});
+
+// Check all Railway environment variables
+const railwayVars = Object.keys(process.env).filter(key => key.startsWith('RAILWAY'));
+console.log('  All Railway env vars:', railwayVars);
+railwayVars.forEach(key => {
+  console.log(`    ${key}:`, process.env[key] ? 'SET' : 'NOT SET');
+});
+
+// Check for any database-related variables
+const dbVars = Object.keys(process.env).filter(key => 
+  key.toLowerCase().includes('host') ||
+  key.toLowerCase().includes('port') ||
+  key.toLowerCase().includes('user') ||
+  key.toLowerCase().includes('password')
+);
+console.log('  All host/port/user/password vars:', dbVars);
+dbVars.forEach(key => {
+  console.log(`    ${key}:`, process.env[key] ? 'SET' : 'NOT SET');
+});
 
 // Security middleware
 app.use(helmet());

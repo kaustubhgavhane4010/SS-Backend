@@ -1,25 +1,68 @@
 import mysql from 'mysql2/promise';
 
-// Try to get MySQL connection from Railway service discovery
+// Comprehensive MySQL configuration detection
 const getRailwayMySQLConfig = () => {
-  // Railway automatically provides these when services are linked
-  if (process.env.RAILWAY_MYSQL_HOST) {
-    return {
+  console.log('🔍 DETECTING MYSQL CONFIGURATION...');
+  
+  // Check all possible Railway MySQL environment variable patterns
+  const possibleConfigs = [
+    // Railway automatic service discovery
+    {
+      name: 'Railway MySQL Service Discovery',
       host: process.env.RAILWAY_MYSQL_HOST,
-      port: process.env.RAILWAY_MYSQL_PORT || 3306,
-      user: process.env.RAILWAY_MYSQL_USER || 'root',
-      password: process.env.RAILWAY_MYSQL_PASSWORD || '',
-      database: process.env.RAILWAY_MYSQL_DATABASE || 'railway'
-    };
+      port: process.env.RAILWAY_MYSQL_PORT,
+      user: process.env.RAILWAY_MYSQL_USER,
+      password: process.env.RAILWAY_MYSQL_PASSWORD,
+      database: process.env.RAILWAY_MYSQL_DATABASE
+    },
+    // Manual Railway variables
+    {
+      name: 'Manual Railway Variables',
+      host: process.env.MYSQL_HOST,
+      port: process.env.MYSQL_PORT,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE
+    },
+    // Alternative Railway patterns
+    {
+      name: 'Alternative Railway Pattern',
+      host: process.env.DATABASE_HOST,
+      port: process.env.DATABASE_PORT,
+      user: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME
+    }
+  ];
+  
+  // Find the first configuration that has a host
+  for (const config of possibleConfigs) {
+    if (config.host) {
+      console.log(`✅ Using ${config.name}:`);
+      console.log(`  Host: ${config.host}`);
+      console.log(`  Port: ${config.port || 3306}`);
+      console.log(`  User: ${config.user || 'root'}`);
+      console.log(`  Database: ${config.database || 'railway'}`);
+      console.log(`  Password: ${config.password ? 'SET' : 'NOT SET'}`);
+      
+      return {
+        host: config.host,
+        port: config.port || 3306,
+        user: config.user || 'root',
+        password: config.password || '',
+        database: config.database || 'railway'
+      };
+    }
   }
   
-  // Fallback to manual environment variables
+  // If no configuration found, return localhost (will fail but we'll know why)
+  console.log('❌ NO MYSQL CONFIGURATION FOUND - Using localhost (will fail)');
   return {
-    host: process.env.MYSQL_HOST || 'localhost',
-    port: process.env.MYSQL_PORT || 3306,
-    user: process.env.MYSQL_USER || 'root',
-    password: process.env.MYSQL_PASSWORD || '',
-    database: process.env.MYSQL_DATABASE || 'campus_assist'
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: '',
+    database: 'campus_assist'
   };
 };
 
