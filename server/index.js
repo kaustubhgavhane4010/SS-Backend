@@ -23,8 +23,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000; // Railway deployment trigger
 
-// Trust Railway's proxy for rate limiting - CRITICAL FIX
-app.set('trust proxy', true);
+// Trust Railway's proxy for rate limiting - configure specifically for Railway
+app.set('trust proxy', 1); // Trust only the first proxy (Railway's load balancer)
 console.log('🔧 COMPREHENSIVE ENVIRONMENT DEBUG - Railway Proxy Fix:');
 console.log('  PORT:', process.env.PORT || '5000 (default)');
 console.log('  NODE_ENV:', process.env.NODE_ENV || 'development');
@@ -77,7 +77,7 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   message: 'Too many requests from this IP, please try again later.',
-  trustProxy: true, // Trust Railway's proxy
+  trustProxy: 1, // Trust only the first proxy (Railway's load balancer)
   skip: (req) => {
     // Skip rate limiting for health checks
     return req.path === '/health' || req.path === '/api/health';
