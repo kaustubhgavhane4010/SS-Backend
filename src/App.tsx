@@ -4,6 +4,7 @@ import { useAuth } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import EnterpriseDashboard from './pages/EnterpriseDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import TicketsPage from './pages/TicketsPage';
 import TicketDetailPage from './pages/TicketDetailPage';
 import NewTicketPage from './pages/NewTicketPage';
@@ -43,6 +44,21 @@ const App: React.FC = () => {
           <Route path="/enterprise/:tab" element={<EnterpriseDashboard />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/enterprise" replace />} />
+        </Routes>
+      </Layout>
+    );
+  }
+
+  // Admin sees Admin Dashboard instead of regular dashboard
+  if (user.role === 'admin') {
+    return (
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Navigate to="/admin" replace />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/:tab" element={<AdminDashboard />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>
       </Layout>
     );
