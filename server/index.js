@@ -101,22 +101,13 @@ app.use('/api/organizational', organizationalRoutes);
 // Health check endpoint for Railway (simple, no database dependency)
 app.get('/health', (req, res) => {
   console.log('🏥 Health check requested at:', new Date().toISOString());
-  try {
-    res.status(200).json({ 
-      status: 'healthy', 
-      timestamp: new Date().toISOString(),
-      message: 'Server is running',
-      port: PORT,
-      environment: process.env.NODE_ENV || 'development'
-    });
-  } catch (error) {
-    console.error('❌ Health check error:', error);
-    res.status(500).json({ 
-      status: 'error', 
-      message: 'Health check failed',
-      error: error.message
-    });
-  }
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    message: 'Server is running',
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
 // Health check endpoint
@@ -159,8 +150,6 @@ app.use('/api/*', (req, res) => {
 // Initialize database and start server
 const startServer = async () => {
   try {
-    console.log('🚀 Starting server...');
-    
     // Start server first, then initialize database
     const server = app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
@@ -171,7 +160,6 @@ const startServer = async () => {
     
     // Initialize database in background
     try {
-      console.log('🔗 Initializing database...');
       await initDatabase();
       console.log('✅ Database initialized successfully');
     } catch (dbError) {
@@ -179,8 +167,7 @@ const startServer = async () => {
       console.log('🔧 Health check will still work, but database features may not function');
     }
   } catch (error) {
-    console.error('❌ CRITICAL: Failed to start server:', error);
-    console.error('❌ Error details:', error.stack);
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
 };
