@@ -29,22 +29,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Different navigation based on user role
-  const navigation = user?.role === 'supreme_admin' 
+  const navigation = (user?.role === 'supreme_admin' || user?.role === 'admin')
     ? [
         { name: 'Enterprise Dashboard', href: '/enterprise', icon: Home },
         { name: 'Organizations', href: '/enterprise?tab=organizations', icon: Building },
         { name: 'Users', href: '/enterprise?tab=users', icon: Users },
         { name: 'Teams', href: '/enterprise?tab=teams', icon: Users },
         { name: 'Analytics', href: '/enterprise?tab=analytics', icon: BarChart3 },
-        { name: 'Settings', href: '/settings', icon: Settings },
-      ]
-    : user?.role === 'admin'
-    ? [
-        { name: 'Admin Dashboard', href: '/admin', icon: Home },
-        { name: 'Users', href: '/admin/users', icon: Users },
-        { name: 'All Tickets', href: '/tickets', icon: Ticket },
-        { name: 'New Ticket', href: '/tickets/new', icon: Plus },
-        { name: 'Team', href: '/team', icon: Users },
         { name: 'Settings', href: '/settings', icon: Settings },
       ]
     : [

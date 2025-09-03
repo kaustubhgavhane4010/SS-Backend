@@ -54,21 +54,17 @@ const App: React.FC = () => {
     );
   }
 
-  // Admin sees Admin Dashboard with organization-scoped access
+  // Admin sees same interface as Supreme Admin but with organization-scoped access
   if (user.role === 'admin') {
     return (
       <Layout>
         <Routes>
-          <Route path="/" element={<Navigate to="/admin" replace />} />
-          <Route path="/dashboard" element={<Navigate to="/admin" replace />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<AdminUsersPage />} />
-          <Route path="/tickets" element={<TicketsPage />} />
-          <Route path="/tickets/new" element={<NewTicketPage />} />
-          <Route path="/tickets/:id" element={<TicketDetailPage />} />
-          <Route path="/team" element={<TeamPage />} />
+          <Route path="/" element={<Navigate to="/enterprise" replace />} />
+          <Route path="/dashboard" element={<Navigate to="/enterprise" replace />} />
+          <Route path="/enterprise" element={<EnterpriseDashboard />} />
+          <Route path="/enterprise/:tab" element={<EnterpriseDashboard />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="*" element={<Navigate to="/admin" replace />} />
+          <Route path="*" element={<Navigate to="/enterprise" replace />} />
         </Routes>
       </Layout>
     );

@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { User, Organization, EnterpriseStats } from '../types';
 import { api } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { Plus, Users, Building, BarChart3, UserPlus, Building2, X, Edit, Trash2 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 const EnterpriseDashboard: React.FC = () => {
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [stats, setStats] = useState<EnterpriseStats | null>(null);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Check if user is Admin (not Supreme Admin)
+  const isAdmin = user?.role === 'admin';
   
   // Modal states
   const [showCreateUser, setShowCreateUser] = useState(false);
@@ -60,15 +65,53 @@ const EnterpriseDashboard: React.FC = () => {
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      const [statsRes, orgsRes, usersRes] = await Promise.all([
-        api.get('/organizational/enterprise-stats'),
-        api.get('/organizational/organizations'),
-        api.get('/organizational/users')
-      ]);
+      
+      if (isAdmin) {
+        // Admin users - use organization-scoped endpoints
+        const [statsRes, usersRes] = await Promise.all([
+          api.get('/admin/dashboard-stats'),
+          api.get('/admin/users')
+        ]);
 
-      if (statsRes.data?.success) setStats(statsRes.data.data);
-      if (orgsRes.data?.success) setOrganizations(orgsRes.data.data);
-      if (usersRes.data?.success) setUsers(usersRes.data.data);
+        if (statsRes.data?.success) {
+          // Transform admin stats to match enterprise stats format
+          const adminStats = statsRes.data.data;
+          setStats({
+            organizations: {
+              total_organizations: 1,
+              companies: adminStats.organization.type === 'company' ? 1 : 0,
+              universities: adminStats.organization.type === 'university' ? 1 : 0,
+              departments: adminStats.organization.type === 'department' ? 1 : 0,
+            },
+            users: {
+              total_users: adminStats.stats.total_users,
+              admins: 0, // Admin can't see other admins
+              university_admins: adminStats.stats.university_admins,
+              senior_leadership: adminStats.stats.senior_leadership,
+              deans: adminStats.stats.deans,
+              managers: adminStats.stats.managers,
+              team_members: adminStats.stats.team_members,
+            },
+            recentUsers: adminStats.recentUsers
+          });
+          
+          // Set organization data for admin
+          setOrganizations([adminStats.organization]);
+        }
+        
+        if (usersRes.data?.success) setUsers(usersRes.data.data);
+      } else {
+        // Supreme Admin users - use enterprise endpoints
+        const [statsRes, orgsRes, usersRes] = await Promise.all([
+          api.get('/organizational/enterprise-stats'),
+          api.get('/organizational/organizations'),
+          api.get('/organizational/users')
+        ]);
+
+        if (statsRes.data?.success) setStats(statsRes.data.data);
+        if (orgsRes.data?.success) setOrganizations(orgsRes.data.data);
+        if (usersRes.data?.success) setUsers(usersRes.data.data);
+      }
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
     } finally {
@@ -107,7 +150,17 @@ const EnterpriseDashboard: React.FC = () => {
     }
 
     try {
-      const response = await api.post('/organizational/users', newUser);
+      const endpoint = isAdmin ? '/admin/users' : '/organizational/users';
+      const userData = isAdmin ? {
+        name: newUser.name,
+        email: newUser.email,
+        password: newUser.password,
+        role: newUser.role,
+        department: newUser.department,
+        phone: newUser.phone
+      } : newUser;
+      
+      const response = await api.post(endpoint, userData);
       if (response.data?.success) {
         alert('User created successfully!');
         setShowCreateUser(false);
@@ -357,13 +410,15 @@ const EnterpriseDashboard: React.FC = () => {
           <div className="px-4 py-5 sm:p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg leading-6 font-medium text-gray-900">Organizations</h3>
-              <button 
-                onClick={() => setShowCreateOrg(true)}
-                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2"
-              >
-                <Plus size={16} />
-                Add Organization
-              </button>
+              {!isAdmin && (
+                <button 
+                  onClick={() => setShowCreateOrg(true)}
+                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  Add Organization
+                </button>
+              )}
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -602,23 +657,29 @@ const EnterpriseDashboard: React.FC = () => {
                   <option value="dean">Dean</option>
                   <option value="senior_leadership">Senior Leadership</option>
                   <option value="university_admin">University Admin</option>
-                  <option value="admin">Admin</option>
-                  <option value="supreme_admin">Supreme Admin</option>
+                  {!isAdmin && (
+                    <>
+                      <option value="admin">Admin</option>
+                      <option value="supreme_admin">Supreme Admin</option>
+                    </>
+                  )}
                 </select>
               </div>
-              <div>
-                <label htmlFor="organization_id" className="block text-sm font-medium text-gray-700">Organization <span className="text-red-500">*</span></label>
-                <select
-                  id="organization_id"
-                  value={newUser.organization_id}
-                  onChange={(e) => setNewUser({ ...newUser, organization_id: e.target.value })}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                >
-                  {organizations.map((org) => (
-                    <option key={org.id} value={org.id}>{org.name}</option>
-                  ))}
-                </select>
-              </div>
+              {!isAdmin && (
+                <div>
+                  <label htmlFor="organization_id" className="block text-sm font-medium text-gray-700">Organization <span className="text-red-500">*</span></label>
+                  <select
+                    id="organization_id"
+                    value={newUser.organization_id}
+                    onChange={(e) => setNewUser({ ...newUser, organization_id: e.target.value })}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    {organizations.map((org) => (
+                      <option key={org.id} value={org.id}>{org.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div>
                 <label htmlFor="department" className="block text-sm font-medium text-gray-700">Department</label>
                 <input
@@ -659,7 +720,7 @@ const EnterpriseDashboard: React.FC = () => {
       )}
 
       {/* Create Organization Modal */}
-      {showCreateOrg && (
+      {showCreateOrg && !isAdmin && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
           <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-md max-h-full">
             <div className="flex justify-between items-center mb-4">
