@@ -187,8 +187,8 @@ router.delete('/organizations/:id', [authenticateToken, requireSupremeAdmin], as
       });
     }
 
-    // Soft delete - mark as inactive instead of hard delete
-    await dbRun('UPDATE organizations SET status = ? WHERE id = ?', ['inactive', id]);
+    // Hard delete - completely remove the organization
+    await dbRun('DELETE FROM organizations WHERE id = ?', [id]);
 
     res.json({
       success: true,
@@ -339,8 +339,12 @@ router.delete('/users/:id', [authenticateToken, requireSupremeAdmin], async (req
       });
     }
 
-    // Soft delete - mark as inactive instead of hard delete
-    await dbRun('UPDATE users SET status = ? WHERE id = ?', ['inactive', id]);
+    // Hard delete - completely remove the user and related data
+    // First delete user sessions
+    await dbRun('DELETE FROM user_sessions WHERE user_id = ?', [id]);
+    
+    // Then delete the user
+    await dbRun('DELETE FROM users WHERE id = ?', [id]);
 
     res.json({
       success: true,

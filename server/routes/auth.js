@@ -361,8 +361,12 @@ router.delete('/users/:id', [authenticateToken, requireAdmin], async (req, res) 
       }
     }
 
-    // Soft delete - mark as inactive instead of hard delete
-    await dbRun('UPDATE users SET status = ? WHERE id = ?', ['inactive', id]);
+    // Hard delete - completely remove the user and related data
+    // First delete user sessions
+    await dbRun('DELETE FROM user_sessions WHERE user_id = ?', [id]);
+    
+    // Then delete the user
+    await dbRun('DELETE FROM users WHERE id = ?', [id]);
 
     res.json({
       success: true,
