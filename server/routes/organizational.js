@@ -122,10 +122,14 @@ router.post('/organizations', [
     
     const organizationId = uuidv4();
 
+    // Convert undefined to null for MySQL
+    const parentOrgId = parent_organization_id || null;
+    const orgSettings = settings || null;
+
     await dbRun(`
       INSERT INTO organizations (id, name, type, status, created_by, parent_organization_id, settings)
       VALUES (?, ?, ?, ?, ?, ?, ?)
-    `, [organizationId, name, type, 'active', req.user.userId, parent_organization_id, settings || null]);
+    `, [organizationId, name, type, 'active', req.user.userId, parentOrgId, orgSettings]);
 
     const newOrganization = await dbGet(`
       SELECT 
