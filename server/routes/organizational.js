@@ -102,8 +102,15 @@ router.post('/organizations', [
   body('parent_organization_id').optional().isUUID()
 ], async (req, res) => {
   try {
+    console.log('🏢 Organization creation request:', {
+      body: req.body,
+      user: req.user,
+      headers: req.headers
+    });
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('❌ Validation errors:', errors.array());
       return res.status(400).json({
         success: false,
         message: 'Validation failed',
@@ -137,7 +144,14 @@ router.post('/organizations', [
       data: newOrganization
     });
   } catch (error) {
-    console.error('Create organization error:', error);
+    console.error('❌ Create organization error:', error);
+    console.error('❌ Error details:', {
+      message: error.message,
+      code: error.code,
+      sqlState: error.sqlState,
+      sqlMessage: error.sqlMessage,
+      stack: error.stack
+    });
     res.status(500).json({
       success: false,
       message: 'Internal server error'
