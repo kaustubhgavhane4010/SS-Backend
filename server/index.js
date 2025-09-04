@@ -103,12 +103,14 @@ app.use('/api/admin', adminRoutes);
 // Health check endpoint for Railway (simple, no database dependency)
 app.get('/health', (req, res) => {
   console.log('🏥 Health check requested at:', new Date().toISOString());
+  console.log('🏥 Health check from IP:', req.ip || req.connection.remoteAddress);
   res.status(200).json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
     message: 'Server is running',
     port: PORT,
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    uptime: process.uptime()
   });
 });
 
@@ -152,22 +154,27 @@ app.use('/api/*', (req, res) => {
 // Initialize database and start server
 const startServer = async () => {
   try {
-    // Start server first, then initialize database
-    const server = app.listen(PORT, () => {
+    // Start server first - this is critical for Railway health checks
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📊 API available at http://localhost:${PORT}/api`);
       console.log(`🏥 Health check: http://localhost:${PORT}/health`);
       console.log(`🏥 API Health check: http://localhost:${PORT}/api/health`);
+      console.log('✅ Server is ready to accept requests');
     });
     
-    // Initialize database in background
-    try {
-      await initDatabase();
-      console.log('✅ Database initialized successfully');
-    } catch (dbError) {
-      console.error('⚠️ Database initialization failed, but server is running:', dbError.message);
-      console.log('🔧 Health check will still work, but database features may not function');
-    }
+    // Initialize database in background - don't block server startup
+    setTimeout(async () => {
+      try {
+        await initDatabase();
+        console.log('✅ Database initialized successfully');
+      } catch (dbError) {
+        console.error('⚠️ Database initialization failed, but server is running:', dbError.message);
+        console.log('🔧 Health check will still work, but database features may not function');
+        console.log('🔧 Server will continue running and database can be retried later');
+      }
+    }, 1000); // Wait 1 second before trying database connection
+    
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);
