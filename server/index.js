@@ -100,17 +100,31 @@ app.use('/api/users', userRoutes);
 app.use('/api/organizational', organizationalRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Root endpoint for Railway health checks
+app.get('/', (req, res) => {
+  console.log('🏠 Root endpoint requested at:', new Date().toISOString());
+  res.status(200).json({ 
+    status: 'healthy', 
+    message: 'BNU Student Support Ticketing System is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Health check endpoint for Railway (simple, no database dependency)
 app.get('/health', (req, res) => {
   console.log('🏥 Health check requested at:', new Date().toISOString());
   console.log('🏥 Health check from IP:', req.ip || req.connection.remoteAddress);
+  console.log('🏥 Health check headers:', req.headers);
+  
+  // Always return 200 OK for Railway health checks
   res.status(200).json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
     message: 'Server is running',
     port: PORT,
     environment: process.env.NODE_ENV || 'development',
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    railway: process.env.RAILWAY_ENVIRONMENT === 'true'
   });
 });
 
