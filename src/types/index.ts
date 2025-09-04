@@ -16,6 +16,18 @@ export interface User {
   created_by_name?: string;
 }
 
+export interface OrganizationSettings {
+  description?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  foundingYear?: string;
+  accreditation?: string;
+  departments?: string[];
+  campuses?: string[];
+}
+
 export interface Organization {
   id: string;
   name: string;
@@ -25,7 +37,7 @@ export interface Organization {
   created_at: string;
   updated_at: string;
   parent_organization_id?: string;
-  settings?: string;
+  settings?: OrganizationSettings;
   created_by_name?: string;
   parent_organization_name?: string;
 }

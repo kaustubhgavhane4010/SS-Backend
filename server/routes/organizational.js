@@ -80,9 +80,15 @@ router.get('/organizations', [authenticateToken, requireSupremeAdmin], async (re
       ORDER BY o.created_at DESC
     `);
 
+    // Parse JSON settings for each organization
+    const organizationsWithSettings = organizations.map(org => ({
+      ...org,
+      settings: org.settings ? JSON.parse(org.settings) : {}
+    }));
+
     res.json({
       success: true,
-      data: organizations
+      data: organizationsWithSettings
     });
   } catch (error) {
     console.error('Get organizations error:', error);
@@ -118,18 +124,43 @@ router.post('/organizations', [
       });
     }
 
-    const { name, type, parent_organization_id, settings } = req.body;
+    const { 
+      name, 
+      type, 
+      parent_organization_id, 
+      description,
+      address,
+      phone,
+      email,
+      website,
+      foundingYear,
+      accreditation,
+      departments,
+      campuses
+    } = req.body;
     
     const organizationId = uuidv4();
 
     // Convert undefined to null for MySQL
     const parentOrgId = parent_organization_id || null;
-    const orgSettings = settings || null;
+    
+    // Create settings object with additional organization data
+    const orgSettings = {
+      description: description || null,
+      address: address || null,
+      phone: phone || null,
+      email: email || null,
+      website: website || null,
+      foundingYear: foundingYear || null,
+      accreditation: accreditation || null,
+      departments: departments || [],
+      campuses: campuses || []
+    };
 
     await dbRun(`
       INSERT INTO organizations (id, name, type, status, created_by, parent_organization_id, settings)
       VALUES (?, ?, ?, ?, ?, ?, ?)
-    `, [organizationId, name, type, 'active', req.user.userId, parentOrgId, orgSettings]);
+    `, [organizationId, name, type, 'active', req.user.userId, parentOrgId, JSON.stringify(orgSettings)]);
 
     const newOrganization = await dbGet(`
       SELECT 
@@ -142,10 +173,16 @@ router.post('/organizations', [
       WHERE o.id = ?
     `, [organizationId]);
 
+    // Parse JSON settings
+    const organizationWithSettings = {
+      ...newOrganization,
+      settings: newOrganization.settings ? JSON.parse(newOrganization.settings) : {}
+    };
+
     res.status(201).json({
       success: true,
       message: 'Organization created successfully',
-      data: newOrganization
+      data: organizationWithSettings
     });
   } catch (error) {
     console.error('❌ Create organization error:', error);

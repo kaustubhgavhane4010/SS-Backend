@@ -42,7 +42,16 @@ const EnterpriseDashboard: React.FC = () => {
   const [newOrganization, setNewOrganization] = useState({
     name: '',
     type: 'company',
-    status: 'active'
+    status: 'active',
+    description: '',
+    address: '',
+    phone: '',
+    email: '',
+    website: '',
+    foundingYear: '',
+    accreditation: '',
+    departments: [] as string[],
+    campuses: [] as string[]
   });
   
   const [newTeam, setNewTeam] = useState({
@@ -50,6 +59,10 @@ const EnterpriseDashboard: React.FC = () => {
     description: '',
     organization_id: ''
   });
+
+  // State for dynamic department and campus inputs
+  const [newDepartment, setNewDepartment] = useState('');
+  const [newCampus, setNewCampus] = useState('');
 
   useEffect(() => {
     loadDashboardData();
@@ -173,6 +186,41 @@ const EnterpriseDashboard: React.FC = () => {
     }
   };
 
+  // Helper functions for managing departments and campuses
+  const addDepartment = () => {
+    if (newDepartment.trim() && !newOrganization.departments.includes(newDepartment.trim())) {
+      setNewOrganization({
+        ...newOrganization,
+        departments: [...newOrganization.departments, newDepartment.trim()]
+      });
+      setNewDepartment('');
+    }
+  };
+
+  const removeDepartment = (index: number) => {
+    setNewOrganization({
+      ...newOrganization,
+      departments: newOrganization.departments.filter((_, i) => i !== index)
+    });
+  };
+
+  const addCampus = () => {
+    if (newCampus.trim() && !newOrganization.campuses.includes(newCampus.trim())) {
+      setNewOrganization({
+        ...newOrganization,
+        campuses: [...newOrganization.campuses, newCampus.trim()]
+      });
+      setNewCampus('');
+    }
+  };
+
+  const removeCampus = (index: number) => {
+    setNewOrganization({
+      ...newOrganization,
+      campuses: newOrganization.campuses.filter((_, i) => i !== index)
+    });
+  };
+
   const handleCreateOrganization = async () => {
     try {
       // Both Admin and Supreme Admin can create organizations using the same endpoint
@@ -180,7 +228,20 @@ const EnterpriseDashboard: React.FC = () => {
       if (response.data?.success) {
         alert('Organization created successfully!');
         setShowCreateOrg(false);
-        setNewOrganization({ name: '', type: 'company', status: 'active' });
+        setNewOrganization({ 
+          name: '', 
+          type: 'company', 
+          status: 'active',
+          description: '',
+          address: '',
+          phone: '',
+          email: '',
+          website: '',
+          foundingYear: '',
+          accreditation: '',
+          departments: [],
+          campuses: []
+        });
         
         // For Admin users, refresh data to show the new organization
         if (isAdmin) {
@@ -443,6 +504,7 @@ const EnterpriseDashboard: React.FC = () => {
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created By</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
@@ -452,8 +514,38 @@ const EnterpriseDashboard: React.FC = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {organizations.map((org) => (
                     <tr key={org.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{org.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{org.name}</div>
+                          {org.settings?.description && (
+                            <div className="text-sm text-gray-500 truncate max-w-xs">{org.settings.description}</div>
+                          )}
+                        </div>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{org.type}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">
+                          {org.type === 'university' && (
+                            <div className="space-y-1">
+                              {org.settings?.foundingYear && (
+                                <div>Founded: {org.settings.foundingYear}</div>
+                              )}
+                              {org.settings?.departments && org.settings.departments.length > 0 && (
+                                <div>Departments: {org.settings.departments.length}</div>
+                              )}
+                              {org.settings?.campuses && org.settings.campuses.length > 0 && (
+                                <div>Campuses: {org.settings.campuses.length}</div>
+                              )}
+                            </div>
+                          )}
+                          {org.settings?.address && (
+                            <div className="truncate max-w-xs">{org.settings.address}</div>
+                          )}
+                          {org.settings?.phone && (
+                            <div>{org.settings.phone}</div>
+                          )}
+                        </div>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           org.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -739,38 +831,216 @@ const EnterpriseDashboard: React.FC = () => {
       {/* Create Organization Modal */}
       {showCreateOrg && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-md max-h-full">
+          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-2xl max-h-full">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">Add New Organization</h3>
               <button onClick={() => setShowCreateOrg(false)} className="text-gray-400 hover:text-gray-500">
                 <X size={20} />
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {/* Basic Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="orgName" className="block text-sm font-medium text-gray-700">Organization Name <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    id="orgName"
+                    value={newOrganization.name}
+                    onChange={(e) => setNewOrganization({ ...newOrganization, name: e.target.value })}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="Enter organization name"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="orgType" className="block text-sm font-medium text-gray-700">Type <span className="text-red-500">*</span></label>
+                  <select
+                    id="orgType"
+                    value={newOrganization.type}
+                    onChange={(e) => setNewOrganization({ ...newOrganization, type: e.target.value })}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    <option value="company">Company</option>
+                    <option value="university">University</option>
+                    <option value="government">Government</option>
+                    <option value="non-profit">Non-Profit</option>
+                  </select>
+                </div>
+              </div>
+
               <div>
-                <label htmlFor="orgName" className="block text-sm font-medium text-gray-700">Organization Name <span className="text-red-500">*</span></label>
-                <input
-                  type="text"
-                  id="orgName"
-                  value={newOrganization.name}
-                  onChange={(e) => setNewOrganization({ ...newOrganization, name: e.target.value })}
+                <label htmlFor="orgDescription" className="block text-sm font-medium text-gray-700">Description</label>
+                <textarea
+                  id="orgDescription"
+                  value={newOrganization.description}
+                  onChange={(e) => setNewOrganization({ ...newOrganization, description: e.target.value })}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  rows={3}
+                  placeholder="Brief description of the organization"
                 />
               </div>
-              <div>
-                <label htmlFor="orgType" className="block text-sm font-medium text-gray-700">Type <span className="text-red-500">*</span></label>
-                <select
-                  id="orgType"
-                  value={newOrganization.type}
-                  onChange={(e) => setNewOrganization({ ...newOrganization, type: e.target.value })}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                >
-                  <option value="company">Company</option>
-                  <option value="university">University</option>
-                  <option value="government">Government</option>
-                  <option value="non-profit">Non-Profit</option>
-                </select>
+
+              {/* Contact Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="orgAddress" className="block text-sm font-medium text-gray-700">Address</label>
+                  <input
+                    type="text"
+                    id="orgAddress"
+                    value={newOrganization.address}
+                    onChange={(e) => setNewOrganization({ ...newOrganization, address: e.target.value })}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="Street address, city, country"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="orgPhone" className="block text-sm font-medium text-gray-700">Phone</label>
+                  <input
+                    type="tel"
+                    id="orgPhone"
+                    value={newOrganization.phone}
+                    onChange={(e) => setNewOrganization({ ...newOrganization, phone: e.target.value })}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="+1 (555) 123-4567"
+                  />
+                </div>
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="orgEmail" className="block text-sm font-medium text-gray-700">Email</label>
+                  <input
+                    type="email"
+                    id="orgEmail"
+                    value={newOrganization.email}
+                    onChange={(e) => setNewOrganization({ ...newOrganization, email: e.target.value })}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="contact@organization.com"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="orgWebsite" className="block text-sm font-medium text-gray-700">Website</label>
+                  <input
+                    type="url"
+                    id="orgWebsite"
+                    value={newOrganization.website}
+                    onChange={(e) => setNewOrganization({ ...newOrganization, website: e.target.value })}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="https://www.organization.com"
+                  />
+                </div>
+              </div>
+
+              {/* University-specific fields */}
+              {newOrganization.type === 'university' && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="orgFoundingYear" className="block text-sm font-medium text-gray-700">Founding Year</label>
+                      <input
+                        type="number"
+                        id="orgFoundingYear"
+                        value={newOrganization.foundingYear}
+                        onChange={(e) => setNewOrganization({ ...newOrganization, foundingYear: e.target.value })}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="e.g., 1965"
+                        min="1800"
+                        max="2024"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="orgAccreditation" className="block text-sm font-medium text-gray-700">Accreditation</label>
+                      <input
+                        type="text"
+                        id="orgAccreditation"
+                        value={newOrganization.accreditation}
+                        onChange={(e) => setNewOrganization({ ...newOrganization, accreditation: e.target.value })}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="e.g., AACSB, ABET, etc."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Departments */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Departments</label>
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={newDepartment}
+                        onChange={(e) => setNewDepartment(e.target.value)}
+                        className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="Add department (e.g., Computer Science)"
+                        onKeyPress={(e) => e.key === 'Enter' && addDepartment()}
+                      />
+                      <button
+                        type="button"
+                        onClick={addDepartment}
+                        className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-1"
+                      >
+                        <Plus size={16} />
+                        Add
+                      </button>
+                    </div>
+                    {newOrganization.departments.length > 0 && (
+                      <div className="space-y-1">
+                        {newOrganization.departments.map((dept, index) => (
+                          <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md">
+                            <span className="text-sm">{dept}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeDepartment(index)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Campuses */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Campuses</label>
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={newCampus}
+                        onChange={(e) => setNewCampus(e.target.value)}
+                        className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="Add campus (e.g., Main Campus, North Campus)"
+                        onKeyPress={(e) => e.key === 'Enter' && addCampus()}
+                      />
+                      <button
+                        type="button"
+                        onClick={addCampus}
+                        className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-1"
+                      >
+                        <Plus size={16} />
+                        Add
+                      </button>
+                    </div>
+                    {newOrganization.campuses.length > 0 && (
+                      <div className="space-y-1">
+                        {newOrganization.campuses.map((campus, index) => (
+                          <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md">
+                            <span className="text-sm">{campus}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeCampus(index)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
               <div>
                 <label htmlFor="orgStatus" className="block text-sm font-medium text-gray-700">Status <span className="text-red-500">*</span></label>
                 <select
@@ -783,20 +1053,20 @@ const EnterpriseDashboard: React.FC = () => {
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
-              <div className="flex justify-end space-x-2">
-                <button
-                  onClick={() => setShowCreateOrg(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCreateOrganization}
-                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
-                >
-                  Create Organization
-                </button>
-              </div>
+            </div>
+            <div className="flex justify-end space-x-2 mt-6 pt-4 border-t">
+              <button
+                onClick={() => setShowCreateOrg(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateOrganization}
+                className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
+              >
+                Create Organization
+              </button>
             </div>
           </div>
         </div>
