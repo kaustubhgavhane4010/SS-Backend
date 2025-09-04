@@ -223,6 +223,14 @@ const EnterpriseDashboard: React.FC = () => {
 
   const handleCreateOrganization = async () => {
     try {
+      // Validate required fields
+      if (!newOrganization.name.trim()) {
+        alert('Organization name is required!');
+        return;
+      }
+      
+      console.log('Creating organization with data:', newOrganization);
+      
       // Both Admin and Supreme Admin can create organizations using the same endpoint
       const response = await api.post('/organizational/organizations', newOrganization);
       if (response.data?.success) {
@@ -260,9 +268,10 @@ const EnterpriseDashboard: React.FC = () => {
           loadDashboardData();
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to create organization:', error);
-      alert('Failed to create organization. Please try again.');
+      const errorMessage = error.response?.data?.message || error.message || 'Unknown error occurred';
+      alert(`Failed to create organization: ${errorMessage}`);
     }
   };
 
@@ -530,7 +539,7 @@ const EnterpriseDashboard: React.FC = () => {
                               {org.settings?.foundingYear && (
                                 <div>Founded: {org.settings.foundingYear}</div>
                               )}
-                              {org.settings?.departments && org.settings.departments.length > 0 && (
+                                  {org.settings?.departments && org.settings.departments.length > 0 && (
                                 <div>Departments: {org.settings.departments.length}</div>
                               )}
                               {org.settings?.campuses && org.settings.campuses.length > 0 && (
