@@ -118,15 +118,39 @@ const EnterpriseDashboard: React.FC = () => {
         if (usersRes.data?.success) setUsers(usersRes.data.data);
       } else {
         // Supreme Admin users - use enterprise endpoints
-      const [statsRes, orgsRes, usersRes] = await Promise.all([
-        api.get('/organizational/enterprise-stats'),
-        api.get('/organizational/organizations'),
-        api.get('/organizational/users')
-      ]);
+        console.log('Loading data for Supreme Admin...');
+        const [statsRes, orgsRes, usersRes] = await Promise.all([
+          api.get('/organizational/enterprise-stats'),
+          api.get('/organizational/organizations'),
+          api.get('/organizational/users')
+        ]);
 
-      if (statsRes.data?.success) setStats(statsRes.data.data);
-      if (orgsRes.data?.success) setOrganizations(orgsRes.data.data);
-      if (usersRes.data?.success) setUsers(usersRes.data.data);
+        console.log('API Responses:', {
+          stats: statsRes.data,
+          organizations: orgsRes.data,
+          users: usersRes.data
+        });
+
+        if (statsRes.data?.success) {
+          console.log('Setting stats:', statsRes.data.data);
+          setStats(statsRes.data.data);
+        } else {
+          console.log('Stats API failed:', statsRes.data);
+        }
+        
+        if (orgsRes.data?.success) {
+          console.log('Setting organizations:', orgsRes.data.data);
+          setOrganizations(orgsRes.data.data);
+        } else {
+          console.log('Organizations API failed:', orgsRes.data);
+        }
+        
+        if (usersRes.data?.success) {
+          console.log('Setting users:', usersRes.data.data);
+          setUsers(usersRes.data.data);
+        } else {
+          console.log('Users API failed:', usersRes.data);
+        }
       }
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
