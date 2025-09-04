@@ -67,10 +67,10 @@ const EnterpriseDashboard: React.FC = () => {
       setLoading(true);
       
       if (isAdmin) {
-        // Admin users - use organization-scoped endpoints for users, but enterprise endpoints for organizations
+        // Admin users - use admin endpoints for all data
         const [statsRes, orgsRes, usersRes] = await Promise.all([
           api.get('/admin/dashboard-stats'),
-          api.get('/organizational/organizations'),
+          api.get('/admin/organizations'),
           api.get('/admin/users')
         ]);
 
