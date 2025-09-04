@@ -831,14 +831,14 @@ const EnterpriseDashboard: React.FC = () => {
       {/* Create Organization Modal */}
       {showCreateOrg && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-2xl max-h-full">
+          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">Add New Organization</h3>
               <button onClick={() => setShowCreateOrg(false)} className="text-gray-400 hover:text-gray-500">
                 <X size={20} />
               </button>
             </div>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
+            <div className="space-y-4">
               {/* Basic Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -1222,7 +1222,7 @@ const EnterpriseDashboard: React.FC = () => {
       {/* Edit Organization Modal */}
       {showEditOrg && editingOrg && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-md max-h-full">
+          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">Edit Organization</h3>
               <button onClick={() => setShowEditOrg(false)} className="text-gray-400 hover:text-gray-500">
@@ -1253,6 +1253,172 @@ const EnterpriseDashboard: React.FC = () => {
                 </select>
               </div>
               <div>
+                <label htmlFor="editOrgDescription" className="block text-sm font-medium text-gray-700">Description</label>
+                <textarea
+                  id="editOrgDescription"
+                  defaultValue={editingOrg.settings?.description || ''}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  rows={3}
+                  placeholder="Brief description of the organization"
+                />
+              </div>
+
+              {/* Contact Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="editOrgAddress" className="block text-sm font-medium text-gray-700">Address</label>
+                  <input
+                    type="text"
+                    id="editOrgAddress"
+                    defaultValue={editingOrg.settings?.address || ''}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="Street address, city, country"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="editOrgPhone" className="block text-sm font-medium text-gray-700">Phone</label>
+                  <input
+                    type="tel"
+                    id="editOrgPhone"
+                    defaultValue={editingOrg.settings?.phone || ''}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="+1 (555) 123-4567"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="editOrgEmail" className="block text-sm font-medium text-gray-700">Email</label>
+                  <input
+                    type="email"
+                    id="editOrgEmail"
+                    defaultValue={editingOrg.settings?.email || ''}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="contact@organization.com"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="editOrgWebsite" className="block text-sm font-medium text-gray-700">Website</label>
+                  <input
+                    type="url"
+                    id="editOrgWebsite"
+                    defaultValue={editingOrg.settings?.website || ''}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="https://www.organization.com"
+                  />
+                </div>
+              </div>
+
+              {/* University-specific fields */}
+              {editingOrg.type === 'university' && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="editOrgFoundingYear" className="block text-sm font-medium text-gray-700">Founding Year</label>
+                      <input
+                        type="number"
+                        id="editOrgFoundingYear"
+                        defaultValue={editingOrg.settings?.foundingYear || ''}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="e.g., 1965"
+                        min="1800"
+                        max="2024"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="editOrgAccreditation" className="block text-sm font-medium text-gray-700">Accreditation</label>
+                      <input
+                        type="text"
+                        id="editOrgAccreditation"
+                        defaultValue={editingOrg.settings?.accreditation || ''}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="e.g., AACSB, ABET, etc."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Departments */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Departments</label>
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={newDepartment}
+                        onChange={(e) => setNewDepartment(e.target.value)}
+                        className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="Add department (e.g., Computer Science)"
+                        onKeyPress={(e) => e.key === 'Enter' && addDepartment()}
+                      />
+                      <button
+                        type="button"
+                        onClick={addDepartment}
+                        className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-1"
+                      >
+                        <Plus size={16} />
+                        Add
+                      </button>
+                    </div>
+                    {(editingOrg.settings?.departments && editingOrg.settings.departments.length > 0) && (
+                      <div className="space-y-1">
+                        {editingOrg.settings.departments.map((dept, index) => (
+                          <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md">
+                            <span className="text-sm">{dept}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeDepartment(index)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Campuses */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Campuses</label>
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={newCampus}
+                        onChange={(e) => setNewCampus(e.target.value)}
+                        className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="Add campus (e.g., Main Campus, North Campus)"
+                        onKeyPress={(e) => e.key === 'Enter' && addCampus()}
+                      />
+                      <button
+                        type="button"
+                        onClick={addCampus}
+                        className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-1"
+                      >
+                        <Plus size={16} />
+                        Add
+                      </button>
+                    </div>
+                    {(editingOrg.settings?.campuses && editingOrg.settings.campuses.length > 0) && (
+                      <div className="space-y-1">
+                        {editingOrg.settings.campuses.map((campus, index) => (
+                          <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md">
+                            <span className="text-sm">{campus}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeCampus(index)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              <div>
                 <label htmlFor="editOrgStatus" className="block text-sm font-medium text-gray-700">Status <span className="text-red-500">*</span></label>
                 <select
                   id="editOrgStatus"
@@ -1263,23 +1429,23 @@ const EnterpriseDashboard: React.FC = () => {
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
-              <div className="flex justify-end space-x-2">
-                <button
-                  onClick={() => setShowEditOrg(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    alert('Edit functionality coming soon!');
-                    setShowEditOrg(false);
-                  }}
-                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
-                >
-                  Update Organization
-                </button>
-              </div>
+            </div>
+            <div className="flex justify-end space-x-2 mt-6 pt-4 border-t">
+              <button
+                onClick={() => setShowEditOrg(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  alert('Edit functionality coming soon!');
+                  setShowEditOrg(false);
+                }}
+                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+              >
+                Update Organization
+              </button>
             </div>
           </div>
         </div>
