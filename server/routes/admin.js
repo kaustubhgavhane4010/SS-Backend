@@ -88,8 +88,11 @@ router.get('/users', [authenticateToken, requireAdmin], async (req, res) => {
     const users = await dbQuery(`
       SELECT 
         u.id, u.name, u.email, u.role, u.status, u.created_at, u.updated_at, u.last_login,
+        u.organization_id,
+        o.name as organization_name,
         c.name as created_by_name
       FROM users u
+      LEFT JOIN organizations o ON u.organization_id = o.id
       LEFT JOIN users c ON u.created_by = c.id
       WHERE u.organization_id = ? AND u.status = 'active'
       ORDER BY u.created_at DESC
