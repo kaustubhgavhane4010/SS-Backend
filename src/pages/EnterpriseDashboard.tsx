@@ -67,42 +67,36 @@ const EnterpriseDashboard: React.FC = () => {
       setLoading(true);
       
       if (isAdmin) {
-        // Admin users - use admin endpoints for user data, organizational endpoints for organizations
-        const [statsRes, orgsRes, usersRes] = await Promise.all([
+        // Admin users - use organization-scoped endpoints
+        const [statsRes, usersRes] = await Promise.all([
           api.get('/admin/dashboard-stats'),
-          api.get('/organizational/organizations'),
           api.get('/admin/users')
         ]);
 
-        // Set all organizations for admin (so they can see organizations they created)
-        if (orgsRes.data?.success) {
-          setOrganizations(orgsRes.data.data);
+        if (statsRes.data?.success) {
+          // Transform admin stats to match enterprise stats format
+          const adminStats = statsRes.data.data;
+          setStats({
+            organizations: {
+              total_organizations: 1,
+              companies: adminStats.organization.type === 'company' ? 1 : 0,
+              universities: adminStats.organization.type === 'university' ? 1 : 0,
+              departments: adminStats.organization.type === 'department' ? 1 : 0,
+            },
+            users: {
+              total_users: adminStats.stats.total_users,
+              admins: 0, // Admin can't see other admins
+              university_admins: adminStats.stats.university_admins,
+              senior_leadership: adminStats.stats.senior_leadership,
+              deans: adminStats.stats.deans,
+              managers: adminStats.stats.managers,
+              team_members: adminStats.stats.team_members,
+            },
+            recentUsers: adminStats.recentUsers
+          });
           
-          // Calculate organization stats from all organizations
-          const orgs: Organization[] = orgsRes.data.data;
-          const orgStats = {
-            total_organizations: orgs.length,
-            companies: orgs.filter((org: Organization) => org.type === 'company').length,
-            universities: orgs.filter((org: Organization) => org.type === 'university').length,
-            departments: orgs.filter((org: Organization) => org.type === 'department').length,
-          };
-          
-          if (statsRes.data?.success) {
-            const adminStats = statsRes.data.data;
-            setStats({
-              organizations: orgStats,
-              users: {
-                total_users: adminStats.stats.total_users,
-                admins: 0, // Admin can't see other admins
-                university_admins: adminStats.stats.university_admins,
-                senior_leadership: adminStats.stats.senior_leadership,
-                deans: adminStats.stats.deans,
-                managers: adminStats.stats.managers,
-                team_members: adminStats.stats.team_members,
-              },
-              recentUsers: adminStats.recentUsers
-            });
-          }
+          // Set organization data for admin
+          setOrganizations([adminStats.organization]);
         }
         
         if (usersRes.data?.success) setUsers(usersRes.data.data);
@@ -187,7 +181,23 @@ const EnterpriseDashboard: React.FC = () => {
         alert('Organization created successfully!');
         setShowCreateOrg(false);
         setNewOrganization({ name: '', type: 'company', status: 'active' });
-        loadDashboardData(); // Refresh data
+        
+        // For Admin users, refresh data to show the new organization
+        if (isAdmin) {
+          // Admin users need to refresh their organization list
+          const orgsRes = await api.get('/organizational/organizations');
+          if (orgsRes.data?.success) {
+            const allOrgs = orgsRes.data.data;
+            // Filter to show only organizations created by this admin or their own organization
+            const filteredOrgs = allOrgs.filter((org: Organization) => 
+              org.created_by === user?.id || org.id === user?.organization_id
+            );
+            setOrganizations(filteredOrgs);
+          }
+        } else {
+          // Supreme Admin - refresh all data
+          loadDashboardData();
+        }
       }
     } catch (error) {
       console.error('Failed to create organization:', error);
