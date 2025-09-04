@@ -2,7 +2,7 @@ import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult } from 'express-validator';
 import { dbGet, dbRun, dbQuery } from '../database/mysql-helpers.js';
-import { authenticateToken, requireSupremeAdmin } from '../middleware/auth.js';
+import { authenticateToken, requireSupremeAdmin, requireAdminOrSupremeAdmin } from '../middleware/auth.js';
 import bcrypt from 'bcryptjs';
 
 const router = express.Router();
@@ -65,7 +65,7 @@ router.get('/enterprise-stats', [authenticateToken, requireSupremeAdmin], async 
 });
 
 // Get all organizations
-router.get('/organizations', [authenticateToken, requireAdmin], async (req, res) => {
+router.get('/organizations', [authenticateToken, requireSupremeAdmin], async (req, res) => {
   try {
     
     
@@ -120,7 +120,7 @@ router.get('/organizations', [authenticateToken, requireAdmin], async (req, res)
 // Create new organization
 router.post('/organizations', [
   authenticateToken,
-  requireAdmin, // Allow both Supreme Admin and Admin users
+  requireAdminOrSupremeAdmin,
   body('name').trim().isLength({ min: 2, max: 100 }),
   body('type').isIn(['company', 'university', 'department']),
   body('parent_organization_id').optional().isUUID()
@@ -158,9 +158,33 @@ router.post('/organizations', [
     } = req.body;
     
     const organizationId = uuidv4();
+    const userId = req.user.userId;
+    const userRole = req.user.role;
 
-    // Convert undefined to null for MySQL
-    const parentOrgId = parent_organization_id || null;
+    // For Admin users, restrict organization creation to their own organization hierarchy
+    let parentOrgId = parent_organization_id || null;
+    
+    if (userRole === 'admin') {
+      // Get admin's organization
+      const adminUser = await dbGet('SELECT organization_id FROM users WHERE id = ?', [userId]);
+      if (!adminUser || !adminUser.organization_id) {
+        return res.status(403).json({
+          success: false,
+          message: 'Admin not associated with any organization'
+        });
+      }
+      
+      // Admin can only create departments under their own organization
+      if (type !== 'department') {
+        return res.status(403).json({
+          success: false,
+          message: 'Admin can only create departments under their organization'
+        });
+      }
+      
+      // Set parent organization to admin's organization
+      parentOrgId = adminUser.organization_id;
+    }
     
     // Create settings object with additional organization data
     const orgSettings = {
@@ -178,7 +202,7 @@ router.post('/organizations', [
     await dbRun(`
       INSERT INTO organizations (id, name, type, status, created_by, parent_organization_id, settings)
       VALUES (?, ?, ?, ?, ?, ?, ?)
-    `, [organizationId, name, type, 'active', req.user.userId, parentOrgId, JSON.stringify(orgSettings)]);
+    `, [organizationId, name, type, 'active', userId, parentOrgId, JSON.stringify(orgSettings)]);
 
     const newOrganization = await dbGet(`
       SELECT 

@@ -100,32 +100,27 @@ app.use('/api/users', userRoutes);
 app.use('/api/organizational', organizationalRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Root endpoint for Railway health checks
-app.get('/', (req, res) => {
-  console.log('🏠 Root endpoint requested at:', new Date().toISOString());
-  res.status(200).json({ 
-    status: 'healthy', 
-    message: 'BNU Student Support Ticketing System is running',
-    timestamp: new Date().toISOString()
-  });
-});
-
 // Health check endpoint for Railway (simple, no database dependency)
 app.get('/health', (req, res) => {
   console.log('🏥 Health check requested at:', new Date().toISOString());
-  console.log('🏥 Health check from IP:', req.ip || req.connection.remoteAddress);
-  console.log('🏥 Health check headers:', req.headers);
-  
-  // Always return 200 OK for Railway health checks
-  res.status(200).json({ 
-    status: 'healthy', 
-    timestamp: new Date().toISOString(),
-    message: 'Server is running',
-    port: PORT,
-    environment: process.env.NODE_ENV || 'development',
-    uptime: process.uptime(),
-    railway: process.env.RAILWAY_ENVIRONMENT === 'true'
-  });
+  try {
+    res.status(200).json({ 
+      status: 'healthy', 
+      timestamp: new Date().toISOString(),
+      message: 'Server is running',
+      port: PORT,
+      environment: process.env.NODE_ENV || 'development',
+      uptime: process.uptime(),
+      memory: process.memoryUsage()
+    });
+  } catch (error) {
+    console.error('Health check error:', error);
+    res.status(500).json({
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      error: error.message
+    });
+  }
 });
 
 // Health check endpoint
@@ -165,76 +160,35 @@ app.use('/api/*', (req, res) => {
   });
 });
 
-// Bulletproof server startup - guaranteed to work for Railway
-console.log('🚀 Starting server with bulletproof configuration...');
-console.log('🔧 Environment check:');
-console.log('  PORT:', process.env.PORT || '5000 (default)');
-console.log('  NODE_ENV:', process.env.NODE_ENV || 'development');
-console.log('  RAILWAY_ENVIRONMENT:', process.env.RAILWAY_ENVIRONMENT || 'Not set');
-
-// Start server immediately - no async, no database dependencies
-const server = app.listen(PORT, '0.0.0.0', (err) => {
-  if (err) {
-    console.error('❌ Server startup failed:', err);
+// Initialize database and start server
+const startServer = async () => {
+  try {
+    // Start server first to ensure healthcheck is available immediately
+    const server = app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📊 API available at http://localhost:${PORT}/api`);
+      console.log(`🏥 Health check: http://localhost:${PORT}/health`);
+      console.log(`🏥 API Health check: http://localhost:${PORT}/api/health`);
+      console.log('✅ Server is ready to accept requests');
+    });
+    
+    // Initialize database in background (non-blocking)
+    setImmediate(async () => {
+      try {
+        console.log('🔄 Initializing database in background...');
+        await initDatabase();
+        console.log('✅ Database initialized successfully');
+      } catch (dbError) {
+        console.error('⚠️ Database initialization failed, but server is running:', dbError.message);
+        console.log('🔧 Health check will still work, but database features may not function');
+        console.log('🔧 You can restart the server to retry database initialization');
+      }
+    });
+    
+  } catch (error) {
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
-  
-  console.log('✅ SERVER STARTED SUCCESSFULLY');
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌐 Server bound to 0.0.0.0:${PORT}`);
-  console.log(`📊 API available at http://localhost:${PORT}/api`);
-  console.log(`🏥 Health check: http://localhost:${PORT}/health`);
-  console.log(`🏠 Root endpoint: http://localhost:${PORT}/`);
-  console.log('✅ Server is ready to accept requests');
-  console.log('✅ Railway health checks should now pass');
-});
+};
 
-// Handle server errors
-server.on('error', (err) => {
-  console.error('❌ Server error:', err);
-  if (err.code === 'EADDRINUSE') {
-    console.error(`❌ Port ${PORT} is already in use`);
-  }
-  process.exit(1);
-});
-
-// Initialize database in background - completely separate from server startup
-setTimeout(async () => {
-  console.log('🔄 Starting database initialization in background...');
-  try {
-    await initDatabase();
-    console.log('✅ Database initialized successfully');
-  } catch (dbError) {
-    console.error('⚠️ Database initialization failed:', dbError.message);
-    console.log('🔧 Server continues running - database features may not work');
-    console.log('🔧 Health checks will still work perfectly');
-  }
-}, 2000); // Wait 2 seconds to ensure server is fully started
-
-// Graceful shutdown handling
-process.on('SIGTERM', () => {
-  console.log('🛑 SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    console.log('✅ Server closed');
-    process.exit(0);
-  });
-});
-
-process.on('SIGINT', () => {
-  console.log('🛑 SIGINT received, shutting down gracefully');
-  server.close(() => {
-    console.log('✅ Server closed');
-    process.exit(0);
-  });
-});
-
-// Keep the process alive
-process.on('uncaughtException', (err) => {
-  console.error('❌ Uncaught Exception:', err);
-  // Don't exit - let the server keep running
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-  // Don't exit - let the server keep running
-});
+startServer();

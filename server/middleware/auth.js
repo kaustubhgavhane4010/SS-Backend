@@ -88,6 +88,16 @@ export const requireSupremeAdmin = (req, res, next) => {
   next();
 };
 
+export const requireAdminOrSupremeAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin' && req.user.role !== 'supreme_admin') {
+    return res.status(403).json({
+      success: false,
+      message: 'Admin or Supreme Admin access required'
+    });
+  }
+  next();
+};
+
 export const requireStaff = (req, res, next) => {
   if (!['staff', 'admin', 'university_admin', 'senior_leadership', 'dean', 'manager', 'team_member'].includes(req.user.role)) {
     return res.status(403).json({

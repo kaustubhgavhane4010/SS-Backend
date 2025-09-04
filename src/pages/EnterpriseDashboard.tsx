@@ -223,14 +223,22 @@ const EnterpriseDashboard: React.FC = () => {
 
   const handleCreateOrganization = async () => {
     try {
-      // Both Admin and Supreme Admin can create organizations using the same endpoint
-      const response = await api.post('/organizational/organizations', newOrganization);
+      // Prepare organization data based on user role
+      let orgData = { ...newOrganization };
+      
+      // For Admin users, ensure they can only create departments
+      if (isAdmin && orgData.type !== 'department') {
+        alert('Admin users can only create departments under their organization.');
+        return;
+      }
+      
+      const response = await api.post('/organizational/organizations', orgData);
       if (response.data?.success) {
         alert('Organization created successfully!');
         setShowCreateOrg(false);
         setNewOrganization({ 
           name: '', 
-          type: 'company', 
+          type: isAdmin ? 'department' : 'company', // Default to department for admin
           status: 'active',
           description: '',
           address: '',
@@ -260,9 +268,10 @@ const EnterpriseDashboard: React.FC = () => {
           loadDashboardData();
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to create organization:', error);
-      alert('Failed to create organization. Please try again.');
+      const errorMessage = error.response?.data?.message || 'Failed to create organization. Please try again.';
+      alert(errorMessage);
     }
   };
 
@@ -859,11 +868,17 @@ const EnterpriseDashboard: React.FC = () => {
                     value={newOrganization.type}
                     onChange={(e) => setNewOrganization({ ...newOrganization, type: e.target.value })}
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    disabled={isAdmin} // Admin can only create departments
                   >
-                    <option value="company">Company</option>
-                    <option value="university">University</option>
+                    {!isAdmin && <option value="company">Company</option>}
+                    {!isAdmin && <option value="university">University</option>}
                     <option value="department">Department</option>
                   </select>
+                  {isAdmin && (
+                    <p className="mt-1 text-sm text-gray-500">
+                      Admin users can only create departments under their organization.
+                    </p>
+                  )}
                 </div>
               </div>
 
