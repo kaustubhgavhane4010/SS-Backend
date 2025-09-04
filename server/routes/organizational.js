@@ -111,6 +111,7 @@ router.post('/organizations', [
     console.log('🏢 Organization creation request:', {
       body: req.body,
       user: req.user,
+      userId: req.user?.userId,
       headers: req.headers
     });
     
