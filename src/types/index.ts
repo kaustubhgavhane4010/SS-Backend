@@ -31,7 +31,7 @@ export interface OrganizationSettings {
 export interface Organization {
   id: string;
   name: string;
-  type: 'company' | 'university' | 'department';
+  type: 'company' | 'university' | 'department' | 'government' | 'non-profit';
   status: 'active' | 'inactive';
   created_by: string;
   created_at: string;

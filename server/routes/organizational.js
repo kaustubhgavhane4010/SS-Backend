@@ -104,7 +104,7 @@ router.post('/organizations', [
   authenticateToken,
   requireSupremeAdmin,
   body('name').trim().isLength({ min: 2, max: 100 }),
-  body('type').isIn(['company', 'university', 'department']),
+  body('type').isIn(['company', 'university', 'department', 'government', 'non-profit']),
   body('parent_organization_id').optional().isUUID()
 ], async (req, res) => {
   try {
