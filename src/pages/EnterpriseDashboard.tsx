@@ -81,9 +81,8 @@ const EnterpriseDashboard: React.FC = () => {
       
       if (isAdmin) {
         // Admin users - use organization-scoped endpoints
-        const [statsRes, orgsRes, usersRes] = await Promise.all([
+        const [statsRes, usersRes] = await Promise.all([
           api.get('/admin/dashboard-stats'),
-          api.get('/organizational/organizations'),
           api.get('/admin/users')
         ]);
 
@@ -108,60 +107,26 @@ const EnterpriseDashboard: React.FC = () => {
             },
             recentUsers: adminStats.recentUsers
           });
-        }
-        
-        // Set organizations for admin (all organizations they can see)
-        if (orgsRes.data?.success) {
-          setOrganizations(orgsRes.data.data);
+          
+          // Set organization data for admin
+          setOrganizations([adminStats.organization]);
         }
         
         if (usersRes.data?.success) setUsers(usersRes.data.data);
       } else {
         // Supreme Admin users - use enterprise endpoints
-        console.log('Loading data for Supreme Admin...');
         const [statsRes, orgsRes, usersRes] = await Promise.all([
           api.get('/organizational/enterprise-stats'),
           api.get('/organizational/organizations'),
           api.get('/organizational/users')
         ]);
 
-        console.log('API Responses:', {
-          stats: statsRes.data,
-          organizations: orgsRes.data,
-          users: usersRes.data
-        });
-
-        if (statsRes.data?.success) {
-          console.log('Setting stats:', statsRes.data.data);
-          setStats(statsRes.data.data);
-        } else {
-          console.log('Stats API failed:', statsRes.data);
-        }
-        
-        if (orgsRes.data?.success) {
-          console.log('Setting organizations:', orgsRes.data.data);
-          setOrganizations(orgsRes.data.data);
-        } else {
-          console.log('Organizations API failed:', orgsRes.data);
-        }
-        
-        if (usersRes.data?.success) {
-          console.log('Setting users:', usersRes.data.data);
-          setUsers(usersRes.data.data);
-        } else {
-          console.log('Users API failed:', usersRes.data);
-        }
+        if (statsRes.data?.success) setStats(statsRes.data.data);
+        if (orgsRes.data?.success) setOrganizations(orgsRes.data.data);
+        if (usersRes.data?.success) setUsers(usersRes.data.data);
       }
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
-      // Set default empty data to prevent blank dashboard
-      setStats({
-        organizations: { total_organizations: 0, companies: 0, universities: 0, departments: 0 },
-        users: { total_users: 0, admins: 0, university_admins: 0, senior_leadership: 0, deans: 0, managers: 0, team_members: 0 },
-        recentUsers: []
-      });
-      setOrganizations([]);
-      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -258,14 +223,6 @@ const EnterpriseDashboard: React.FC = () => {
 
   const handleCreateOrganization = async () => {
     try {
-      // Validate required fields
-      if (!newOrganization.name.trim()) {
-        alert('Organization name is required!');
-        return;
-      }
-      
-      console.log('Creating organization with data:', newOrganization);
-      
       // Both Admin and Supreme Admin can create organizations using the same endpoint
       const response = await api.post('/organizational/organizations', newOrganization);
       if (response.data?.success) {
@@ -303,10 +260,9 @@ const EnterpriseDashboard: React.FC = () => {
           loadDashboardData();
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to create organization:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Unknown error occurred';
-      alert(`Failed to create organization: ${errorMessage}`);
+      alert('Failed to create organization. Please try again.');
     }
   };
 
@@ -494,37 +450,37 @@ const EnterpriseDashboard: React.FC = () => {
 
           {/* Recent Users - Hidden for Admin users to protect privacy */}
           {!isAdmin && (
-          <div className="bg-white shadow rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Recent Users</h3>
-              <div className="flow-root">
-                <ul className="-my-5 divide-y divide-gray-200">
-                  {stats.recentUsers.map((user) => (
-                    <li key={user.id} className="py-4">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex-shrink-0">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getRoleColor(user.role)}`}>
-                            <span className="text-white text-sm font-medium">
-                              {user.name.charAt(0).toUpperCase()}
+            <div className="bg-white shadow rounded-lg">
+              <div className="px-4 py-5 sm:p-6">
+                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Recent Users</h3>
+                <div className="flow-root">
+                  <ul className="-my-5 divide-y divide-gray-200">
+                    {stats.recentUsers.map((user) => (
+                      <li key={user.id} className="py-4">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex-shrink-0">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getRoleColor(user.role)}`}>
+                              <span className="text-white text-sm font-medium">
+                                {user.name.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+                            <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                          </div>
+                          <div className="flex-shrink-0">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(user.role)} text-white`}>
+                              {getRoleDisplayName(user.role)}
                             </span>
                           </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-                          <p className="text-sm text-gray-500 truncate">{user.email}</p>
-                        </div>
-                        <div className="flex-shrink-0">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(user.role)} text-white`}>
-                            {getRoleDisplayName(user.role)}
-                          </span>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
           )}
         </div>
       )}
@@ -532,16 +488,16 @@ const EnterpriseDashboard: React.FC = () => {
       {currentTab === 'organizations' && (
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Organizations</h3>
-              <button 
-                onClick={() => setShowCreateOrg(true)}
-                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2"
-              >
-                <Plus size={16} />
-                Add Organization
-              </button>
-            </div>
+                          <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">Organizations</h3>
+                <button 
+                  onClick={() => setShowCreateOrg(true)}
+                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  Add Organization
+                </button>
+              </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
@@ -812,26 +768,26 @@ const EnterpriseDashboard: React.FC = () => {
                   <option value="university_admin">University Admin</option>
                   {!isAdmin && (
                     <>
-                  <option value="admin">Admin</option>
-                  <option value="supreme_admin">Supreme Admin</option>
+                      <option value="admin">Admin</option>
+                      <option value="supreme_admin">Supreme Admin</option>
                     </>
                   )}
                 </select>
               </div>
               {!isAdmin && (
-              <div>
-                <label htmlFor="organization_id" className="block text-sm font-medium text-gray-700">Organization <span className="text-red-500">*</span></label>
-                <select
-                  id="organization_id"
-                  value={newUser.organization_id}
-                  onChange={(e) => setNewUser({ ...newUser, organization_id: e.target.value })}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                >
-                  {organizations.map((org) => (
-                    <option key={org.id} value={org.id}>{org.name}</option>
-                  ))}
-                </select>
-              </div>
+                <div>
+                  <label htmlFor="organization_id" className="block text-sm font-medium text-gray-700">Organization <span className="text-red-500">*</span></label>
+                  <select
+                    id="organization_id"
+                    value={newUser.organization_id}
+                    onChange={(e) => setNewUser({ ...newUser, organization_id: e.target.value })}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    {organizations.map((org) => (
+                      <option key={org.id} value={org.id}>{org.name}</option>
+                    ))}
+                  </select>
+                </div>
               )}
               <div>
                 <label htmlFor="department" className="block text-sm font-medium text-gray-700">Department</label>
@@ -885,31 +841,31 @@ const EnterpriseDashboard: React.FC = () => {
             <div className="space-y-4">
               {/* Basic Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="orgName" className="block text-sm font-medium text-gray-700">Organization Name <span className="text-red-500">*</span></label>
-                <input
-                  type="text"
-                  id="orgName"
-                  value={newOrganization.name}
-                  onChange={(e) => setNewOrganization({ ...newOrganization, name: e.target.value })}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                <div>
+                  <label htmlFor="orgName" className="block text-sm font-medium text-gray-700">Organization Name <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    id="orgName"
+                    value={newOrganization.name}
+                    onChange={(e) => setNewOrganization({ ...newOrganization, name: e.target.value })}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     placeholder="Enter organization name"
-                />
-              </div>
-              <div>
-                <label htmlFor="orgType" className="block text-sm font-medium text-gray-700">Type <span className="text-red-500">*</span></label>
-                <select
-                  id="orgType"
-                  value={newOrganization.type}
-                  onChange={(e) => setNewOrganization({ ...newOrganization, type: e.target.value })}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                >
-                  <option value="company">Company</option>
-                  <option value="university">University</option>
-                  <option value="government">Government</option>
-                  <option value="non-profit">Non-Profit</option>
-                </select>
-              </div>
+                  />
+                </div>
+                <div>
+                  <label htmlFor="orgType" className="block text-sm font-medium text-gray-700">Type <span className="text-red-500">*</span></label>
+                  <select
+                    id="orgType"
+                    value={newOrganization.type}
+                    onChange={(e) => setNewOrganization({ ...newOrganization, type: e.target.value })}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    <option value="company">Company</option>
+                    <option value="university">University</option>
+                    <option value="government">Government</option>
+                    <option value="non-profit">Non-Profit</option>
+                  </select>
+                </div>
               </div>
 
               <div>
@@ -1099,18 +1055,18 @@ const EnterpriseDashboard: React.FC = () => {
               </div>
             </div>
             <div className="flex justify-end space-x-2 mt-6 pt-4 border-t">
-                <button
-                  onClick={() => setShowCreateOrg(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCreateOrganization}
-                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
-                >
-                  Create Organization
-                </button>
+              <button
+                onClick={() => setShowCreateOrg(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateOrganization}
+                className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
+              >
+                Create Organization
+              </button>
             </div>
           </div>
         </div>
@@ -1475,21 +1431,21 @@ const EnterpriseDashboard: React.FC = () => {
               </div>
             </div>
             <div className="flex justify-end space-x-2 mt-6 pt-4 border-t">
-                <button
-                  onClick={() => setShowEditOrg(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    alert('Edit functionality coming soon!');
-                    setShowEditOrg(false);
-                  }}
+              <button
+                onClick={() => setShowEditOrg(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  alert('Edit functionality coming soon!');
+                  setShowEditOrg(false);
+                }}
                 className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-                >
-                  Update Organization
-                </button>
+              >
+                Update Organization
+              </button>
             </div>
           </div>
         </div>
