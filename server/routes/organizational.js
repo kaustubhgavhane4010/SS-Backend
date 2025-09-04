@@ -65,7 +65,7 @@ router.get('/enterprise-stats', [authenticateToken, requireSupremeAdmin], async 
 });
 
 // Get all organizations
-router.get('/organizations', [authenticateToken, requireSupremeAdmin], async (req, res) => {
+router.get('/organizations', [authenticateToken, requireAdmin], async (req, res) => {
   try {
     
     
@@ -120,7 +120,7 @@ router.get('/organizations', [authenticateToken, requireSupremeAdmin], async (re
 // Create new organization
 router.post('/organizations', [
   authenticateToken,
-  requireSupremeAdmin,
+  requireAdmin, // Allow both Supreme Admin and Admin users
   body('name').trim().isLength({ min: 2, max: 100 }),
   body('type').isIn(['company', 'university', 'department']),
   body('parent_organization_id').optional().isUUID()
