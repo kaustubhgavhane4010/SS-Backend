@@ -69,41 +69,6 @@ router.get('/dashboard-stats', [authenticateToken, requireAdmin], async (req, re
   }
 });
 
-// Get all organizations (for Admin users to see organizations they can create/manage)
-router.get('/organizations', [authenticateToken, requireAdmin], async (req, res) => {
-  try {
-    const organizations = await dbQuery(`
-      SELECT
-        o.id,
-        o.name,
-        o.type,
-        o.status,
-        o.created_at,
-        o.updated_at,
-        o.parent_organization_id,
-        o.settings,
-        c.name as created_by_name,
-        p.name as parent_organization_name
-      FROM organizations o
-      LEFT JOIN users c ON o.created_by = c.id
-      LEFT JOIN organizations p ON o.parent_organization_id = p.id
-      WHERE o.status = 'active'
-      ORDER BY o.created_at DESC
-    `);
-
-    res.json({
-      success: true,
-      data: organizations
-    });
-  } catch (error) {
-    console.error('Get organizations error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
-
 // Get all users in admin's organization
 router.get('/users', [authenticateToken, requireAdmin], async (req, res) => {
   try {

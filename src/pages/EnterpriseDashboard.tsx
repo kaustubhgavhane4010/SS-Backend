@@ -67,10 +67,10 @@ const EnterpriseDashboard: React.FC = () => {
       setLoading(true);
       
       if (isAdmin) {
-        // Admin users - use admin endpoints for all data
+        // Admin users - use admin endpoints for user data, organizational endpoints for organizations
         const [statsRes, orgsRes, usersRes] = await Promise.all([
           api.get('/admin/dashboard-stats'),
-          api.get('/admin/organizations'),
+          api.get('/organizational/organizations'),
           api.get('/admin/users')
         ]);
 
@@ -104,6 +104,7 @@ const EnterpriseDashboard: React.FC = () => {
             });
           }
         }
+        
         if (usersRes.data?.success) setUsers(usersRes.data.data);
       } else {
         // Supreme Admin users - use enterprise endpoints
@@ -416,16 +417,16 @@ const EnterpriseDashboard: React.FC = () => {
       {currentTab === 'organizations' && (
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Organizations</h3>
-              <button 
-                onClick={() => setShowCreateOrg(true)}
-                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2"
-              >
-                <Plus size={16} />
-                Add Organization
-              </button>
-            </div>
+                          <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">Organizations</h3>
+                <button 
+                  onClick={() => setShowCreateOrg(true)}
+                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  Add Organization
+                </button>
+              </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
