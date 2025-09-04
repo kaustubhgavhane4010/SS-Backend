@@ -2,7 +2,7 @@ import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult } from 'express-validator';
 import { dbGet, dbRun, dbQuery } from '../database/mysql-helpers.js';
-import { authenticateToken, requireSupremeAdmin } from '../middleware/auth.js';
+import { authenticateToken, requireSupremeAdmin, requireAdmin } from '../middleware/auth.js';
 import bcrypt from 'bcryptjs';
 
 const router = express.Router();
@@ -96,7 +96,7 @@ router.get('/organizations', [authenticateToken, requireSupremeAdmin], async (re
 // Create new organization
 router.post('/organizations', [
   authenticateToken,
-  requireSupremeAdmin,
+  requireAdmin,
   body('name').trim().isLength({ min: 2, max: 100 }),
   body('type').isIn(['company', 'university', 'department']),
   body('parent_organization_id').optional().isUUID()

@@ -67,38 +67,43 @@ const EnterpriseDashboard: React.FC = () => {
       setLoading(true);
       
       if (isAdmin) {
-        // Admin users - use organization-scoped endpoints
-        const [statsRes, usersRes] = await Promise.all([
+        // Admin users - use organization-scoped endpoints for users, but enterprise endpoints for organizations
+        const [statsRes, orgsRes, usersRes] = await Promise.all([
           api.get('/admin/dashboard-stats'),
+          api.get('/organizational/organizations'),
           api.get('/admin/users')
         ]);
 
-        if (statsRes.data?.success) {
-          // Transform admin stats to match enterprise stats format
-          const adminStats = statsRes.data.data;
-          setStats({
-            organizations: {
-              total_organizations: 1,
-              companies: adminStats.organization.type === 'company' ? 1 : 0,
-              universities: adminStats.organization.type === 'university' ? 1 : 0,
-              departments: adminStats.organization.type === 'department' ? 1 : 0,
-            },
-            users: {
-              total_users: adminStats.stats.total_users,
-              admins: 0, // Admin can't see other admins
-              university_admins: adminStats.stats.university_admins,
-              senior_leadership: adminStats.stats.senior_leadership,
-              deans: adminStats.stats.deans,
-              managers: adminStats.stats.managers,
-              team_members: adminStats.stats.team_members,
-            },
-            recentUsers: adminStats.recentUsers
-          });
+        // Set all organizations for admin (so they can see organizations they created)
+        if (orgsRes.data?.success) {
+          setOrganizations(orgsRes.data.data);
           
-          // Set organization data for admin
-          setOrganizations([adminStats.organization]);
+          // Calculate organization stats from all organizations
+          const orgs: Organization[] = orgsRes.data.data;
+          const orgStats = {
+            total_organizations: orgs.length,
+            companies: orgs.filter((org: Organization) => org.type === 'company').length,
+            universities: orgs.filter((org: Organization) => org.type === 'university').length,
+            departments: orgs.filter((org: Organization) => org.type === 'department').length,
+          };
+          
+          if (statsRes.data?.success) {
+            const adminStats = statsRes.data.data;
+            setStats({
+              organizations: orgStats,
+              users: {
+                total_users: adminStats.stats.total_users,
+                admins: 0, // Admin can't see other admins
+                university_admins: adminStats.stats.university_admins,
+                senior_leadership: adminStats.stats.senior_leadership,
+                deans: adminStats.stats.deans,
+                managers: adminStats.stats.managers,
+                team_members: adminStats.stats.team_members,
+              },
+              recentUsers: adminStats.recentUsers
+            });
+          }
         }
-        
         if (usersRes.data?.success) setUsers(usersRes.data.data);
       } else {
         // Supreme Admin users - use enterprise endpoints
@@ -175,6 +180,7 @@ const EnterpriseDashboard: React.FC = () => {
 
   const handleCreateOrganization = async () => {
     try {
+      // Both Admin and Supreme Admin can create organizations using the same endpoint
       const response = await api.post('/organizational/organizations', newOrganization);
       if (response.data?.success) {
         alert('Organization created successfully!');
@@ -412,15 +418,13 @@ const EnterpriseDashboard: React.FC = () => {
           <div className="px-4 py-5 sm:p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg leading-6 font-medium text-gray-900">Organizations</h3>
-              {!isAdmin && (
-                <button 
-                  onClick={() => setShowCreateOrg(true)}
-                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2"
-                >
-                  <Plus size={16} />
-                  Add Organization
-                </button>
-              )}
+              <button 
+                onClick={() => setShowCreateOrg(true)}
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2"
+              >
+                <Plus size={16} />
+                Add Organization
+              </button>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -722,7 +726,7 @@ const EnterpriseDashboard: React.FC = () => {
       )}
 
       {/* Create Organization Modal */}
-      {showCreateOrg && !isAdmin && (
+      {showCreateOrg && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
           <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-md max-h-full">
             <div className="flex justify-between items-center mb-4">
