@@ -81,10 +81,28 @@ router.get('/organizations', [authenticateToken, requireSupremeAdmin], async (re
     `);
 
     // Parse JSON settings for each organization
-    const organizationsWithSettings = organizations.map(org => ({
-      ...org,
-      settings: org.settings ? JSON.parse(org.settings) : {}
-    }));
+    const organizationsWithSettings = organizations.map(org => {
+      let parsedSettings = {};
+      
+      if (org.settings) {
+        try {
+          // Check if it's already an object or a JSON string
+          if (typeof org.settings === 'string') {
+            parsedSettings = JSON.parse(org.settings);
+          } else if (typeof org.settings === 'object') {
+            parsedSettings = org.settings;
+          }
+        } catch (error) {
+          console.error('Error parsing settings for org:', org.id, 'Settings:', org.settings, 'Error:', error.message);
+          parsedSettings = {};
+        }
+      }
+      
+      return {
+        ...org,
+        settings: parsedSettings
+      };
+    });
 
     res.json({
       success: true,
@@ -174,9 +192,23 @@ router.post('/organizations', [
     `, [organizationId]);
 
     // Parse JSON settings
+    let parsedSettings = {};
+    if (newOrganization.settings) {
+      try {
+        if (typeof newOrganization.settings === 'string') {
+          parsedSettings = JSON.parse(newOrganization.settings);
+        } else if (typeof newOrganization.settings === 'object') {
+          parsedSettings = newOrganization.settings;
+        }
+      } catch (error) {
+        console.error('Error parsing settings for new org:', newOrganization.id, 'Settings:', newOrganization.settings, 'Error:', error.message);
+        parsedSettings = {};
+      }
+    }
+    
     const organizationWithSettings = {
       ...newOrganization,
-      settings: newOrganization.settings ? JSON.parse(newOrganization.settings) : {}
+      settings: parsedSettings
     };
 
     res.status(201).json({

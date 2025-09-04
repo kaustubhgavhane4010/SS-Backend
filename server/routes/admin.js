@@ -53,9 +53,23 @@ router.get('/dashboard-stats', [authenticateToken, requireAdmin], async (req, re
     `, [organizationId]);
 
     // Parse JSON settings
+    let parsedSettings = {};
+    if (organization.settings) {
+      try {
+        if (typeof organization.settings === 'string') {
+          parsedSettings = JSON.parse(organization.settings);
+        } else if (typeof organization.settings === 'object') {
+          parsedSettings = organization.settings;
+        }
+      } catch (error) {
+        console.error('Error parsing settings for admin org:', organization.id, 'Settings:', organization.settings, 'Error:', error.message);
+        parsedSettings = {};
+      }
+    }
+    
     const organizationWithSettings = {
       ...organization,
-      settings: organization.settings ? JSON.parse(organization.settings) : {}
+      settings: parsedSettings
     };
 
     res.json({
