@@ -88,7 +88,7 @@ const createTables = async () => {
       CREATE TABLE IF NOT EXISTS organizations (
         id VARCHAR(36) PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
-        type ENUM('company', 'university', 'department', 'government', 'non-profit') NOT NULL,
+        type ENUM('company', 'university', 'department') NOT NULL,
         status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
         created_by VARCHAR(36),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -115,21 +115,6 @@ const createTables = async () => {
         throw error;
       }
       // Constraint already exists, continue
-    }
-
-    // Update organization type ENUM to include new types (if needed)
-    try {
-      await pool.execute(`
-        ALTER TABLE organizations 
-        MODIFY COLUMN type ENUM('company', 'university', 'department', 'government', 'non-profit') NOT NULL
-      `);
-      console.log('✅ Updated organization type ENUM to include government and non-profit');
-    } catch (error) {
-      if (error.code === 'ER_DUP_ENTRY' || error.code === 'ER_CANT_DROP_FIELD_OR_KEY') {
-        console.log('ℹ️ Organization type ENUM already updated or no changes needed');
-      } else {
-        console.log('⚠️ Could not update organization type ENUM:', error.message);
-      }
     }
 
     // Tickets table

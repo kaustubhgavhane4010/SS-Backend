@@ -104,14 +104,13 @@ router.post('/organizations', [
   authenticateToken,
   requireSupremeAdmin,
   body('name').trim().isLength({ min: 2, max: 100 }),
-  body('type').isIn(['company', 'university', 'department', 'government', 'non-profit']),
+  body('type').isIn(['company', 'university', 'department']),
   body('parent_organization_id').optional().isUUID()
 ], async (req, res) => {
   try {
     console.log('🏢 Organization creation request:', {
       body: req.body,
       user: req.user,
-      userId: req.user?.userId,
       headers: req.headers
     });
     

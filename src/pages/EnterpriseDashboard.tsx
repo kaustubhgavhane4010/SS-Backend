@@ -115,39 +115,15 @@ const EnterpriseDashboard: React.FC = () => {
         if (usersRes.data?.success) setUsers(usersRes.data.data);
       } else {
         // Supreme Admin users - use enterprise endpoints
-        console.log('🔍 Loading Supreme Admin dashboard data...');
         const [statsRes, orgsRes, usersRes] = await Promise.all([
           api.get('/organizational/enterprise-stats'),
           api.get('/organizational/organizations'),
           api.get('/organizational/users')
         ]);
 
-        console.log('📊 Supreme Admin API responses:', {
-          stats: statsRes.data,
-          orgs: orgsRes.data,
-          users: usersRes.data
-        });
-
-        if (statsRes.data?.success) {
-          console.log('✅ Setting stats:', statsRes.data.data);
-          setStats(statsRes.data.data);
-        } else {
-          console.log('❌ Stats failed:', statsRes.data);
-        }
-        
-        if (orgsRes.data?.success) {
-          console.log('✅ Setting organizations:', orgsRes.data.data);
-          setOrganizations(orgsRes.data.data);
-        } else {
-          console.log('❌ Organizations failed:', orgsRes.data);
-        }
-        
-        if (usersRes.data?.success) {
-          console.log('✅ Setting users:', usersRes.data.data);
-          setUsers(usersRes.data.data);
-        } else {
-          console.log('❌ Users failed:', usersRes.data);
-        }
+        if (statsRes.data?.success) setStats(statsRes.data.data);
+        if (orgsRes.data?.success) setOrganizations(orgsRes.data.data);
+        if (usersRes.data?.success) setUsers(usersRes.data.data);
       }
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
@@ -554,7 +530,7 @@ const EnterpriseDashboard: React.FC = () => {
                               {org.settings?.foundingYear && (
                                 <div>Founded: {org.settings.foundingYear}</div>
                               )}
-                                  {org.settings?.departments && org.settings.departments.length > 0 && (
+                              {org.settings?.departments && org.settings.departments.length > 0 && (
                                 <div>Departments: {org.settings.departments.length}</div>
                               )}
                               {org.settings?.campuses && org.settings.campuses.length > 0 && (
@@ -855,14 +831,14 @@ const EnterpriseDashboard: React.FC = () => {
       {/* Create Organization Modal */}
       {showCreateOrg && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-2xl max-h-full">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">Add New Organization</h3>
               <button onClick={() => setShowCreateOrg(false)} className="text-gray-400 hover:text-gray-500">
                 <X size={20} />
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-96 overflow-y-auto">
               {/* Basic Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -886,8 +862,7 @@ const EnterpriseDashboard: React.FC = () => {
                   >
                     <option value="company">Company</option>
                     <option value="university">University</option>
-                    <option value="government">Government</option>
-                    <option value="non-profit">Non-Profit</option>
+                    <option value="department">Department</option>
                   </select>
                 </div>
               </div>
@@ -1246,36 +1221,40 @@ const EnterpriseDashboard: React.FC = () => {
       {/* Edit Organization Modal */}
       {showEditOrg && editingOrg && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative bg-white p-8 border border-gray-300 rounded-lg shadow-xl w-full max-w-2xl max-h-full">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">Edit Organization</h3>
               <button onClick={() => setShowEditOrg(false)} className="text-gray-400 hover:text-gray-500">
                 <X size={20} />
               </button>
             </div>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="editOrgName" className="block text-sm font-medium text-gray-700">Organization Name <span className="text-red-500">*</span></label>
-                <input
-                  type="text"
-                  id="editOrgName"
-                  defaultValue={editingOrg.name}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {/* Basic Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="editOrgName" className="block text-sm font-medium text-gray-700">Organization Name <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    id="editOrgName"
+                    defaultValue={editingOrg.name}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="Enter organization name"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="editOrgType" className="block text-sm font-medium text-gray-700">Type <span className="text-red-500">*</span></label>
+                  <select
+                    id="editOrgType"
+                    defaultValue={editingOrg.type}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    <option value="company">Company</option>
+                    <option value="university">University</option>
+                    <option value="department">Department</option>
+                  </select>
+                </div>
               </div>
-              <div>
-                <label htmlFor="editOrgType" className="block text-sm font-medium text-gray-700">Type <span className="text-red-500">*</span></label>
-                <select
-                  id="editOrgType"
-                  defaultValue={editingOrg.type}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                >
-                  <option value="company">Company</option>
-                  <option value="university">University</option>
-                  <option value="government">Government</option>
-                  <option value="non-profit">Non-Profit</option>
-                </select>
-              </div>
+
               <div>
                 <label htmlFor="editOrgDescription" className="block text-sm font-medium text-gray-700">Description</label>
                 <textarea
@@ -1466,7 +1445,7 @@ const EnterpriseDashboard: React.FC = () => {
                   alert('Edit functionality coming soon!');
                   setShowEditOrg(false);
                 }}
-                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
               >
                 Update Organization
               </button>
