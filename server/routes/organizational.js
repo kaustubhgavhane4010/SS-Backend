@@ -161,30 +161,8 @@ router.post('/organizations', [
     const userId = req.user.userId;
     const userRole = req.user.role;
 
-    // For Admin users, restrict organization creation to their own organization hierarchy
+    // Set parent organization ID (both Admin and Supreme Admin can create any organization type)
     let parentOrgId = parent_organization_id || null;
-    
-    if (userRole === 'admin') {
-      // Get admin's organization
-      const adminUser = await dbGet('SELECT organization_id FROM users WHERE id = ?', [userId]);
-      if (!adminUser || !adminUser.organization_id) {
-        return res.status(403).json({
-          success: false,
-          message: 'Admin not associated with any organization'
-        });
-      }
-      
-      // Admin can only create departments under their own organization
-      if (type !== 'department') {
-        return res.status(403).json({
-          success: false,
-          message: 'Admin can only create departments under their organization'
-        });
-      }
-      
-      // Set parent organization to admin's organization
-      parentOrgId = adminUser.organization_id;
-    }
     
     // Create settings object with additional organization data
     const orgSettings = {
