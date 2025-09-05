@@ -359,4 +359,51 @@ router.delete('/users/:id', [authenticateToken, requireAdmin], async (req, res) 
   }
 });
 
+// Get organizations created by admin
+router.get('/organizations', [authenticateToken, requireAdmin], async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    
+    // Get organizations created by this admin or their own organization
+    const organizations = await dbQuery(`
+      SELECT 
+        o.*,
+        u.name as created_by_name,
+        p.name as parent_organization_name
+      FROM organizations o
+      LEFT JOIN users u ON o.created_by = u.id
+      LEFT JOIN organizations p ON o.parent_organization_id = p.id
+      WHERE o.created_by = ? OR o.id = (SELECT organization_id FROM users WHERE id = ?)
+      ORDER BY o.created_at DESC
+    `, [userId, userId]);
+
+    // Parse JSON settings for each organization
+    const organizationsWithSettings = organizations.map(org => {
+      let parsedSettings = {};
+      if (org.settings) {
+        try {
+          parsedSettings = JSON.parse(org.settings);
+        } catch (e) {
+          console.error('Error parsing organization settings:', e);
+        }
+      }
+      return {
+        ...org,
+        settings: parsedSettings
+      };
+    });
+
+    res.json({
+      success: true,
+      data: organizationsWithSettings
+    });
+  } catch (error) {
+    console.error('Get admin organizations error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
 export default router;

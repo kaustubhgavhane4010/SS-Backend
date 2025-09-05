@@ -84,7 +84,7 @@ const EnterpriseDashboard: React.FC = () => {
         const [statsRes, usersRes, orgsRes] = await Promise.all([
           api.get('/admin/dashboard-stats'),
           api.get('/admin/users'),
-          api.get('/organizational/organizations')
+          api.get('/admin/organizations')
         ]);
 
         if (statsRes.data?.success) {
@@ -112,12 +112,7 @@ const EnterpriseDashboard: React.FC = () => {
         
         // Load organizations created by this admin
         if (orgsRes.data?.success) {
-          const allOrgs = orgsRes.data.data;
-          // Filter to show only organizations created by this admin or their own organization
-          const filteredOrgs = allOrgs.filter((org: Organization) => 
-            org.created_by === user?.id || org.id === user?.organization_id
-          );
-          setOrganizations(filteredOrgs);
+          setOrganizations(orgsRes.data.data);
         }
         
         if (usersRes.data?.success) setUsers(usersRes.data.data);
@@ -256,14 +251,9 @@ const EnterpriseDashboard: React.FC = () => {
         // For Admin users, refresh data to show the new organization
         if (isAdmin) {
           // Admin users need to refresh their organization list
-          const orgsRes = await api.get('/organizational/organizations');
+          const orgsRes = await api.get('/admin/organizations');
           if (orgsRes.data?.success) {
-            const allOrgs = orgsRes.data.data;
-            // Filter to show only organizations created by this admin or their own organization
-            const filteredOrgs = allOrgs.filter((org: Organization) => 
-              org.created_by === user?.id || org.id === user?.organization_id
-            );
-            setOrganizations(filteredOrgs);
+            setOrganizations(orgsRes.data.data);
           }
         } else {
           // Supreme Admin - refresh all data
