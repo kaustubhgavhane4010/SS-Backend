@@ -1401,7 +1401,7 @@ const EnterpriseDashboard: React.FC = () => {
                         Add
                       </button>
                     </div>
-                    {(editingOrg.settings?.departments && editingOrg.settings.departments.length > 0) && (
+                    {editingOrg.settings?.departments && editingOrg.settings.departments.length > 0 && (
                       <div className="space-y-1">
                         {editingOrg.settings.departments.map((dept, index) => (
                           <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md">
@@ -1440,7 +1440,7 @@ const EnterpriseDashboard: React.FC = () => {
                         Add
                       </button>
                     </div>
-                    {(editingOrg.settings?.campuses && editingOrg.settings.campuses.length > 0) && (
+                    {editingOrg.settings?.campuses && editingOrg.settings.campuses.length > 0 && (
                       <div className="space-y-1">
                         {editingOrg.settings.campuses.map((campus, index) => (
                           <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md">
