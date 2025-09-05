@@ -234,6 +234,144 @@ router.post('/organizations', [
   }
 });
 
+// Update organization
+router.put('/organizations/:id', [
+  authenticateToken,
+  requireAdminOrSupremeAdmin,
+  body('name').optional().trim().isLength({ min: 2, max: 100 }),
+  body('type').optional().isIn(['company', 'university', 'department']),
+  body('status').optional().isIn(['active', 'inactive'])
+], async (req, res) => {
+  try {
+    const { id } = req.params;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { 
+      name, 
+      type, 
+      status,
+      description,
+      address,
+      phone,
+      email,
+      website,
+      foundingYear,
+      accreditation,
+      departments,
+      campuses
+    } = req.body;
+
+    // Check if organization exists
+    const existingOrg = await dbGet('SELECT * FROM organizations WHERE id = ?', [id]);
+    if (!existingOrg) {
+      return res.status(404).json({
+        success: false,
+        message: 'Organization not found'
+      });
+    }
+
+    // For Admin users, check if they can edit this organization
+    if (req.user.role === 'admin') {
+      const adminUser = await dbGet('SELECT organization_id FROM users WHERE id = ?', [req.user.userId]);
+      if (!adminUser || !adminUser.organization_id) {
+        return res.status(403).json({
+          success: false,
+          message: 'Admin not associated with any organization'
+        });
+      }
+      
+      // Admin can only edit organizations they created or their own organization
+      if (existingOrg.created_by !== req.user.userId && existingOrg.id !== adminUser.organization_id) {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied to this organization'
+        });
+      }
+    }
+
+    // Prepare settings object with additional organization data
+    const orgSettings = {
+      description: description || existingOrg.settings?.description || null,
+      address: address || existingOrg.settings?.address || null,
+      phone: phone || existingOrg.settings?.phone || null,
+      email: email || existingOrg.settings?.email || null,
+      website: website || existingOrg.settings?.website || null,
+      foundingYear: foundingYear || existingOrg.settings?.foundingYear || null,
+      accreditation: accreditation || existingOrg.settings?.accreditation || null,
+      departments: departments || existingOrg.settings?.departments || [],
+      campuses: campuses || existingOrg.settings?.campuses || []
+    };
+
+    // Update organization
+    await dbRun(`
+      UPDATE organizations 
+      SET 
+        name = COALESCE(?, name),
+        type = COALESCE(?, type),
+        status = COALESCE(?, status),
+        settings = ?
+      WHERE id = ?
+    `, [
+      name || existingOrg.name,
+      type || existingOrg.type,
+      status || existingOrg.status,
+      JSON.stringify(orgSettings),
+      id
+    ]);
+
+    // Get updated organization
+    const updatedOrganization = await dbGet(`
+      SELECT 
+        o.*,
+        u.name as created_by_name,
+        p.name as parent_organization_name
+      FROM organizations o
+      LEFT JOIN users u ON o.created_by = u.id
+      LEFT JOIN organizations p ON o.parent_organization_id = p.id
+      WHERE o.id = ?
+    `, [id]);
+
+    // Parse JSON settings
+    let parsedSettings = {};
+    if (updatedOrganization.settings) {
+      try {
+        if (typeof updatedOrganization.settings === 'string') {
+          parsedSettings = JSON.parse(updatedOrganization.settings);
+        } else if (typeof updatedOrganization.settings === 'object') {
+          parsedSettings = updatedOrganization.settings;
+        }
+      } catch (error) {
+        console.error('Error parsing settings for updated org:', updatedOrganization.id, 'Settings:', updatedOrganization.settings, 'Error:', error.message);
+        parsedSettings = {};
+      }
+    }
+
+    const organizationWithSettings = {
+      ...updatedOrganization,
+      settings: parsedSettings
+    };
+
+    res.json({
+      success: true,
+      message: 'Organization updated successfully',
+      data: organizationWithSettings
+    });
+  } catch (error) {
+    console.error('Update organization error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
 // Delete organization
 router.delete('/organizations/:id', [authenticateToken, requireSupremeAdmin], async (req, res) => {
   try {

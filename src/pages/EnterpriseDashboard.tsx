@@ -286,6 +286,41 @@ const EnterpriseDashboard: React.FC = () => {
     setShowEditOrg(true);
   };
 
+  const handleUpdateOrganization = async () => {
+    if (!editingOrg) return;
+    
+    try {
+      // Get form data from the edit modal
+      const formData = {
+        name: (document.getElementById('editOrgName') as HTMLInputElement)?.value || editingOrg.name,
+        type: (document.getElementById('editOrgType') as HTMLSelectElement)?.value || editingOrg.type,
+        status: (document.getElementById('editOrgStatus') as HTMLSelectElement)?.value || editingOrg.status,
+        description: (document.getElementById('editOrgDescription') as HTMLTextAreaElement)?.value || editingOrg.settings?.description || '',
+        address: (document.getElementById('editOrgAddress') as HTMLInputElement)?.value || editingOrg.settings?.address || '',
+        phone: (document.getElementById('editOrgPhone') as HTMLInputElement)?.value || editingOrg.settings?.phone || '',
+        email: (document.getElementById('editOrgEmail') as HTMLInputElement)?.value || editingOrg.settings?.email || '',
+        website: (document.getElementById('editOrgWebsite') as HTMLInputElement)?.value || editingOrg.settings?.website || '',
+        foundingYear: (document.getElementById('editOrgFoundingYear') as HTMLInputElement)?.value || editingOrg.settings?.foundingYear || '',
+        accreditation: (document.getElementById('editOrgAccreditation') as HTMLInputElement)?.value || editingOrg.settings?.accreditation || '',
+        departments: editingOrg.settings?.departments || [],
+        campuses: editingOrg.settings?.campuses || []
+      };
+
+      const response = await api.put(`/organizational/organizations/${editingOrg.id}`, formData);
+      
+      if (response.data?.success) {
+        alert('Organization updated successfully!');
+        setShowEditOrg(false);
+        setEditingOrg(null);
+        loadDashboardData(); // Refresh data
+      }
+    } catch (error: any) {
+      console.error('Failed to update organization:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to update organization. Please try again.';
+      alert(errorMessage);
+    }
+  };
+
   const handleDeleteOrganization = async (orgId: string | number) => {
     console.log('Delete organization clicked, ID:', orgId, 'Type:', typeof orgId);
     
@@ -1442,10 +1477,7 @@ const EnterpriseDashboard: React.FC = () => {
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  alert('Edit functionality coming soon!');
-                  setShowEditOrg(false);
-                }}
+                onClick={handleUpdateOrganization}
                 className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
               >
                 Update Organization
