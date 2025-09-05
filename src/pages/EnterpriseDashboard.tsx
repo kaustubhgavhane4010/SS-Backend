@@ -282,6 +282,9 @@ const EnterpriseDashboard: React.FC = () => {
   // Edit and Delete handlers for Organizations
   const handleEditOrganization = (org: Organization) => {
     console.log('Edit organization clicked:', org);
+    console.log('Organization settings:', org.settings);
+    console.log('Departments:', org.settings?.departments);
+    console.log('Campuses:', org.settings?.campuses);
     setEditingOrg(org);
     setShowEditOrg(true);
   };
