@@ -81,9 +81,10 @@ const EnterpriseDashboard: React.FC = () => {
       
       if (isAdmin) {
         // Admin users - use organization-scoped endpoints
-        const [statsRes, usersRes] = await Promise.all([
+        const [statsRes, usersRes, orgsRes] = await Promise.all([
           api.get('/admin/dashboard-stats'),
-          api.get('/admin/users')
+          api.get('/admin/users'),
+          api.get('/organizational/organizations')
         ]);
 
         if (statsRes.data?.success) {
@@ -107,9 +108,16 @@ const EnterpriseDashboard: React.FC = () => {
             },
             recentUsers: adminStats.recentUsers
           });
-          
-          // Set organization data for admin
-          setOrganizations([adminStats.organization]);
+        }
+        
+        // Load organizations created by this admin
+        if (orgsRes.data?.success) {
+          const allOrgs = orgsRes.data.data;
+          // Filter to show only organizations created by this admin or their own organization
+          const filteredOrgs = allOrgs.filter((org: Organization) => 
+            org.created_by === user?.id || org.id === user?.organization_id
+          );
+          setOrganizations(filteredOrgs);
         }
         
         if (usersRes.data?.success) setUsers(usersRes.data.data);
