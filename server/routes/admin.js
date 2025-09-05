@@ -380,13 +380,21 @@ router.get('/organizations', [authenticateToken, requireAdmin], async (req, res)
     // Parse JSON settings for each organization
     const organizationsWithSettings = organizations.map(org => {
       let parsedSettings = {};
+      
       if (org.settings) {
         try {
-          parsedSettings = JSON.parse(org.settings);
-        } catch (e) {
-          console.error('Error parsing organization settings:', e);
+          // Check if it's already an object or a JSON string
+          if (typeof org.settings === 'string') {
+            parsedSettings = JSON.parse(org.settings);
+          } else if (typeof org.settings === 'object') {
+            parsedSettings = org.settings;
+          }
+        } catch (error) {
+          console.error('Error parsing settings for org:', org.id, 'Settings:', org.settings, 'Error:', error.message);
+          parsedSettings = {};
         }
       }
+      
       return {
         ...org,
         settings: parsedSettings
