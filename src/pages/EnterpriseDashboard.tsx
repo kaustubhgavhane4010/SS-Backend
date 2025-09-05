@@ -63,6 +63,12 @@ const EnterpriseDashboard: React.FC = () => {
   // State for dynamic department and campus inputs
   const [newDepartment, setNewDepartment] = useState('');
   const [newCampus, setNewCampus] = useState('');
+  
+  // State for editing departments and campuses
+  const [editDepartments, setEditDepartments] = useState<string[]>([]);
+  const [editCampuses, setEditCampuses] = useState<string[]>([]);
+  const [editNewDepartment, setEditNewDepartment] = useState('');
+  const [editNewCampus, setEditNewCampus] = useState('');
 
   useEffect(() => {
     loadDashboardData();
@@ -109,7 +115,7 @@ const EnterpriseDashboard: React.FC = () => {
             recentUsers: adminStats.recentUsers
           });
         }
-        
+          
         // Load organizations created by this admin
         if (orgsRes.data?.success) {
           setOrganizations(orgsRes.data.data);
@@ -224,6 +230,29 @@ const EnterpriseDashboard: React.FC = () => {
     });
   };
 
+  // Helper functions for managing edit departments and campuses
+  const addEditDepartment = () => {
+    if (editNewDepartment.trim() && !editDepartments.includes(editNewDepartment.trim())) {
+      setEditDepartments([...editDepartments, editNewDepartment.trim()]);
+      setEditNewDepartment('');
+    }
+  };
+
+  const removeEditDepartment = (index: number) => {
+    setEditDepartments(editDepartments.filter((_, i) => i !== index));
+  };
+
+  const addEditCampus = () => {
+    if (editNewCampus.trim() && !editCampuses.includes(editNewCampus.trim())) {
+      setEditCampuses([...editCampuses, editNewCampus.trim()]);
+      setEditNewCampus('');
+    }
+  };
+
+  const removeEditCampus = (index: number) => {
+    setEditCampuses(editCampuses.filter((_, i) => i !== index));
+  };
+
   const handleCreateOrganization = async () => {
     try {
       // Prepare organization data (both Admin and Supreme Admin can create any organization type)
@@ -286,6 +315,13 @@ const EnterpriseDashboard: React.FC = () => {
     console.log('Departments:', org.settings?.departments);
     console.log('Campuses:', org.settings?.campuses);
     setEditingOrg(org);
+    
+    // Initialize edit state with existing departments and campuses
+    setEditDepartments(org.settings?.departments || []);
+    setEditCampuses(org.settings?.campuses || []);
+    setEditNewDepartment('');
+    setEditNewCampus('');
+    
     setShowEditOrg(true);
   };
 
@@ -305,8 +341,8 @@ const EnterpriseDashboard: React.FC = () => {
         website: (document.getElementById('editOrgWebsite') as HTMLInputElement)?.value || editingOrg.settings?.website || '',
         foundingYear: (document.getElementById('editOrgFoundingYear') as HTMLInputElement)?.value || editingOrg.settings?.foundingYear || '',
         accreditation: (document.getElementById('editOrgAccreditation') as HTMLInputElement)?.value || editingOrg.settings?.accreditation || '',
-        departments: editingOrg.settings?.departments || [],
-        campuses: editingOrg.settings?.campuses || []
+        departments: editDepartments,
+        campuses: editCampuses
       };
 
       const response = await api.put(`/organizational/organizations/${editingOrg.id}`, formData);
@@ -1386,29 +1422,29 @@ const EnterpriseDashboard: React.FC = () => {
                     <div className="flex gap-2 mb-2">
                       <input
                         type="text"
-                        value={newDepartment}
-                        onChange={(e) => setNewDepartment(e.target.value)}
+                        value={editNewDepartment}
+                        onChange={(e) => setEditNewDepartment(e.target.value)}
                         className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         placeholder="Add department (e.g., Computer Science)"
-                        onKeyPress={(e) => e.key === 'Enter' && addDepartment()}
+                        onKeyPress={(e) => e.key === 'Enter' && addEditDepartment()}
                       />
                       <button
                         type="button"
-                        onClick={addDepartment}
+                        onClick={addEditDepartment}
                         className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-1"
                       >
                         <Plus size={16} />
                         Add
                       </button>
                     </div>
-                    {editingOrg.settings?.departments && editingOrg.settings.departments.length > 0 && (
+                    {editDepartments.length > 0 && (
                       <div className="space-y-1">
-                        {editingOrg.settings.departments.map((dept, index) => (
+                        {editDepartments.map((dept, index) => (
                           <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md">
                             <span className="text-sm">{dept}</span>
                             <button
                               type="button"
-                              onClick={() => removeDepartment(index)}
+                              onClick={() => removeEditDepartment(index)}
                               className="text-red-500 hover:text-red-700"
                             >
                               <X size={16} />
@@ -1425,29 +1461,29 @@ const EnterpriseDashboard: React.FC = () => {
                     <div className="flex gap-2 mb-2">
                       <input
                         type="text"
-                        value={newCampus}
-                        onChange={(e) => setNewCampus(e.target.value)}
+                        value={editNewCampus}
+                        onChange={(e) => setEditNewCampus(e.target.value)}
                         className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         placeholder="Add campus (e.g., Main Campus, North Campus)"
-                        onKeyPress={(e) => e.key === 'Enter' && addCampus()}
+                        onKeyPress={(e) => e.key === 'Enter' && addEditCampus()}
                       />
                       <button
                         type="button"
-                        onClick={addCampus}
+                        onClick={addEditCampus}
                         className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-1"
                       >
                         <Plus size={16} />
                         Add
                       </button>
                     </div>
-                    {editingOrg.settings?.campuses && editingOrg.settings.campuses.length > 0 && (
+                    {editCampuses.length > 0 && (
                       <div className="space-y-1">
-                        {editingOrg.settings.campuses.map((campus, index) => (
+                        {editCampuses.map((campus, index) => (
                           <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md">
                             <span className="text-sm">{campus}</span>
                             <button
                               type="button"
-                              onClick={() => removeCampus(index)}
+                              onClick={() => removeEditCampus(index)}
                               className="text-red-500 hover:text-red-700"
                             >
                               <X size={16} />
