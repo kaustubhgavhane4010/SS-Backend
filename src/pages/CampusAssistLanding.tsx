@@ -1218,15 +1218,15 @@ const CampusAssistLanding: React.FC = () => {
         </motion.div>
 
         <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-neutral-900 leading-tight mb-6">
-          One Student Saved Pays
+          Your Students Are at Risk.
           <br />
-          <span className="bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">for the Entire Year</span>
+          <span className="bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">The Solution Starts Here.</span>
         </motion.h2>
 
         <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed mb-10 max-w-2xl mx-auto">
-          Join the next generation of UK universities using AI-driven intelligence to improve
-          student outcomes, reduce attrition, and demonstrate real impact to the OfS.
-          We'll tailor a pilot to your institution's size, budget, and goals.
+          Join the next generation of UK universities using AI-driven intelligence to identify
+          at-risk students early, improve continuation rates, and demonstrate measurable impact to the OfS.
+          We'll tailor a pilot to your institution's size and goals.
         </motion.p>
 
         <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-4">
