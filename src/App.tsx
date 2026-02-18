@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
+import CampusAssistLanding from './pages/CampusAssistLanding';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import EnterpriseDashboard from './pages/EnterpriseDashboard';
@@ -33,8 +34,9 @@ const App: React.FC = () => {
   if (!user) {
     return (
       <Routes>
+        <Route path="/" element={<CampusAssistLanding />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
   }

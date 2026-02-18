@@ -63,7 +63,7 @@ const EnterpriseDashboard: React.FC = () => {
   // State for dynamic department and campus inputs
   const [newDepartment, setNewDepartment] = useState('');
   const [newCampus, setNewCampus] = useState('');
-  
+
   // State for editing departments and campuses
   const [editDepartments, setEditDepartments] = useState<string[]>([]);
   const [editCampuses, setEditCampuses] = useState<string[]>([]);

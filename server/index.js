@@ -103,7 +103,7 @@ app.use('/api/admin', adminRoutes);
 // Health check endpoint for Railway (simple, no database dependency)
 app.get('/health', (req, res) => {
   console.log('🏥 Health check requested at:', new Date().toISOString());
-  try {
+   try {
     res.status(200).json({ 
       status: 'healthy', 
       timestamp: new Date().toISOString(),
