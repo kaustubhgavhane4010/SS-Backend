@@ -696,24 +696,47 @@ const CampusAssistLanding: React.FC = () => {
                     ))}
                   </div>
 
-                  {/* Results */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-                    <div className="text-center p-6 bg-white rounded-2xl border border-neutral-200/50 shadow-sm">
-                      <p className="text-sm text-neutral-500 mb-2">Annual Losses You're Facing</p>
-                      <p className="text-4xl font-extrabold text-red-600">
+                  {/* Results — three distinct insights from one number */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+                    {/* Card 1: The Raw Loss */}
+                    <div className="text-center p-6 bg-white rounded-2xl border border-red-200/50 shadow-sm">
+                      <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center mx-auto mb-3">
+                        <TrendingDown className="h-5 w-5 text-red-500" />
+                      </div>
+                      <p className="text-sm text-neutral-500 mb-2">Annual Revenue Lost</p>
+                      <p className="text-3xl sm:text-4xl font-extrabold text-red-600">
                         £{(savedStudents * activeLoss).toLocaleString()}
                       </p>
                       <p className="text-xs text-neutral-400 mt-2">
-                        {savedStudents} {savedStudents === 1 ? 'student' : 'students'} × £{activeLoss.toLocaleString()} per dropout
+                        {savedStudents} {savedStudents === 1 ? 'student' : 'students'} × £{activeLoss.toLocaleString()} each
                       </p>
                     </div>
-                    <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200/50 shadow-sm">
-                      <p className="text-sm text-green-700 font-semibold mb-2">Potential Revenue Protected</p>
-                      <p className="text-4xl font-extrabold text-green-600">
-                        £{(savedStudents * activeLoss).toLocaleString()}
+
+                    {/* Card 2: What That Money Could Fund */}
+                    <div className="text-center p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200/50 shadow-sm">
+                      <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mx-auto mb-3">
+                        <GraduationCap className="h-5 w-5 text-amber-600" />
+                      </div>
+                      <p className="text-sm text-amber-700 font-semibold mb-2">That's Equivalent To</p>
+                      <p className="text-3xl sm:text-4xl font-extrabold text-amber-700">
+                        {Math.max(1, Math.round((savedStudents * activeLoss) / tuitionFee))}
                       </p>
-                      <p className="text-xs text-green-600/70 mt-2">
-                        Revenue retained if these students stay and complete
+                      <p className="text-xs text-amber-600/70 mt-2">
+                        full student scholarships your institution could have funded instead
+                      </p>
+                    </div>
+
+                    {/* Card 3: Weekly Cost of Inaction */}
+                    <div className="text-center p-6 bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl border border-primary-200/50 shadow-sm">
+                      <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center mx-auto mb-3">
+                        <Clock className="h-5 w-5 text-primary-600" />
+                      </div>
+                      <p className="text-sm text-primary-700 font-semibold mb-2">Every Week You Wait</p>
+                      <p className="text-3xl sm:text-4xl font-extrabold text-primary-700">
+                        £{Math.round((savedStudents * activeLoss) / 52).toLocaleString()}
+                      </p>
+                      <p className="text-xs text-primary-600/60 mt-2">
+                        drains from your institution while at-risk students go unsupported
                       </p>
                     </div>
                   </div>
