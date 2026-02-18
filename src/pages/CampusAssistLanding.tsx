@@ -67,7 +67,6 @@ import {
   TrendingDown,
   TrendingUp,
   AlertTriangle,
-  CheckCircle2,
   ArrowRight,
   ChevronRight,
   Globe,
@@ -346,7 +345,7 @@ const CampusAssistLanding: React.FC = () => {
           <nav className="hidden lg:flex items-center gap-1">
             {[
               { label: 'Platform', id: 'platform' },
-              { label: 'ROI', id: 'roi-calculator' },
+              { label: 'Impact', id: 'roi-calculator' },
               { label: 'Procurement', id: 'procurement' },
               { label: 'Trust & Security', id: 'trust' },
             ].map((item) => (
@@ -409,7 +408,7 @@ const CampusAssistLanding: React.FC = () => {
             <div className="px-4 py-4 space-y-1">
               {[
                 { label: 'Platform', id: 'platform' },
-                { label: 'ROI Calculator', id: 'roi-calculator' },
+                { label: 'Impact Calculator', id: 'roi-calculator' },
                 { label: 'Procurement', id: 'procurement' },
                 { label: 'Trust & Security', id: 'trust' },
               ].map((item) => (
@@ -509,7 +508,7 @@ const CampusAssistLanding: React.FC = () => {
               className="group inline-flex items-center gap-3 px-8 py-4 text-base font-semibold rounded-2xl text-white/90 border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all duration-300"
             >
               <PoundSterling className="h-5 w-5 text-accent-400" />
-              Calculate Your ROI
+              See Your Attrition Cost
               <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform text-white/40" />
             </button>
           </motion.div>
@@ -568,18 +567,18 @@ const CampusAssistLanding: React.FC = () => {
   );
 
   /* ─────────────────────────────────────────────────────────────────────────
-     SECTION 4: FINANCIAL HEMORRHAGE — ATTRITION CALCULATOR
+     SECTION 4: FINANCIAL HEMORRHAGE — ATTRITION COST CALCULATOR
      Background: Soft primary-50 with white calculator cards. Animated
-     counters illustrate the cost contrast.
+     counters illustrate the true cost of student dropout.
+     Pricing is intentionally EXCLUDED — revealed in consultative sales.
      ───────────────────────────────────────────────────────────────────────── */
   const AttritionCalculator = () => {
     const domesticLoss = 28000;
     const internationalLoss = 42000; // Significantly higher as per brief
-    const licenseCost = 25000;
     const tuitionFee = 9535;
     const activeLoss = activeCalculatorTab === 'domestic' ? domesticLoss : internationalLoss;
     const studentsSlider = [1, 5, 10, 25, 50];
-    const [savedStudents, setSavedStudents] = useState(1);
+    const [savedStudents, setSavedStudents] = useState(5);
 
     return (
       <Section id="roi-calculator" className="py-24 lg:py-32 bg-gradient-to-b from-white to-primary-50/50">
@@ -591,13 +590,13 @@ const CampusAssistLanding: React.FC = () => {
               <span className="text-red-700 text-sm font-semibold">The Financial Reality</span>
             </motion.div>
             <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-neutral-900 leading-tight mb-6">
-              Every Dropout Costs More Than
+              How Much is Student
               <br />
-              <span className="text-red-500">Our Entire Annual Licence</span>
+              <span className="text-red-500">Attrition Really Costing You?</span>
             </motion.h2>
             <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed">
-              The "One Student" ROI Guarantee: if Campus Assist prevents just one student from leaving,
-              the annual licence pays for itself. Everything beyond that is net savings.
+              Every student who leaves represents far more than lost tuition fees. Calculate the true
+              financial impact on your institution—then let us show you how Campus Assist pays for itself.
             </motion.p>
           </div>
 
@@ -622,49 +621,65 @@ const CampusAssistLanding: React.FC = () => {
               </div>
 
               <div className="p-8 lg:p-12">
-                {/* Cost Comparison Row */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                  {/* License Cost */}
-                  <div className="relative p-6 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100/50 border border-primary-200/50">
-                    <div className="flex items-center gap-2 mb-3">
-                      <CheckCircle2 className="h-5 w-5 text-primary-600" />
-                      <span className="text-sm font-semibold text-primary-700 uppercase tracking-wide">Annual Licence</span>
-                    </div>
-                    <div className="text-4xl font-extrabold text-primary-900">
-                      <AnimatedCounter target={licenseCost} prefix="£" />
-                    </div>
-                    <p className="text-sm text-primary-600/70 mt-2">Full platform access for your institution</p>
-                  </div>
-
-                  {/* VS Divider */}
-                  <div className="flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center">
-                      <span className="text-neutral-400 text-sm font-bold">vs</span>
-                    </div>
-                  </div>
-
-                  {/* Dropout Cost */}
-                  <div className="relative p-6 rounded-2xl bg-gradient-to-br from-red-50 to-red-100/50 border border-red-200/50">
-                    <div className="flex items-center gap-2 mb-3">
+                {/* Cost Breakdown */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                  {/* Dropout Cost Card */}
+                  <div className="relative p-8 rounded-2xl bg-gradient-to-br from-red-50 to-red-100/50 border border-red-200/50">
+                    <div className="flex items-center gap-2 mb-4">
                       <AlertTriangle className="h-5 w-5 text-red-500" />
-                      <span className="text-sm font-semibold text-red-700 uppercase tracking-wide">Cost per Dropout</span>
+                      <span className="text-sm font-semibold text-red-700 uppercase tracking-wide">Total Cost Per Dropout</span>
                     </div>
-                    <div className="text-4xl font-extrabold text-red-600">
+                    <div className="text-5xl font-extrabold text-red-600 mb-2">
                       <AnimatedCounter target={activeLoss} prefix="£" />
                     </div>
-                    <p className="text-sm text-red-500/70 mt-2">
+                    <p className="text-sm text-red-500/70 mb-4">
                       {activeCalculatorTab === 'domestic'
-                        ? `£${tuitionFee.toLocaleString()} tuition + total institutional loss`
-                        : 'Significantly higher due to international fee levels'}
+                        ? `£${tuitionFee.toLocaleString()} tuition + HEFCE funding, support costs & reputational impact`
+                        : 'International fee income, accommodation revenue & recruitment cost write-off'}
                     </p>
+                    <div className="flex items-center gap-2 pt-4 border-t border-red-200/50">
+                      <Activity className="h-4 w-4 text-red-400" />
+                      <span className="text-xs text-red-600 font-medium">
+                        {activeCalculatorTab === 'domestic'
+                          ? 'Based on HESA sector-average data for UK undergraduates'
+                          : 'Estimated at 1.5× domestic rate due to higher fee bands'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Context Card */}
+                  <div className="relative p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/30 border border-amber-200/50">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Gauge className="h-5 w-5 text-amber-600" />
+                      <span className="text-sm font-semibold text-amber-700 uppercase tracking-wide">Sector Context</span>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="text-3xl font-extrabold text-amber-700">40%</div>
+                        <p className="text-sm text-amber-600/70">of UK universities currently operate in deficit</p>
+                      </div>
+                      <div>
+                        <div className="text-3xl font-extrabold text-amber-700">6.3%</div>
+                        <p className="text-sm text-amber-600/70">average non-continuation rate across UK HE</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 pt-4 mt-4 border-t border-amber-200/50">
+                      <BookOpen className="h-4 w-4 text-amber-500" />
+                      <span className="text-xs text-amber-600 font-medium">
+                        Source: OfS & HESA published data 2023-24
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Savings Simulator */}
+                {/* Impact Simulator */}
                 <div className="bg-neutral-50 rounded-2xl p-6 lg:p-8">
-                  <h3 className="text-lg font-bold text-neutral-900 mb-6">
-                    Savings Simulator — How many students could you retain?
+                  <h3 className="text-lg font-bold text-neutral-900 mb-2">
+                    Impact Simulator
                   </h3>
+                  <p className="text-sm text-neutral-500 mb-6">
+                    Select the number of at-risk students you could retain to see the potential financial impact for your institution.
+                  </p>
                   <div className="flex flex-wrap gap-3 mb-8">
                     {studentsSlider.map((n) => (
                       <button
@@ -682,39 +697,50 @@ const CampusAssistLanding: React.FC = () => {
                   </div>
 
                   {/* Results */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    <div className="text-center p-4">
-                      <p className="text-sm text-neutral-500 mb-1">Potential Losses Prevented</p>
-                      <p className="text-3xl font-extrabold text-red-600">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                    <div className="text-center p-6 bg-white rounded-2xl border border-neutral-200/50 shadow-sm">
+                      <p className="text-sm text-neutral-500 mb-2">Annual Losses You're Facing</p>
+                      <p className="text-4xl font-extrabold text-red-600">
                         £{(savedStudents * activeLoss).toLocaleString()}
                       </p>
-                    </div>
-                    <div className="text-center p-4">
-                      <p className="text-sm text-neutral-500 mb-1">Licence Investment</p>
-                      <p className="text-3xl font-extrabold text-primary-700">
-                        £{licenseCost.toLocaleString()}
+                      <p className="text-xs text-neutral-400 mt-2">
+                        {savedStudents} {savedStudents === 1 ? 'student' : 'students'} × £{activeLoss.toLocaleString()} per dropout
                       </p>
                     </div>
-                    <div className="text-center p-4 bg-green-50 rounded-2xl border border-green-200/50">
-                      <p className="text-sm text-green-700 font-semibold mb-1">Net Savings</p>
-                      <p className="text-3xl font-extrabold text-green-600">
-                        £{((savedStudents * activeLoss) - licenseCost).toLocaleString()}
+                    <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200/50 shadow-sm">
+                      <p className="text-sm text-green-700 font-semibold mb-2">Potential Revenue Protected</p>
+                      <p className="text-4xl font-extrabold text-green-600">
+                        £{(savedStudents * activeLoss).toLocaleString()}
+                      </p>
+                      <p className="text-xs text-green-600/70 mt-2">
+                        Revenue retained if these students stay and complete
                       </p>
                     </div>
                   </div>
 
-                  {/* ROI Percentage */}
-                  <div className="mt-6 text-center">
-                    <motion.div
-                      key={savedStudents}
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold shadow-lg"
-                    >
-                      <TrendingUp className="h-5 w-5" />
-                      {Math.round(((savedStudents * activeLoss) / licenseCost) * 100)}% Return on Investment
-                    </motion.div>
-                  </div>
+                  {/* CTA — Gated pricing reveal */}
+                  <motion.div
+                    key={savedStudents}
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="text-center"
+                  >
+                    <div className="inline-flex flex-col items-center gap-3 p-6 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100/50 border border-primary-200/50">
+                      <p className="text-sm text-primary-800 font-semibold">
+                        Your institution could be losing <span className="text-red-600 font-extrabold">£{(savedStudents * activeLoss).toLocaleString()}</span> annually to preventable attrition
+                      </p>
+                      <a
+                        href="mailto:hello@campusassist.co.uk?subject=Custom%20ROI%20Report%20Request%20-%20Campus%20Assist"
+                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105 transition-all duration-300 text-sm"
+                      >
+                        Get Your Custom ROI Report
+                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </a>
+                      <p className="text-xs text-primary-600/60">
+                        We'll model your specific student population, dropout rates, and potential savings
+                      </p>
+                    </div>
+                  </motion.div>
                 </div>
               </div>
             </div>
@@ -933,6 +959,8 @@ const CampusAssistLanding: React.FC = () => {
 
   /* ─────────────────────────────────────────────────────────────────────────
      SECTION 6: PROCUREMENT STRATEGY
+     Pricing intentionally hidden. Sub-threshold messaging is implied
+     (not explicit) to protect competitive positioning.
      ───────────────────────────────────────────────────────────────────────── */
   const ProcurementSection = () => (
     <Section id="procurement" className="py-24 lg:py-32 bg-white">
@@ -952,17 +980,17 @@ const CampusAssistLanding: React.FC = () => {
             </motion.h2>
 
             <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed mb-8">
-              At £25,000, the Campus Assist pilot sits comfortably below the £50,000+ formal
-              tender threshold used by most UK universities. This means Deans and departmental
-              heads can approve via discretionary budgets—no 6-month procurement cycles.
+              Campus Assist offers flexible pilot pricing designed to fit within existing
+              departmental budgets. No lengthy tender cycles, no 6-month procurement delays—
+              Deans and department heads can get started quickly with a low-risk pilot.
             </motion.p>
 
             <motion.div variants={fadeInUp} custom={3} className="space-y-5">
               {[
                 {
                   icon: Timer,
-                  title: 'Sub-Threshold Pricing',
-                  desc: 'At £25,000, approval comes from departmental discretionary budgets—not a formal tender process.',
+                  title: 'Designed for Discretionary Budgets',
+                  desc: 'Pilot pricing structured to align with how university departments actually approve spend—fast and without red tape.',
                 },
                 {
                   icon: Zap,
@@ -972,7 +1000,7 @@ const CampusAssistLanding: React.FC = () => {
                 {
                   icon: Building2,
                   title: 'Low-Risk Pilot Model',
-                  desc: 'Start with a single department or faculty. Prove ROI, then expand institution-wide with confidence.',
+                  desc: 'Start with a single department or faculty. Prove ROI with real data, then expand institution-wide with confidence.',
                 },
               ].map(({ icon: Icon, title, desc }, i) => (
                 <div key={i} className="flex items-start gap-4">
@@ -1002,7 +1030,7 @@ const CampusAssistLanding: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-white font-bold text-lg">Procurement-Ready</h4>
-                    <p className="text-neutral-400 text-sm">Below formal tender threshold</p>
+                    <p className="text-neutral-400 text-sm">Designed for fast institutional approval</p>
                   </div>
                 </div>
 
@@ -1034,17 +1062,22 @@ const CampusAssistLanding: React.FC = () => {
                   ))}
                 </div>
 
-                {/* Price Tag */}
+                {/* Gated Pricing CTA — replaces the explicit price tag */}
                 <div className="mt-10 p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                  <div className="flex items-baseline justify-between">
-                    <div>
-                      <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium">Departmental Pilot</p>
-                      <p className="text-3xl font-extrabold text-white mt-1">£25,000<span className="text-base font-normal text-neutral-500">/year</span></p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-green-400 font-semibold">Below £50k threshold</p>
-                      <p className="text-xs text-neutral-500">No formal tender required</p>
-                    </div>
+                  <div className="text-center">
+                    <p className="text-sm text-white/70 mb-3">
+                      Flexible pilot pricing tailored to your institution's size and needs
+                    </p>
+                    <a
+                      href="mailto:hello@campusassist.co.uk?subject=Pricing%20%26%20Procurement%20Guide%20Request"
+                      className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                    >
+                      Request Pricing & Procurement Guide
+                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </a>
+                    <p className="text-[11px] text-white/30 mt-3">
+                      Includes detailed ROI modelling for your institution
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1170,7 +1203,7 @@ const CampusAssistLanding: React.FC = () => {
         <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed mb-10 max-w-2xl mx-auto">
           Join the next generation of UK universities using AI-driven intelligence to improve
           student outcomes, reduce attrition, and demonstrate real impact to the OfS.
-          Your pilot starts at £25,000—below the formal tender threshold.
+          We'll tailor a pilot to your institution's size, budget, and goals.
         </motion.p>
 
         <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -1181,13 +1214,13 @@ const CampusAssistLanding: React.FC = () => {
             Request Your Demo
             <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </a>
-          <button
-            onClick={() => scrollToSection('roi-calculator')}
+          <a
+            href="mailto:hello@campusassist.co.uk?subject=Custom%20Pricing%20Request%20-%20Campus%20Assist"
             className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded-2xl text-primary-700 border-2 border-primary-200 hover:border-primary-300 hover:bg-primary-50 transition-all duration-200"
           >
             <PoundSterling className="h-5 w-5" />
-            See ROI Calculator
-          </button>
+            See Pricing for Your Institution
+          </a>
         </motion.div>
 
         {/* Trust badges */}
@@ -1251,7 +1284,7 @@ const CampusAssistLanding: React.FC = () => {
           <div>
             <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Resources</h4>
             <ul className="space-y-2">
-              {['ROI Calculator', 'Procurement Guide', 'Security Overview', 'Contact Us'].map((item, i) => (
+              {['Impact Calculator', 'Procurement Guide', 'Security Overview', 'Contact Us'].map((item, i) => (
                 <li key={item}>
                   <button
                     onClick={() => scrollToSection(['roi-calculator', 'procurement', 'trust', 'cta'][i])}
