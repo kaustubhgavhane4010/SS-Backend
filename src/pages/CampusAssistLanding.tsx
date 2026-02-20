@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════════════════════════════
- * CAMPUS ASSIST — The Intelligence Layer for UK Higher Education
+ * CAMPUS ASSIST — The Unified AI Student Success & Support Platform
  * ═══════════════════════════════════════════════════════════════════════════════
  *
  * DESIGN TOKENS (derived from existing brand blue gradient + elevated palette):
@@ -62,38 +62,29 @@ import {
   Shield,
   MessageSquare,
   BarChart3,
-  Send,
-  GraduationCap,
-  TrendingDown,
   TrendingUp,
   AlertTriangle,
   ArrowRight,
   ChevronRight,
-  Globe,
   Lock,
   Zap,
   Users,
   Clock,
-  Smartphone,
-  Bell,
   FileCheck,
   BadgeCheck,
   Sparkles,
   Activity,
-  PoundSterling,
   Building2,
   Timer,
   CircleDot,
   Layers,
-  Eye,
   Heart,
-  Target,
-  Gauge,
   ShieldCheck,
   CloudCog,
   Scale,
   BookOpen,
   Landmark,
+  Globe,
   ChevronDown,
   Menu,
   X,
@@ -284,7 +275,7 @@ const CampusAssistLanding: React.FC = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeCalculatorTab, setActiveCalculatorTab] = useState<'domestic' | 'international'>('domestic');
+  const [activeHeroTab, setActiveHeroTab] = useState<'student' | 'staff'>('student');
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
@@ -336,7 +327,7 @@ const CampusAssistLanding: React.FC = () => {
               <span className={`hidden sm:block text-[10px] uppercase tracking-[0.2em] font-medium transition-colors duration-300 ${
                 scrolled ? 'text-primary-600' : 'text-primary-300'
               }`}>
-                Intelligence Layer
+                AI Success Platform
               </span>
             </div>
           </div>
@@ -345,7 +336,7 @@ const CampusAssistLanding: React.FC = () => {
           <nav className="hidden lg:flex items-center gap-1">
             {[
               { label: 'Platform', id: 'platform' },
-              { label: 'Impact', id: 'roi-calculator' },
+              { label: 'Results', id: 'results' },
               { label: 'Procurement', id: 'procurement' },
               { label: 'Trust & Security', id: 'trust' },
             ].map((item) => (
@@ -408,7 +399,7 @@ const CampusAssistLanding: React.FC = () => {
             <div className="px-4 py-4 space-y-1">
               {[
                 { label: 'Platform', id: 'platform' },
-                { label: 'Impact Calculator', id: 'roi-calculator' },
+                { label: 'Results', id: 'results' },
                 { label: 'Procurement', id: 'procurement' },
                 { label: 'Trust & Security', id: 'trust' },
               ].map((item) => (
@@ -434,102 +425,244 @@ const CampusAssistLanding: React.FC = () => {
   );
 
   /* ─────────────────────────────────────────────────────────────────────────
-     SECTION 2: HERO
-     Background: Navy Deep (#0A1628) with animated gradient orbs, dot-grid
-     pattern at 4% opacity, and neural-network SVG constellation overlay.
+     SECTION 2: HERO — "The Convergence"
+     Split-View: Student AI Chat (left) | Staff Risk Dashboard (right)
+     Background: Navy Deep with animated gradient orbs + neural constellation.
+     NO mention of £28,000 specific figure. Focus on dual-value proposition.
      ───────────────────────────────────────────────────────────────────────── */
   const Hero = () => (
     <div ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden" style={{ background: DESIGN_TOKENS.colors.navyDeep }}>
       {/* Abstract AI background layers */}
       <div className="absolute inset-0">
-        {/* Gradient orb 1 - top right */}
         <motion.div
           animate={{ x: [0, 30, 0], y: [0, -20, 0], scale: [1, 1.1, 1] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full"
           style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%)' }}
         />
-        {/* Gradient orb 2 - bottom left */}
         <motion.div
           animate={{ x: [0, -20, 0], y: [0, 30, 0], scale: [1, 1.15, 1] }}
           transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
           className="absolute -bottom-60 -left-40 w-[600px] h-[600px] rounded-full"
           style={{ background: 'radial-gradient(circle, rgba(96,165,250,0.08) 0%, transparent 70%)' }}
         />
-        {/* Gradient orb 3 - center */}
         <motion.div
           animate={{ x: [0, 15, -15, 0], y: [0, -25, 10, 0] }}
           transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
           className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full"
           style={{ background: 'radial-gradient(circle, rgba(250,204,21,0.04) 0%, transparent 70%)' }}
         />
-        {/* Dot grid pattern */}
         <DotGridPattern className="text-white/[0.04]" />
-        {/* Neural network constellation */}
         <NeuralNetworkBg />
       </div>
 
-      {/* Hero Content */}
-      <motion.div style={{ opacity: heroOpacity, scale: heroScale }} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
-        <div className="max-w-4xl">
-          {/* Eyebrow badge */}
-          <motion.div variants={fadeInUp} custom={0} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary-500/30 bg-primary-500/10 backdrop-blur-sm mb-8">
-            <div className="w-2 h-2 rounded-full bg-primary-400 animate-pulse" />
-            <span className="text-primary-300 text-sm font-medium">Purpose-Built for UK Higher Education</span>
-          </motion.div>
+      {/* Hero Content — Two-Column: Copy + Split-View */}
+      <motion.div style={{ opacity: heroOpacity, scale: heroScale }} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left: Copy */}
+          <div>
+            <motion.div variants={fadeInUp} custom={0} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary-500/30 bg-primary-500/10 backdrop-blur-sm mb-8">
+              <div className="w-2 h-2 rounded-full bg-primary-400 animate-pulse" />
+              <span className="text-primary-300 text-sm font-medium">AI-Powered Student Success</span>
+            </motion.div>
 
-          {/* Main headline */}
-          <motion.h1 variants={fadeInUp} custom={1} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.08] tracking-tight mb-6">
-            The Intelligence Layer
-            <br />
-            <span className="bg-gradient-to-r from-primary-400 via-primary-300 to-blue-200 bg-clip-text text-transparent">
-              for UK Higher Education
-            </span>
-          </motion.h1>
+            <motion.h1 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold text-white leading-[1.1] tracking-tight mb-6">
+              The Unified AI Support & Retention Platform
+              <br />
+              <span className="bg-gradient-to-r from-primary-400 via-primary-300 to-blue-200 bg-clip-text text-transparent">
+                for Higher Education
+              </span>
+            </motion.h1>
 
-          {/* Sub-headline */}
-          <motion.p variants={fadeInUp} custom={2} className="text-lg sm:text-xl text-white/60 leading-relaxed max-w-2xl mb-10">
-            UK universities lose <span className="text-white font-semibold">£28,000 for every student dropout</span>.
-            Campus Assist uses AI-driven sentiment analysis to identify at-risk students before
-            they disengage—sitting as a lightweight layer on top of your existing Student Information System.
-          </motion.p>
+            <motion.p variants={fadeInUp} custom={2} className="text-lg text-white/60 leading-relaxed max-w-xl mb-10">
+              Deliver instant 24/7 support to your students while silently powering the
+              intelligence your staff needs to predict and prevent dropouts. A lightweight
+              overlay on your existing systems—no rip-and-replace required.
+            </motion.p>
 
-          {/* CTA Group */}
-          <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-16">
-            <button
-              onClick={() => scrollToSection('cta')}
-              className="group inline-flex items-center gap-3 px-8 py-4 text-base font-semibold rounded-2xl bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-2xl shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105 transition-all duration-300"
-            >
-              Request a Demo
-              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button
-              onClick={() => scrollToSection('roi-calculator')}
-              className="group inline-flex items-center gap-3 px-8 py-4 text-base font-semibold rounded-2xl text-white/90 border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all duration-300"
-            >
-              <PoundSterling className="h-5 w-5 text-accent-400" />
-              See Your Attrition Cost
-              <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform text-white/40" />
-            </button>
-          </motion.div>
+            <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-12">
+              <button
+                onClick={() => scrollToSection('cta')}
+                className="group inline-flex items-center gap-3 px-8 py-4 text-base font-semibold rounded-2xl bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-2xl shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105 transition-all duration-300"
+              >
+                Request a Demo
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+              <button
+                onClick={() => scrollToSection('platform')}
+                className="group inline-flex items-center gap-3 px-8 py-4 text-base font-semibold rounded-2xl text-white/90 border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all duration-300"
+              >
+                See How It Works
+                <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform text-white/40" />
+              </button>
+            </motion.div>
 
-          {/* Hero Stats Row */}
-          <motion.div variants={fadeInUp} custom={4} className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl">
-            {[
-              { value: '£28,000', label: 'Average cost per dropout', icon: TrendingDown, color: 'text-red-400' },
-              { value: '40%', label: 'Of UK institutions in deficit', icon: AlertTriangle, color: 'text-amber-400' },
-              { value: '24/7', label: 'AI-powered student support', icon: Clock, color: 'text-primary-400' },
-            ].map((stat, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <div className="mt-1 w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
-                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
+            {/* Compact trust badges */}
+            <motion.div variants={fadeIn} custom={4} className="flex flex-wrap items-center gap-4">
+              {[
+                { icon: Lock, label: 'UK GDPR Compliant' },
+                { icon: Scale, label: 'OfS B3 Aligned' },
+                { icon: ShieldCheck, label: 'DPIA Ready' },
+              ].map(({ icon: Icon, label }, i) => (
+                <div key={i} className="flex items-center gap-1.5 text-white/30">
+                  <Icon className="h-3.5 w-3.5" />
+                  <span className="text-[11px] font-medium">{label}</span>
                 </div>
-                <div>
-                  <div className="text-xl font-bold text-white">{stat.value}</div>
-                  <div className="text-sm text-white/40">{stat.label}</div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Right: Split-View Interface Mockup */}
+          <motion.div variants={scaleIn} custom={2} className="hidden lg:block">
+            <div className="relative">
+              {/* Ambient glow behind the mockup */}
+              <div className="absolute -inset-8 bg-gradient-to-br from-primary-500/15 to-primary-400/5 rounded-3xl blur-3xl" />
+
+              {/* Tab Switcher */}
+              <div className="relative">
+                <div className="flex mb-4 bg-white/5 rounded-xl p-1 backdrop-blur-sm border border-white/10">
+                  {([
+                    { key: 'student' as const, label: 'Student View', icon: MessageSquare },
+                    { key: 'staff' as const, label: 'Staff View', icon: BarChart3 },
+                  ]).map(({ key, label, icon: Icon }) => (
+                    <button
+                      key={key}
+                      onClick={() => setActiveHeroTab(key)}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                        activeHeroTab === key
+                          ? 'bg-white/15 text-white shadow-sm'
+                          : 'text-white/40 hover:text-white/60'
+                      }`}
+                    >
+                      <Icon className="h-3.5 w-3.5" />
+                      {label}
+                    </button>
+                  ))}
                 </div>
+
+                <AnimatePresence mode="wait">
+                  {activeHeroTab === 'student' ? (
+                    /* ── STUDENT-FACING: Mobile AI Chat ── */
+                    <motion.div
+                      key="student"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative bg-white/[0.07] backdrop-blur-md rounded-2xl border border-white/10 p-5 shadow-2xl"
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-primary-500/20 text-primary-300 rounded-full">Student-Facing</span>
+                        <span className="text-[9px] text-white/30">•</span>
+                        <span className="text-[9px] text-white/30">40+ Languages</span>
+                      </div>
+
+                      {/* Chat header */}
+                      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-white/10">
+                        <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center">
+                          <Brain className="h-4 w-4 text-white" />
+                        </div>
+                        <div>
+                          <span className="text-xs font-semibold text-white">Campus Assist AI</span>
+                          <div className="flex items-center gap-1">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                            <span className="text-[10px] text-green-400">Always Online</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Chat messages */}
+                      <div className="space-y-3 mb-4">
+                        <div className="bg-white/10 rounded-xl p-3 max-w-[85%]">
+                          <p className="text-[11px] text-white/80 leading-relaxed">Hi, I'm really struggling with my coursework deadline. I don't know who to talk to and I've missed my last seminar 😞</p>
+                        </div>
+                        <div className="bg-primary-500/30 rounded-xl p-3 max-w-[85%] ml-auto">
+                          <p className="text-[11px] text-white leading-relaxed">I'm sorry to hear that. Let me help right away. I can:<br/>
+                          ✅ Guide you through an EC form<br/>
+                          ✅ Connect you with your personal tutor<br/>
+                          ✅ Book a wellbeing appointment<br/>
+                          Which would be most helpful?</p>
+                        </div>
+                        <div className="bg-white/10 rounded-xl p-3 max-w-[60%]">
+                          <p className="text-[11px] text-white/80">The wellbeing appointment please 🙏</p>
+                        </div>
+                      </div>
+
+                      {/* Typing indicator */}
+                      <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg">
+                        <div className="flex gap-1">
+                          <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 rounded-full bg-primary-400" />
+                          <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-primary-400" />
+                          <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-primary-400" />
+                        </div>
+                        <span className="text-[10px] text-white/30">Booking appointment with Student Wellbeing...</span>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    /* ── STAFF-FACING: Risk Alert Dashboard ── */
+                    <motion.div
+                      key="staff"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative bg-white/[0.07] backdrop-blur-md rounded-2xl border border-white/10 p-5 shadow-2xl"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 rounded-full">Staff-Facing</span>
+                          <span className="text-[9px] text-white/30">Risk Alert Dashboard</span>
+                        </div>
+                        <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20">
+                          <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                          <span className="text-[10px] text-red-300 font-medium">3 Alerts</span>
+                        </div>
+                      </div>
+
+                      {/* Student risk rows */}
+                      <div className="space-y-2 mb-4">
+                        {[
+                          { name: 'Alex M.', dept: 'Business', score: 28, risk: 'Critical', color: 'bg-red-500', textColor: 'text-red-300', bgColor: 'bg-red-500/20', sentiment: '↓ Distress detected' },
+                          { name: 'Priya K.', dept: 'Psychology', score: 45, risk: 'High', color: 'bg-amber-500', textColor: 'text-amber-300', bgColor: 'bg-amber-500/20', sentiment: '↓ Disengaging' },
+                          { name: 'James L.', dept: 'Computing', score: 62, risk: 'Medium', color: 'bg-yellow-500', textColor: 'text-yellow-300', bgColor: 'bg-yellow-500/20', sentiment: '→ Attendance drop' },
+                          { name: 'Sarah W.', dept: 'Nursing', score: 91, risk: 'Low', color: 'bg-green-500', textColor: 'text-green-300', bgColor: 'bg-green-500/20', sentiment: '↑ Engaged' },
+                        ].map((s, i) => (
+                          <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                            <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-[9px] font-bold text-white/60">
+                              {s.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] font-semibold text-white truncate">{s.name}</span>
+                                <span className="text-[9px] text-white/30">{s.dept}</span>
+                              </div>
+                              <div className="flex items-center gap-2 mt-1">
+                                <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+                                  <div className={`h-full ${s.color} rounded-full`} style={{ width: `${s.score}%` }} />
+                                </div>
+                                <span className="text-[9px] text-white/40 w-6 text-right">{s.score}</span>
+                              </div>
+                            </div>
+                            <div className="text-right flex-shrink-0">
+                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${s.bgColor} ${s.textColor}`}>{s.risk}</span>
+                              <p className={`text-[8px] mt-0.5 ${s.textColor}`}>{s.sentiment}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Bottom insight bar */}
+                      <div className="flex items-center gap-2 p-2.5 rounded-lg bg-primary-500/10 border border-primary-500/20">
+                        <Activity className="h-3.5 w-3.5 text-primary-300 flex-shrink-0" />
+                        <p className="text-[10px] text-primary-200">
+                          <span className="font-semibold">Proprietary Sentiment Analysis</span> flagged 2 students from passive engagement data this week
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            ))}
+            </div>
           </motion.div>
         </div>
 
@@ -555,7 +688,7 @@ const CampusAssistLanding: React.FC = () => {
           Designed for institutions using
         </motion.p>
         <motion.div variants={fadeIn} custom={1} className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
-          {['Ellucian Banner', 'Tribal SITS', 'Unit-e', 'UCAS', 'Microsoft 365'].map((name, i) => (
+          {['Tribal SITS', 'Canvas', 'Moodle', 'Ellucian Banner', 'Microsoft 365', 'UCAS'].map((name, i) => (
             <div key={i} className="flex items-center gap-2 text-neutral-400 hover:text-neutral-600 transition-colors">
               <Layers className="h-5 w-5" />
               <span className="text-sm font-semibold tracking-wide">{name}</span>
@@ -567,220 +700,187 @@ const CampusAssistLanding: React.FC = () => {
   );
 
   /* ─────────────────────────────────────────────────────────────────────────
-     SECTION 4: FINANCIAL HEMORRHAGE — ATTRITION COST CALCULATOR
-     Background: Soft primary-50 with white calculator cards. Animated
-     counters illustrate the true cost of student dropout.
-     Pricing is intentionally EXCLUDED — revealed in consultative sales.
+     SECTION 4: EFFICIENCY & LOGIC — BENTO GRID
+     Three high-impact metrics in a modern bento layout. No specific
+     dropout figures. Focuses on operational efficiency & revenue protection.
      ───────────────────────────────────────────────────────────────────────── */
-  const AttritionCalculator = () => {
-    const domesticLoss = 28000;
-    const internationalLoss = 42000; // Significantly higher as per brief
-    const tuitionFee = 9535;
-    const activeLoss = activeCalculatorTab === 'domestic' ? domesticLoss : internationalLoss;
-    const studentsSlider = [1, 5, 10, 25, 50];
-    const [savedStudents, setSavedStudents] = useState(5);
+  const BentoGrid = () => (
+    <Section id="results" className="py-24 lg:py-32 bg-gradient-to-b from-white to-slate-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-100 border border-primary-200/50 mb-6">
+            <Zap className="h-4 w-4 text-primary-600" />
+            <span className="text-primary-700 text-sm font-semibold">Efficiency & Logic</span>
+          </motion.div>
+          <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-neutral-900 leading-tight mb-6">
+            The Numbers That
+            <br />
+            <span className="bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">Move the Needle</span>
+          </motion.h2>
+          <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed">
+            Campus Assist doesn't just support students—it transforms operational efficiency
+            and protects the revenue your institution depends on.
+          </motion.p>
+        </div>
 
-    return (
-      <Section id="roi-calculator" className="py-24 lg:py-32 bg-gradient-to-b from-white to-primary-50/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-200/50 mb-6">
-              <TrendingDown className="h-4 w-4 text-red-500" />
-              <span className="text-red-700 text-sm font-semibold">The Financial Reality</span>
-            </motion.div>
-            <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-neutral-900 leading-tight mb-6">
-              How Much is Student
-              <br />
-              <span className="text-red-500">Attrition Really Costing You?</span>
-            </motion.h2>
-            <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed">
-              Every student who leaves represents far more than lost tuition fees. Calculate the true
-              financial impact on your institution—then let us show you how Campus Assist pays for itself.
-            </motion.p>
-          </div>
+        {/* Bento Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* METRIC 1: 80% Ticket Deflection — Large card */}
+          <motion.div variants={scaleIn} custom={0} className="md:col-span-2 lg:col-span-2 group">
+            <div className="relative h-full bg-white rounded-2xl border border-neutral-200/70 p-8 lg:p-10 hover:shadow-xl hover:shadow-primary-900/5 transition-all duration-500 overflow-hidden">
+              {/* Background accent */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-primary-50 to-transparent rounded-bl-full" />
 
-          {/* Calculator Card */}
-          <motion.div variants={scaleIn} custom={1} className="max-w-5xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl shadow-neutral-900/5 border border-neutral-200/50 overflow-hidden">
-              {/* Tab Switcher */}
-              <div className="flex border-b border-neutral-100">
-                {(['domestic', 'international'] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveCalculatorTab(tab)}
-                    className={`flex-1 py-4 text-sm font-semibold uppercase tracking-wider transition-all duration-200 ${
-                      activeCalculatorTab === tab
-                        ? 'text-primary-700 bg-primary-50 border-b-2 border-primary-600'
-                        : 'text-neutral-400 hover:text-neutral-600 hover:bg-neutral-50'
-                    }`}
-                  >
-                    {tab === 'domestic' ? '🇬🇧 Domestic Student' : '🌍 International Student'}
-                  </button>
-                ))}
-              </div>
-
-              <div className="p-8 lg:p-12">
-                {/* Cost Breakdown */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                  {/* Dropout Cost Card */}
-                  <div className="relative p-8 rounded-2xl bg-gradient-to-br from-red-50 to-red-100/50 border border-red-200/50">
-                    <div className="flex items-center gap-2 mb-4">
-                      <AlertTriangle className="h-5 w-5 text-red-500" />
-                      <span className="text-sm font-semibold text-red-700 uppercase tracking-wide">Total Cost Per Dropout</span>
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center">
+                        <MessageSquare className="h-5 w-5 text-primary-600" />
+                      </div>
+                      <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-primary-100 text-primary-700 rounded-full">Admin Efficiency</span>
                     </div>
-                    <div className="text-5xl font-extrabold text-red-600 mb-2">
-                      <AnimatedCounter target={activeLoss} prefix="£" />
-                    </div>
-                    <p className="text-sm text-red-500/70 mb-4">
-                      {activeCalculatorTab === 'domestic'
-                        ? `£${tuitionFee.toLocaleString()} tuition + HEFCE funding, support costs & reputational impact`
-                        : 'International fee income, accommodation revenue & recruitment cost write-off'}
+                    <h3 className="text-2xl font-bold text-neutral-900 mb-2">Ticket Deflection</h3>
+                    <p className="text-neutral-500 leading-relaxed max-w-lg">
+                      Our AI handles routine student queries autonomously—extenuating circumstances, timetabling,
+                      accommodation, finance—freeing your student services team to focus on complex welfare cases.
                     </p>
-                    <div className="flex items-center gap-2 pt-4 border-t border-red-200/50">
-                      <Activity className="h-4 w-4 text-red-400" />
-                      <span className="text-xs text-red-600 font-medium">
-                        {activeCalculatorTab === 'domestic'
-                          ? 'Based on HESA sector-average data for UK undergraduates'
-                          : 'Estimated at 1.5× domestic rate due to higher fee bands'}
-                      </span>
-                    </div>
                   </div>
-
-                  {/* Context Card */}
-                  <div className="relative p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/30 border border-amber-200/50">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Gauge className="h-5 w-5 text-amber-600" />
-                      <span className="text-sm font-semibold text-amber-700 uppercase tracking-wide">Sector Context</span>
+                  <div className="hidden sm:block text-right">
+                    <div className="text-6xl lg:text-7xl font-extrabold text-primary-600">
+                      <AnimatedCounter target={80} suffix="%" />
                     </div>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="text-3xl font-extrabold text-amber-700">40%</div>
-                        <p className="text-sm text-amber-600/70">of UK universities currently operate in deficit</p>
-                      </div>
-                      <div>
-                        <div className="text-3xl font-extrabold text-amber-700">6.3%</div>
-                        <p className="text-sm text-amber-600/70">average non-continuation rate across UK HE</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 pt-4 mt-4 border-t border-amber-200/50">
-                      <BookOpen className="h-4 w-4 text-amber-500" />
-                      <span className="text-xs text-amber-600 font-medium">
-                        Source: OfS & HESA published data 2023-24
-                      </span>
-                    </div>
+                    <p className="text-sm text-primary-600/60 font-medium">of queries resolved<br/>without human input</p>
                   </div>
                 </div>
 
-                {/* Impact Simulator */}
-                <div className="bg-neutral-50 rounded-2xl p-6 lg:p-8">
-                  <h3 className="text-lg font-bold text-neutral-900 mb-2">
-                    Impact Simulator
-                  </h3>
-                  <p className="text-sm text-neutral-500 mb-6">
-                    Select the number of at-risk students you could retain to see the potential financial impact for your institution.
+                {/* Mobile: show number inline */}
+                <div className="sm:hidden mb-4">
+                  <span className="text-5xl font-extrabold text-primary-600">
+                    <AnimatedCounter target={80} suffix="%" />
+                  </span>
+                  <span className="text-sm text-primary-600/60 font-medium ml-2">queries auto-resolved</span>
+                </div>
+
+                {/* Progress visualization */}
+                <div className="flex items-center gap-3 mt-6">
+                  <div className="flex-1 h-3 bg-neutral-100 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: '80%' }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.5, ease: EASE_CURVE, delay: 0.3 }}
+                      className="h-full bg-gradient-to-r from-primary-500 to-primary-400 rounded-full"
+                    />
+                  </div>
+                  <span className="text-xs text-neutral-400 font-medium whitespace-nowrap">Target: 80%+</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* METRIC 2: Revenue Protection — "One Student" ROI */}
+          <motion.div variants={scaleIn} custom={1} className="group">
+            <div className="relative h-full bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-2xl p-8 hover:shadow-xl transition-all duration-500 overflow-hidden">
+              {/* Background accent */}
+              <div className="absolute bottom-0 right-0 w-40 h-40 bg-gradient-to-tl from-green-500/10 to-transparent rounded-tl-full" />
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                    <Shield className="h-5 w-5 text-green-400" />
+                  </div>
+                  <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-green-500/20 text-green-300 rounded-full">Revenue Shield</span>
+                </div>
+
+                <h3 className="text-2xl font-bold text-white mb-3">Protected Revenue</h3>
+                <p className="text-white/50 leading-relaxed mb-8 text-sm">
+                  The UK HE sector loses significant tuition and funding revenue to preventable attrition every year.
+                  Campus Assist pays for itself by retaining even a small number of at-risk students.
+                </p>
+
+                <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <TrendingUp className="h-5 w-5 text-green-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-bold text-sm">One Student ROI</p>
+                      <p className="text-white/40 text-xs">Retain just one student and the platform has already paid for itself</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* METRIC 3: < 3 Weeks Implementation */}
+          <motion.div variants={scaleIn} custom={2} className="group">
+            <div className="relative h-full bg-white rounded-2xl border border-neutral-200/70 p-8 hover:shadow-xl hover:shadow-primary-900/5 transition-all duration-500">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                  <Timer className="h-5 w-5 text-amber-600" />
+                </div>
+                <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 rounded-full">Lightweight Overlay</span>
+              </div>
+
+              <div className="text-5xl font-extrabold text-neutral-900 mb-2">
+                {'< '}3
+              </div>
+              <p className="text-lg font-semibold text-neutral-700 mb-3">Weeks to Go-Live</p>
+              <p className="text-neutral-500 text-sm leading-relaxed">
+                Cloud-native. No on-premise installation. No infrastructure changes.
+                Campus Assist layers on top of SITS, Canvas, and Moodle via secure API integration.
+              </p>
+
+              <div className="mt-6 flex items-center gap-2">
+                <Layers className="h-4 w-4 text-neutral-400" />
+                <span className="text-xs text-neutral-400 font-medium">Non-invasive SIS integration</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* METRIC 4: Sector Crisis Context */}
+          <motion.div variants={scaleIn} custom={3} className="md:col-span-2 group">
+            <div className="relative h-full bg-gradient-to-r from-red-50 to-amber-50 rounded-2xl border border-red-200/30 p-8 hover:shadow-xl transition-all duration-500">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-12">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-3">
+                    <AlertTriangle className="h-4 w-4 text-red-500" />
+                    <span className="text-sm font-semibold text-red-700">The Sector Crisis</span>
+                  </div>
+                  <p className="text-neutral-600 leading-relaxed">
+                    UK universities are facing a financial hemorrhage. Student attrition drains tuition revenue, HEFCE funding,
+                    and recruitment investment—while 40% of institutions already operate in deficit. Early intervention isn't optional. It's survival.
                   </p>
-                  <div className="flex flex-wrap gap-3 mb-8">
-                    {studentsSlider.map((n) => (
-                      <button
-                        key={n}
-                        onClick={() => setSavedStudents(n)}
-                        className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                          savedStudents === n
-                            ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/25'
-                            : 'bg-white text-neutral-600 border border-neutral-200 hover:border-primary-300 hover:text-primary-700'
-                        }`}
-                      >
-                        {n} {n === 1 ? 'student' : 'students'}
-                      </button>
-                    ))}
+                </div>
+                <div className="flex items-center gap-8 flex-shrink-0">
+                  <div className="text-center">
+                    <div className="text-3xl font-extrabold text-red-600"><AnimatedCounter target={40} suffix="%" /></div>
+                    <p className="text-xs text-neutral-500 mt-1">Institutions<br/>in deficit</p>
                   </div>
-
-                  {/* Results — three distinct insights from one number */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
-                    {/* Card 1: The Raw Loss */}
-                    <div className="text-center p-6 bg-white rounded-2xl border border-red-200/50 shadow-sm">
-                      <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center mx-auto mb-3">
-                        <TrendingDown className="h-5 w-5 text-red-500" />
-                      </div>
-                      <p className="text-sm text-neutral-500 mb-2">Annual Revenue Lost</p>
-                      <p className="text-3xl sm:text-4xl font-extrabold text-red-600">
-                        £{(savedStudents * activeLoss).toLocaleString()}
-                      </p>
-                      <p className="text-xs text-neutral-400 mt-2">
-                        {savedStudents} {savedStudents === 1 ? 'student' : 'students'} × £{activeLoss.toLocaleString()} each
-                      </p>
-                    </div>
-
-                    {/* Card 2: What That Money Could Fund */}
-                    <div className="text-center p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200/50 shadow-sm">
-                      <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mx-auto mb-3">
-                        <GraduationCap className="h-5 w-5 text-amber-600" />
-                      </div>
-                      <p className="text-sm text-amber-700 font-semibold mb-2">That's Equivalent To</p>
-                      <p className="text-3xl sm:text-4xl font-extrabold text-amber-700">
-                        {Math.max(1, Math.round((savedStudents * activeLoss) / tuitionFee))}
-                      </p>
-                      <p className="text-xs text-amber-600/70 mt-2">
-                        full student scholarships your institution could have funded instead
-                      </p>
-                    </div>
-
-                    {/* Card 3: Weekly Cost of Inaction */}
-                    <div className="text-center p-6 bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl border border-primary-200/50 shadow-sm">
-                      <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center mx-auto mb-3">
-                        <Clock className="h-5 w-5 text-primary-600" />
-                      </div>
-                      <p className="text-sm text-primary-700 font-semibold mb-2">Every Week You Wait</p>
-                      <p className="text-3xl sm:text-4xl font-extrabold text-primary-700">
-                        £{Math.round((savedStudents * activeLoss) / 52).toLocaleString()}
-                      </p>
-                      <p className="text-xs text-primary-600/60 mt-2">
-                        drains from your institution while at-risk students go unsupported
-                      </p>
-                    </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-extrabold text-amber-600"><AnimatedCounter target={6} suffix=".3%" /></div>
+                    <p className="text-xs text-neutral-500 mt-1">Non-continuation<br/>rate (UK avg)</p>
                   </div>
-
-                  {/* CTA — Gated pricing reveal */}
-                  <motion.div
-                    key={savedStudents}
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="text-center"
-                  >
-                    <div className="inline-flex flex-col items-center gap-3 p-6 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100/50 border border-primary-200/50">
-                      <p className="text-sm text-primary-800 font-semibold">
-                        Your institution could be losing <span className="text-red-600 font-extrabold">£{(savedStudents * activeLoss).toLocaleString()}</span> annually to preventable attrition
-                      </p>
-                      <a
-                        href="mailto:hello@campusassist.co.uk?subject=Custom%20ROI%20Report%20Request%20-%20Campus%20Assist"
-                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105 transition-all duration-300 text-sm"
-                      >
-                        Get Your Custom ROI Report
-                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </a>
-                      <p className="text-xs text-primary-600/60">
-                        We'll model your specific student population, dropout rates, and potential savings
-                      </p>
-                    </div>
-                  </motion.div>
                 </div>
               </div>
             </div>
           </motion.div>
         </div>
-      </Section>
-    );
-  };
+      </div>
+    </Section>
+  );
 
   /* ─────────────────────────────────────────────────────────────────────────
      SECTION 5: THREE-PILLAR PRODUCT ECOSYSTEM
-     Background: Surface (#f8fafc) with barely-visible topographic contour
-     pattern in primary-100/30 suggesting layered data analysis.
+     Pillars: Digital Front Desk | Smart Triage & Safeguarding | Retention Risk Engine
+     Uses "Proprietary Sentiment Analysis" and "Passive Engagement Data" language.
      ───────────────────────────────────────────────────────────────────────── */
   const ProductEcosystem = () => (
     <Section id="platform" className="py-24 lg:py-32 bg-slate-50 relative overflow-hidden">
-      {/* Topographic contour background pattern */}
+      {/* Topographic contour background */}
       <div className="absolute inset-0 opacity-[0.03]">
         <svg className="w-full h-full" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
           {[100, 200, 300, 400, 500].map((r, i) => (
@@ -802,18 +902,17 @@ const CampusAssistLanding: React.FC = () => {
             <span className="bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">Student Success</span>
           </motion.h2>
           <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed">
-            A unified intelligence layer that connects your student-facing support with
-            staff-facing analytics and automated intervention—all from one platform.
+            A unified platform that connects student-facing 24/7 support with automated safeguarding triage
+            and staff-facing predictive analytics—all from a single lightweight overlay.
           </motion.p>
         </div>
 
         {/* Product Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* PILLAR 1: Digital Front Desk — STUDENT-FACING */}
+          {/* PILLAR 1: The Digital Front Desk — STUDENT-FACING */}
           <motion.div variants={fadeInUp} custom={0} className="group relative">
             <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-primary-400/20 to-primary-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
             <div className="relative bg-white rounded-2xl border border-neutral-200/70 p-8 h-full hover:shadow-xl hover:shadow-primary-900/5 transition-all duration-500 hover:-translate-y-1">
-              {/* Student Badge */}
               <div className="flex items-center gap-2 mb-6">
                 <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-blue-100 text-blue-700 rounded-full">Student-Facing</span>
               </div>
@@ -823,8 +922,9 @@ const CampusAssistLanding: React.FC = () => {
               </div>
               <h3 className="text-xl font-bold text-neutral-900 mb-3">The Digital Front Desk</h3>
               <p className="text-neutral-500 mb-6 leading-relaxed">
-                A mobile-first AI chat interface providing 24/7 autonomous support for every student query—
-                from accommodation to academic appeals—without waiting in phone queues.
+                Mobile-first AI chat providing instant, autonomous support in 40+ languages.
+                Students get immediate answers to accommodation, finance, EC forms, and timetabling queries—
+                no phone queues, no office hours.
               </p>
 
               {/* Mock Chat Interface */}
@@ -850,18 +950,68 @@ const CampusAssistLanding: React.FC = () => {
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
-                {['24/7 Available', 'Multi-language', 'Mobile-First'].map((tag) => (
+                {['24/7 Available', '40+ Languages', 'Mobile-First'].map((tag) => (
                   <span key={tag} className="px-2.5 py-1 text-[11px] font-medium bg-primary-50 text-primary-700 rounded-full">{tag}</span>
                 ))}
               </div>
             </div>
           </motion.div>
 
-          {/* PILLAR 2: Retention & Risk Engine — STAFF-FACING */}
+          {/* PILLAR 2: Smart Triage & Safeguarding — SAFEGUARDING */}
           <motion.div variants={fadeInUp} custom={1} className="group relative">
+            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-rose-400/20 to-rose-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+            <div className="relative bg-white rounded-2xl border border-neutral-200/70 p-8 h-full hover:shadow-xl hover:shadow-rose-900/5 transition-all duration-500 hover:-translate-y-1">
+              <div className="flex items-center gap-2 mb-6">
+                <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-rose-100 text-rose-700 rounded-full">Safeguarding</span>
+              </div>
+
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center mb-6 shadow-lg shadow-rose-500/25">
+                <Heart className="h-7 w-7 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-neutral-900 mb-3">Smart Triage & Safeguarding</h3>
+              <p className="text-neutral-500 mb-6 leading-relaxed">
+                When proprietary sentiment analysis detects distress, self-harm language, or complex welfare needs,
+                Campus Assist automatically escalates to your human Wellbeing or Registry team—with full context.
+              </p>
+
+              {/* Mock Triage Flow */}
+              <div className="bg-neutral-50 rounded-xl p-4 border border-neutral-100">
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-neutral-100">
+                  <Shield className="h-3.5 w-3.5 text-rose-500" />
+                  <span className="text-xs font-semibold text-neutral-600">Triage Alert</span>
+                  <div className="ml-auto">
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 animate-pulse">URGENT</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2 p-2.5 rounded-lg bg-red-50 border border-red-100">
+                    <AlertTriangle className="h-3.5 w-3.5 text-red-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-[11px] text-red-800 font-semibold">Distress Detected — Student Alex M.</p>
+                      <p className="text-[10px] text-red-600 mt-1">Sentiment score dropped to 15. Language patterns indicate significant emotional distress.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-blue-50 border border-blue-100">
+                    <Users className="h-3.5 w-3.5 text-blue-600" />
+                    <p className="text-[10px] text-blue-700 font-medium">
+                      → Auto-escalated to Wellbeing Team with full conversation context
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-2">
+                {['Human Handoff', 'Welfare Alerts', 'Full Context'].map((tag) => (
+                  <span key={tag} className="px-2.5 py-1 text-[11px] font-medium bg-rose-50 text-rose-700 rounded-full">{tag}</span>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* PILLAR 3: Retention Risk Engine — STAFF-FACING */}
+          <motion.div variants={fadeInUp} custom={2} className="group relative">
             <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-amber-400/20 to-amber-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
             <div className="relative bg-white rounded-2xl border border-neutral-200/70 p-8 h-full hover:shadow-xl hover:shadow-amber-900/5 transition-all duration-500 hover:-translate-y-1">
-              {/* Staff Badge */}
               <div className="flex items-center gap-2 mb-6">
                 <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-700 rounded-full">Staff-Facing</span>
               </div>
@@ -869,17 +1019,20 @@ const CampusAssistLanding: React.FC = () => {
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center mb-6 shadow-lg shadow-amber-500/25">
                 <BarChart3 className="h-7 w-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">Retention & Risk Engine</h3>
+              <h3 className="text-xl font-bold text-neutral-900 mb-3">Retention Risk Engine</h3>
               <p className="text-neutral-500 mb-6 leading-relaxed">
-                A staff dashboard with predictive engagement scores and sentiment flags.
-                Identify which students are disengaging before they submit a withdrawal form.
+                Predictive engagement scores derived from VLE logins, passive engagement data, and
+                proprietary sentiment analysis. Flag at-risk students proactively—weeks before they disengage.
               </p>
 
               {/* Mock Dashboard Preview */}
               <div className="bg-neutral-50 rounded-xl p-4 border border-neutral-100">
                 <div className="flex items-center justify-between mb-3 pb-2 border-b border-neutral-100">
                   <span className="text-xs font-semibold text-neutral-600">Risk Overview</span>
-                  <span className="text-[10px] text-neutral-400">Live</span>
+                  <div className="flex items-center gap-1">
+                    <Activity className="h-3 w-3 text-green-500" />
+                    <span className="text-[10px] text-neutral-400">Live</span>
+                  </div>
                 </div>
                 {[
                   { name: 'Alex M.', score: 32, risk: 'High', color: 'bg-red-500', bg: 'bg-red-50', text: 'text-red-700' },
@@ -902,55 +1055,8 @@ const CampusAssistLanding: React.FC = () => {
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
-                {['Sentiment Analysis', 'Predictive Scores', 'Early Alerts'].map((tag) => (
+                {['Proprietary AI', 'VLE Data', 'Predictive Scores'].map((tag) => (
                   <span key={tag} className="px-2.5 py-1 text-[11px] font-medium bg-amber-50 text-amber-700 rounded-full">{tag}</span>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* PILLAR 3: Proactive Outreach — AUTOMATED */}
-          <motion.div variants={fadeInUp} custom={2} className="group relative">
-            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-green-400/20 to-green-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
-            <div className="relative bg-white rounded-2xl border border-neutral-200/70 p-8 h-full hover:shadow-xl hover:shadow-green-900/5 transition-all duration-500 hover:-translate-y-1">
-              {/* Automated Badge */}
-              <div className="flex items-center gap-2 mb-6">
-                <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-green-100 text-green-700 rounded-full">Automated</span>
-              </div>
-
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mb-6 shadow-lg shadow-green-500/25">
-                <Send className="h-7 w-7 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">Proactive Outreach</h3>
-              <p className="text-neutral-500 mb-6 leading-relaxed">
-                Automated, personalised SMS and WhatsApp check-ins triggered when student engagement drops.
-                Reach students on the channels they actually use—before it's too late.
-              </p>
-
-              {/* Mock SMS Preview */}
-              <div className="bg-neutral-50 rounded-xl p-4 border border-neutral-100">
-                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-neutral-100">
-                  <Smartphone className="h-3.5 w-3.5 text-green-600" />
-                  <span className="text-xs font-semibold text-neutral-600">Automated Check-In</span>
-                </div>
-                <div className="bg-green-50 rounded-xl p-3 border border-green-100">
-                  <div className="flex items-start gap-2">
-                    <Bell className="h-3.5 w-3.5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-xs text-green-800 leading-relaxed">
-                        Hi Alex, we noticed you haven't attended your last 2 seminars. Is everything OK?
-                        Your personal tutor Dr. Smith is available this week. Would you like us to book a
-                        quick chat? Reply YES or tap here →
-                      </p>
-                      <p className="text-[10px] text-green-600 mt-2 font-medium">via WhatsApp • Sent automatically</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 flex flex-wrap gap-2">
-                {['SMS', 'WhatsApp', 'Auto-Triggered'].map((tag) => (
-                  <span key={tag} className="px-2.5 py-1 text-[11px] font-medium bg-green-50 text-green-700 rounded-full">{tag}</span>
                 ))}
               </div>
             </div>
@@ -966,13 +1072,13 @@ const CampusAssistLanding: React.FC = () => {
             </div>
             <ChevronRight className="h-4 w-4 text-neutral-300" />
             <div className="flex items-center gap-2 text-sm text-neutral-500">
-              <Activity className="h-4 w-4 text-amber-500" />
-              <span>AI analyses sentiment</span>
+              <Heart className="h-4 w-4 text-rose-500" />
+              <span>Smart triage routes</span>
             </div>
             <ChevronRight className="h-4 w-4 text-neutral-300" />
             <div className="flex items-center gap-2 text-sm text-neutral-500">
-              <Send className="h-4 w-4 text-green-500" />
-              <span>Outreach triggers</span>
+              <Activity className="h-4 w-4 text-amber-500" />
+              <span>Risk engine predicts</span>
             </div>
           </div>
         </motion.div>
@@ -982,8 +1088,8 @@ const CampusAssistLanding: React.FC = () => {
 
   /* ─────────────────────────────────────────────────────────────────────────
      SECTION 6: PROCUREMENT STRATEGY
-     Pricing intentionally hidden. Sub-threshold messaging is implied
-     (not explicit) to protect competitive positioning.
+     Highlights £15,000 – £25,000 "Sub-Threshold" range. Enables Deans
+     to bypass the 9–12 month formal tender process.
      ───────────────────────────────────────────────────────────────────────── */
   const ProcurementSection = () => (
     <Section id="procurement" className="py-24 lg:py-32 bg-white">
@@ -993,7 +1099,7 @@ const CampusAssistLanding: React.FC = () => {
           <div>
             <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-200/50 mb-6">
               <FileCheck className="h-4 w-4 text-green-600" />
-              <span className="text-green-700 text-sm font-semibold">Procurement-Friendly</span>
+              <span className="text-green-700 text-sm font-semibold">Sub-Threshold Procurement</span>
             </motion.div>
 
             <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl font-extrabold text-neutral-900 leading-tight mb-6">
@@ -1003,27 +1109,27 @@ const CampusAssistLanding: React.FC = () => {
             </motion.h2>
 
             <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed mb-8">
-              Campus Assist offers flexible pilot pricing designed to fit within existing
-              departmental budgets. No lengthy tender cycles, no 6-month procurement delays—
-              Deans and department heads can get started quickly with a low-risk pilot.
+              At <span className="font-semibold text-neutral-700">£15,000 – £25,000</span>, the Campus Assist pilot sits comfortably
+              below the £50,000+ formal tender threshold—allowing Deans and department heads to
+              approve via discretionary budget and bypass the typical 9–12 month procurement cycle.
             </motion.p>
 
             <motion.div variants={fadeInUp} custom={3} className="space-y-5">
               {[
                 {
                   icon: Timer,
-                  title: 'Designed for Discretionary Budgets',
-                  desc: 'Pilot pricing structured to align with how university departments actually approve spend—fast and without red tape.',
+                  title: 'Sub-Threshold Pricing',
+                  desc: 'Pilot investment falls within discretionary spending limits. No formal tender, no procurement board—just a Dean\'s sign-off.',
                 },
                 {
                   icon: Zap,
                   title: 'Rapid Deployment',
-                  desc: 'Cloud-native architecture means no on-premise installation. Go live within 2-4 weeks of sign-off.',
+                  desc: 'Cloud-native architecture means no on-premise installation. Go live within 2-3 weeks of approval.',
                 },
                 {
                   icon: Building2,
-                  title: 'Low-Risk Pilot Model',
-                  desc: 'Start with a single department or faculty. Prove ROI with real data, then expand institution-wide with confidence.',
+                  title: 'Low-Risk Faculty Pilot',
+                  desc: 'Start with a single department. Prove ROI with real retention data, then expand institution-wide with full confidence.',
                 },
               ].map(({ icon: Icon, title, desc }, i) => (
                 <div key={i} className="flex items-start gap-4">
@@ -1042,7 +1148,6 @@ const CampusAssistLanding: React.FC = () => {
           {/* Right: Visual Card */}
           <motion.div variants={scaleIn} custom={2}>
             <div className="relative">
-              {/* Background glow */}
               <div className="absolute -inset-4 bg-gradient-to-br from-green-400/10 to-primary-400/10 rounded-3xl blur-2xl" />
 
               <div className="relative bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-2xl p-8 lg:p-10 shadow-2xl">
@@ -1053,17 +1158,27 @@ const CampusAssistLanding: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-white font-bold text-lg">Procurement-Ready</h4>
-                    <p className="text-neutral-400 text-sm">Designed for fast institutional approval</p>
+                    <p className="text-neutral-400 text-sm">No formal tender required</p>
+                  </div>
+                </div>
+
+                {/* Price Range Card */}
+                <div className="p-5 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 mb-8">
+                  <div className="text-center">
+                    <p className="text-xs text-green-300/70 uppercase tracking-wider font-semibold mb-2">Annual Pilot Investment</p>
+                    <div className="text-3xl font-extrabold text-white">
+                      £15,000 – £25,000
+                    </div>
+                    <p className="text-sm text-green-300/60 mt-1">Below the £50k+ formal tender threshold</p>
                   </div>
                 </div>
 
                 {/* Timeline */}
-                <div className="space-y-6">
+                <div className="space-y-5">
                   {[
                     { week: 'Week 1', label: 'Discovery & Scoping', status: 'complete' },
-                    { week: 'Week 2', label: 'Data Integration Setup', status: 'complete' },
-                    { week: 'Week 3', label: 'Staff Training & UAT', status: 'active' },
-                    { week: 'Week 4', label: 'Go-Live & Monitoring', status: 'upcoming' },
+                    { week: 'Week 2', label: 'SIS Integration & Setup', status: 'complete' },
+                    { week: 'Week 3', label: 'Go-Live & Staff Training', status: 'active' },
                   ].map((step, i) => (
                     <div key={i} className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold ${
@@ -1085,21 +1200,18 @@ const CampusAssistLanding: React.FC = () => {
                   ))}
                 </div>
 
-                {/* Gated Pricing CTA — replaces the explicit price tag */}
-                <div className="mt-10 p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                {/* CTA */}
+                <div className="mt-8 p-5 rounded-xl bg-white/5 border border-white/10">
                   <div className="text-center">
-                    <p className="text-sm text-white/70 mb-3">
-                      Flexible pilot pricing tailored to your institution's size and needs
-                    </p>
                     <a
-                      href="mailto:hello@campusassist.co.uk?subject=Pricing%20%26%20Procurement%20Guide%20Request"
-                      className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                      href="mailto:hello@campusassist.co.uk?subject=Pilot%20Pricing%20%26%20Procurement%20Guide%20Request"
+                      className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
                     >
                       Request Pricing & Procurement Guide
                       <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </a>
                     <p className="text-[11px] text-white/30 mt-3">
-                      Includes detailed ROI modelling for your institution
+                      Includes bespoke ROI modelling for your student population
                     </p>
                   </div>
                 </div>
@@ -1204,10 +1316,11 @@ const CampusAssistLanding: React.FC = () => {
 
   /* ─────────────────────────────────────────────────────────────────────────
      SECTION 8: FINAL CTA
+     Dual-sided value: lifeline for students, revenue-shield for admin.
+     Reinforces sub-threshold procurement + One Student ROI.
      ───────────────────────────────────────────────────────────────────────── */
   const FinalCTA = () => (
     <Section id="cta" className="py-24 lg:py-32 bg-white relative overflow-hidden">
-      {/* Background accent */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary-50/30 to-transparent" />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -1218,15 +1331,19 @@ const CampusAssistLanding: React.FC = () => {
         </motion.div>
 
         <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-neutral-900 leading-tight mb-6">
-          Your Students Are at Risk.
+          A Lifeline for Students.
           <br />
-          <span className="bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">The Solution Starts Here.</span>
+          <span className="bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">A Revenue Shield for You.</span>
         </motion.h2>
 
-        <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed mb-10 max-w-2xl mx-auto">
-          Join the next generation of UK universities using AI-driven intelligence to identify
-          at-risk students early, improve continuation rates, and demonstrate measurable impact to the OfS.
-          We'll tailor a pilot to your institution's size and goals.
+        <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed mb-4 max-w-2xl mx-auto">
+          Join the next generation of UK universities using proprietary sentiment analysis to
+          identify at-risk students early, improve OfS B3 metrics, and protect the revenue your institution depends on.
+        </motion.p>
+
+        <motion.p variants={fadeInUp} custom={2.5} className="text-base text-neutral-400 mb-10 max-w-xl mx-auto">
+          Pilots start from <span className="font-semibold text-neutral-600">£15,000</span>—below the formal tender threshold.
+          Retain just one student and the platform has already paid for itself.
         </motion.p>
 
         <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -1238,19 +1355,19 @@ const CampusAssistLanding: React.FC = () => {
             <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </a>
           <a
-            href="mailto:hello@campusassist.co.uk?subject=Custom%20Pricing%20Request%20-%20Campus%20Assist"
+            href="mailto:hello@campusassist.co.uk?subject=Procurement%20Guide%20Request%20-%20Campus%20Assist"
             className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded-2xl text-primary-700 border-2 border-primary-200 hover:border-primary-300 hover:bg-primary-50 transition-all duration-200"
           >
-            <PoundSterling className="h-5 w-5" />
-            See Pricing for Your Institution
+            <FileCheck className="h-5 w-5" />
+            Get Procurement Guide
           </a>
         </motion.div>
 
         {/* Trust badges */}
         <motion.div variants={fadeIn} custom={4} className="mt-12 flex flex-wrap items-center justify-center gap-6">
           {[
-            { icon: Lock, label: 'GDPR Ready' },
-            { icon: ShieldCheck, label: 'DPIA Complete' },
+            { icon: Lock, label: 'UK GDPR Compliant' },
+            { icon: ShieldCheck, label: 'DPIA Ready' },
             { icon: Scale, label: 'OfS B3 Aligned' },
             { icon: CloudCog, label: 'Cloud-Native' },
           ].map(({ icon: Icon, label }, i) => (
@@ -1280,12 +1397,12 @@ const CampusAssistLanding: React.FC = () => {
               </div>
               <div>
                 <span className="text-lg font-bold text-white">Campus Assist</span>
-                <span className="block text-[10px] uppercase tracking-[0.2em] text-primary-400 font-medium">Intelligence Layer</span>
+                <span className="block text-[10px] uppercase tracking-[0.2em] text-primary-400 font-medium">AI Success Platform</span>
               </div>
             </div>
             <p className="text-sm text-white/40 leading-relaxed max-w-md">
-              The AI-powered intelligence layer for UK higher education. Reducing attrition,
-              improving student outcomes, and delivering measurable ROI for university leadership.
+              The unified AI support & retention platform for UK higher education. 24/7 student support,
+              smart safeguarding triage, and predictive retention intelligence—all from one lightweight overlay.
             </p>
           </div>
 
@@ -1293,7 +1410,7 @@ const CampusAssistLanding: React.FC = () => {
           <div>
             <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Platform</h4>
             <ul className="space-y-2">
-              {['Digital Front Desk', 'Retention Engine', 'Proactive Outreach', 'Analytics Dashboard'].map((item) => (
+              {['Digital Front Desk', 'Smart Triage', 'Retention Risk Engine', 'Staff Dashboard'].map((item) => (
                 <li key={item}>
                   <button onClick={() => scrollToSection('platform')} className="text-sm text-white/40 hover:text-white/70 transition-colors">
                     {item}
@@ -1307,10 +1424,10 @@ const CampusAssistLanding: React.FC = () => {
           <div>
             <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Resources</h4>
             <ul className="space-y-2">
-              {['Impact Calculator', 'Procurement Guide', 'Security Overview', 'Contact Us'].map((item, i) => (
+              {['Results & ROI', 'Procurement Guide', 'Security Overview', 'Contact Us'].map((item, i) => (
                 <li key={item}>
                   <button
-                    onClick={() => scrollToSection(['roi-calculator', 'procurement', 'trust', 'cta'][i])}
+                    onClick={() => scrollToSection(['results', 'procurement', 'trust', 'cta'][i])}
                     className="text-sm text-white/40 hover:text-white/70 transition-colors"
                   >
                     {item}
@@ -1344,7 +1461,7 @@ const CampusAssistLanding: React.FC = () => {
       <Header />
       <Hero />
       <SocialProofBar />
-      <AttritionCalculator />
+      <BentoGrid />
       <ProductEcosystem />
       <ProcurementSection />
       <TrustSection />
