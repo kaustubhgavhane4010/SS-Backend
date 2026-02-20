@@ -62,6 +62,7 @@ import {
   Shield,
   MessageSquare,
   BarChart3,
+  TrendingDown,
   TrendingUp,
   AlertTriangle,
   ArrowRight,
@@ -70,6 +71,7 @@ import {
   Zap,
   Users,
   Clock,
+  GraduationCap,
   FileCheck,
   BadgeCheck,
   Sparkles,
@@ -276,6 +278,7 @@ const CampusAssistLanding: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeHeroTab, setActiveHeroTab] = useState<'student' | 'staff'>('student');
+  const [activeCalculatorTab, setActiveCalculatorTab] = useState<'domestic' | 'international'>('domestic');
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
@@ -336,7 +339,7 @@ const CampusAssistLanding: React.FC = () => {
           <nav className="hidden lg:flex items-center gap-1">
             {[
               { label: 'Platform', id: 'platform' },
-              { label: 'Results', id: 'results' },
+              { label: 'Impact', id: 'impact-simulator' },
               { label: 'Procurement', id: 'procurement' },
               { label: 'Trust & Security', id: 'trust' },
             ].map((item) => (
@@ -399,7 +402,7 @@ const CampusAssistLanding: React.FC = () => {
             <div className="px-4 py-4 space-y-1">
               {[
                 { label: 'Platform', id: 'platform' },
-                { label: 'Results', id: 'results' },
+                { label: 'Impact Simulator', id: 'impact-simulator' },
                 { label: 'Procurement', id: 'procurement' },
                 { label: 'Trust & Security', id: 'trust' },
               ].map((item) => (
@@ -475,9 +478,9 @@ const CampusAssistLanding: React.FC = () => {
             </motion.h1>
 
             <motion.p variants={fadeInUp} custom={2} className="text-lg text-white/60 leading-relaxed max-w-xl mb-10">
-              Deliver instant 24/7 support to your students while silently powering the
-              intelligence your staff needs to predict and prevent dropouts. A lightweight
-              overlay on your existing systems—no rip-and-replace required.
+              Combine 24/7 AI-powered student support with predictive retention intelligence
+              that flags at-risk students before they disengage. Your staff gets early warnings;
+              your students get instant help. One lightweight overlay—no rip-and-replace required.
             </motion.p>
 
             <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-12">
@@ -489,10 +492,10 @@ const CampusAssistLanding: React.FC = () => {
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
-                onClick={() => scrollToSection('platform')}
+                onClick={() => scrollToSection('impact-simulator')}
                 className="group inline-flex items-center gap-3 px-8 py-4 text-base font-semibold rounded-2xl text-white/90 border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all duration-300"
               >
-                See How It Works
+                See Your Attrition Cost
                 <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform text-white/40" />
               </button>
             </motion.div>
@@ -719,8 +722,9 @@ const CampusAssistLanding: React.FC = () => {
             <span className="bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">Move the Needle</span>
           </motion.h2>
           <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed">
-            Campus Assist doesn't just support students—it transforms operational efficiency
-            and protects the revenue your institution depends on.
+            Campus Assist delivers both sides of the equation: operational efficiency through
+            automated student support, and revenue protection through predictive retention intelligence
+            that catches at-risk students weeks before they withdraw.
           </motion.p>
         </div>
 
@@ -794,20 +798,34 @@ const CampusAssistLanding: React.FC = () => {
                   <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-green-500/20 text-green-300 rounded-full">Revenue Shield</span>
                 </div>
 
-                <h3 className="text-2xl font-bold text-white mb-3">Protected Revenue</h3>
-                <p className="text-white/50 leading-relaxed mb-8 text-sm">
-                  The UK HE sector loses significant tuition and funding revenue to preventable attrition every year.
-                  Campus Assist pays for itself by retaining even a small number of at-risk students.
+                <h3 className="text-2xl font-bold text-white mb-3">Retention-Driven ROI</h3>
+                <p className="text-white/50 leading-relaxed mb-6 text-sm">
+                  Predictive engagement scores and sentiment analysis flag at-risk students weeks
+                  before withdrawal. Every student retained is tuition, funding, and recruitment
+                  cost preserved.
                 </p>
 
-                <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                      <TrendingUp className="h-5 w-5 text-green-400" />
+                <div className="space-y-3">
+                  <div className="p-3 rounded-xl bg-white/5 border border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <TrendingUp className="h-4 w-4 text-green-400" />
+                      </div>
+                      <div>
+                        <p className="text-white font-bold text-sm">One Student ROI</p>
+                        <p className="text-white/40 text-xs">Retain one student and the platform pays for itself</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-white font-bold text-sm">One Student ROI</p>
-                      <p className="text-white/40 text-xs">Retain just one student and the platform has already paid for itself</p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-white/5 border border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-amber-500/20 flex items-center justify-center">
+                        <Activity className="h-4 w-4 text-amber-400" />
+                      </div>
+                      <div>
+                        <p className="text-white font-bold text-sm">Early Warning System</p>
+                        <p className="text-white/40 text-xs">VLE + sentiment data predicts disengagement proactively</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -874,7 +892,210 @@ const CampusAssistLanding: React.FC = () => {
   );
 
   /* ─────────────────────────────────────────────────────────────────────────
-     SECTION 5: THREE-PILLAR PRODUCT ECOSYSTEM
+     SECTION 5: ATTRITION IMPACT SIMULATOR
+     Interactive calculator: Domestic / International tabs, student count
+     selector. Shows losses, scholarship equivalents, weekly drain.
+     NO pricing. Pure loss quantification with gated ROI report CTA.
+     ───────────────────────────────────────────────────────────────────────── */
+  const ImpactSimulator = () => {
+    const domesticLoss = 28000;
+    const internationalLoss = 42000;
+    const tuitionFee = 9535;
+    const activeLoss = activeCalculatorTab === 'domestic' ? domesticLoss : internationalLoss;
+    const studentsSlider = [1, 5, 10, 25, 50];
+    const [savedStudents, setSavedStudents] = useState(5);
+
+    return (
+      <Section id="impact-simulator" className="py-24 lg:py-32 bg-gradient-to-b from-slate-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-200/50 mb-6">
+              <TrendingDown className="h-4 w-4 text-red-500" />
+              <span className="text-red-700 text-sm font-semibold">The Financial Reality</span>
+            </motion.div>
+            <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-neutral-900 leading-tight mb-6">
+              How Much is Student
+              <br />
+              <span className="text-red-500">Attrition Really Costing You?</span>
+            </motion.h2>
+            <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed">
+              Every student who leaves represents far more than lost tuition fees. See the true
+              financial impact—then let us show you how Campus Assist's retention intelligence pays for itself.
+            </motion.p>
+          </div>
+
+          {/* Calculator Card */}
+          <motion.div variants={scaleIn} custom={1} className="max-w-5xl mx-auto">
+            <div className="bg-white rounded-3xl shadow-2xl shadow-neutral-900/5 border border-neutral-200/50 overflow-hidden">
+              {/* Tab Switcher */}
+              <div className="flex border-b border-neutral-100">
+                {(['domestic', 'international'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveCalculatorTab(tab)}
+                    className={`flex-1 py-4 text-sm font-semibold uppercase tracking-wider transition-all duration-200 ${
+                      activeCalculatorTab === tab
+                        ? 'text-primary-700 bg-primary-50 border-b-2 border-primary-600'
+                        : 'text-neutral-400 hover:text-neutral-600 hover:bg-neutral-50'
+                    }`}
+                  >
+                    {tab === 'domestic' ? '🇬🇧 Domestic Student' : '🌍 International Student'}
+                  </button>
+                ))}
+              </div>
+
+              <div className="p-8 lg:p-12">
+                {/* Cost Breakdown */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                  {/* Dropout Cost Card */}
+                  <div className="relative p-8 rounded-2xl bg-gradient-to-br from-red-50 to-red-100/50 border border-red-200/50">
+                    <div className="flex items-center gap-2 mb-4">
+                      <AlertTriangle className="h-5 w-5 text-red-500" />
+                      <span className="text-sm font-semibold text-red-700 uppercase tracking-wide">Total Cost Per Dropout</span>
+                    </div>
+                    <div className="text-5xl font-extrabold text-red-600 mb-2">
+                      <AnimatedCounter target={activeLoss} prefix="£" />
+                    </div>
+                    <p className="text-sm text-red-500/70 mb-4">
+                      {activeCalculatorTab === 'domestic'
+                        ? `£${tuitionFee.toLocaleString()} tuition + HEFCE funding, support costs & reputational impact`
+                        : 'International fee income, accommodation revenue & recruitment cost write-off'}
+                    </p>
+                    <div className="flex items-center gap-2 pt-4 border-t border-red-200/50">
+                      <Activity className="h-4 w-4 text-red-400" />
+                      <span className="text-xs text-red-600 font-medium">
+                        {activeCalculatorTab === 'domestic'
+                          ? 'Based on HESA sector-average data for UK undergraduates'
+                          : 'Estimated at 1.5× domestic rate due to higher fee bands'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Sector Context Card */}
+                  <div className="relative p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/30 border border-amber-200/50">
+                    <div className="flex items-center gap-2 mb-4">
+                      <BarChart3 className="h-5 w-5 text-amber-600" />
+                      <span className="text-sm font-semibold text-amber-700 uppercase tracking-wide">Sector Context</span>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="text-3xl font-extrabold text-amber-700">40%</div>
+                        <p className="text-sm text-amber-600/70">of UK universities currently operate in deficit</p>
+                      </div>
+                      <div>
+                        <div className="text-3xl font-extrabold text-amber-700">6.3%</div>
+                        <p className="text-sm text-amber-600/70">average non-continuation rate across UK HE</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 pt-4 mt-4 border-t border-amber-200/50">
+                      <BookOpen className="h-4 w-4 text-amber-500" />
+                      <span className="text-xs text-amber-600 font-medium">Source: OfS & HESA published data 2023-24</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Interactive Simulator */}
+                <div className="bg-neutral-50 rounded-2xl p-6 lg:p-8">
+                  <h3 className="text-lg font-bold text-neutral-900 mb-2">Impact Simulator</h3>
+                  <p className="text-sm text-neutral-500 mb-6">
+                    Select the number of at-risk students you could retain with early intervention to see the potential financial impact.
+                  </p>
+                  <div className="flex flex-wrap gap-3 mb-8">
+                    {studentsSlider.map((n) => (
+                      <button
+                        key={n}
+                        onClick={() => setSavedStudents(n)}
+                        className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                          savedStudents === n
+                            ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/25'
+                            : 'bg-white text-neutral-600 border border-neutral-200 hover:border-primary-300 hover:text-primary-700'
+                        }`}
+                      >
+                        {n} {n === 1 ? 'student' : 'students'}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Three insight cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+                    {/* Card 1: Annual Revenue Lost */}
+                    <div className="text-center p-6 bg-white rounded-2xl border border-red-200/50 shadow-sm">
+                      <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center mx-auto mb-3">
+                        <TrendingDown className="h-5 w-5 text-red-500" />
+                      </div>
+                      <p className="text-sm text-neutral-500 mb-2">Annual Revenue Lost</p>
+                      <p className="text-3xl sm:text-4xl font-extrabold text-red-600">
+                        £{(savedStudents * activeLoss).toLocaleString()}
+                      </p>
+                      <p className="text-xs text-neutral-400 mt-2">
+                        {savedStudents} {savedStudents === 1 ? 'student' : 'students'} × £{activeLoss.toLocaleString()} each
+                      </p>
+                    </div>
+
+                    {/* Card 2: Scholarship Equivalent */}
+                    <div className="text-center p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200/50 shadow-sm">
+                      <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mx-auto mb-3">
+                        <GraduationCap className="h-5 w-5 text-amber-600" />
+                      </div>
+                      <p className="text-sm text-amber-700 font-semibold mb-2">That's Equivalent To</p>
+                      <p className="text-3xl sm:text-4xl font-extrabold text-amber-700">
+                        {Math.max(1, Math.round((savedStudents * activeLoss) / tuitionFee))}
+                      </p>
+                      <p className="text-xs text-amber-600/70 mt-2">
+                        full student scholarships your institution could have funded instead
+                      </p>
+                    </div>
+
+                    {/* Card 3: Weekly Cost of Inaction */}
+                    <div className="text-center p-6 bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl border border-primary-200/50 shadow-sm">
+                      <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center mx-auto mb-3">
+                        <Clock className="h-5 w-5 text-primary-600" />
+                      </div>
+                      <p className="text-sm text-primary-700 font-semibold mb-2">Every Week You Wait</p>
+                      <p className="text-3xl sm:text-4xl font-extrabold text-primary-700">
+                        £{Math.round((savedStudents * activeLoss) / 52).toLocaleString()}
+                      </p>
+                      <p className="text-xs text-primary-600/60 mt-2">
+                        drains while at-risk students go unsupported
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Gated CTA */}
+                  <motion.div
+                    key={savedStudents}
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="text-center"
+                  >
+                    <div className="inline-flex flex-col items-center gap-3 p-6 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100/50 border border-primary-200/50">
+                      <p className="text-sm text-primary-800 font-semibold">
+                        Your institution could be losing <span className="text-red-600 font-extrabold">£{(savedStudents * activeLoss).toLocaleString()}</span> annually to preventable attrition
+                      </p>
+                      <a
+                        href="mailto:hello@campusassist.co.uk?subject=Custom%20ROI%20Report%20Request%20-%20Campus%20Assist"
+                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105 transition-all duration-300 text-sm"
+                      >
+                        Get Your Custom ROI Report
+                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </a>
+                      <p className="text-xs text-primary-600/60">
+                        We'll model your specific student population, dropout rates, and potential savings
+                      </p>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </Section>
+    );
+  };
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     SECTION 6: THREE-PILLAR PRODUCT ECOSYSTEM
      Pillars: Digital Front Desk | Smart Triage & Safeguarding | Retention Risk Engine
      Uses "Proprietary Sentiment Analysis" and "Passive Engagement Data" language.
      ───────────────────────────────────────────────────────────────────────── */
@@ -1087,9 +1308,9 @@ const CampusAssistLanding: React.FC = () => {
   );
 
   /* ─────────────────────────────────────────────────────────────────────────
-     SECTION 6: PROCUREMENT STRATEGY
-     Highlights £15,000 – £25,000 "Sub-Threshold" range. Enables Deans
-     to bypass the 9–12 month formal tender process.
+     SECTION 7: PROCUREMENT STRATEGY
+     Pricing intentionally hidden — revealed in consultative sales.
+     Focus: speed, low-risk pilot, discretionary budget fit.
      ───────────────────────────────────────────────────────────────────────── */
   const ProcurementSection = () => (
     <Section id="procurement" className="py-24 lg:py-32 bg-white">
@@ -1099,7 +1320,7 @@ const CampusAssistLanding: React.FC = () => {
           <div>
             <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-200/50 mb-6">
               <FileCheck className="h-4 w-4 text-green-600" />
-              <span className="text-green-700 text-sm font-semibold">Sub-Threshold Procurement</span>
+              <span className="text-green-700 text-sm font-semibold">Procurement-Friendly</span>
             </motion.div>
 
             <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl font-extrabold text-neutral-900 leading-tight mb-6">
@@ -1109,17 +1330,17 @@ const CampusAssistLanding: React.FC = () => {
             </motion.h2>
 
             <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed mb-8">
-              At <span className="font-semibold text-neutral-700">£15,000 – £25,000</span>, the Campus Assist pilot sits comfortably
-              below the £50,000+ formal tender threshold—allowing Deans and department heads to
-              approve via discretionary budget and bypass the typical 9–12 month procurement cycle.
+              Campus Assist offers flexible pilot pricing designed to fit within existing
+              departmental budgets. No lengthy tender cycles, no 6-month procurement delays—
+              Deans and department heads can get started quickly with a low-risk pilot.
             </motion.p>
 
             <motion.div variants={fadeInUp} custom={3} className="space-y-5">
               {[
                 {
                   icon: Timer,
-                  title: 'Sub-Threshold Pricing',
-                  desc: 'Pilot investment falls within discretionary spending limits. No formal tender, no procurement board—just a Dean\'s sign-off.',
+                  title: 'Designed for Discretionary Budgets',
+                  desc: 'Pilot pricing structured to align with how university departments actually approve spend—fast and without red tape.',
                 },
                 {
                   icon: Zap,
@@ -1158,27 +1379,17 @@ const CampusAssistLanding: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-white font-bold text-lg">Procurement-Ready</h4>
-                    <p className="text-neutral-400 text-sm">No formal tender required</p>
-                  </div>
-                </div>
-
-                {/* Price Range Card */}
-                <div className="p-5 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 mb-8">
-                  <div className="text-center">
-                    <p className="text-xs text-green-300/70 uppercase tracking-wider font-semibold mb-2">Annual Pilot Investment</p>
-                    <div className="text-3xl font-extrabold text-white">
-                      £15,000 – £25,000
-                    </div>
-                    <p className="text-sm text-green-300/60 mt-1">Below the £50k+ formal tender threshold</p>
+                    <p className="text-neutral-400 text-sm">Designed for fast institutional approval</p>
                   </div>
                 </div>
 
                 {/* Timeline */}
-                <div className="space-y-5">
+                <div className="space-y-6">
                   {[
                     { week: 'Week 1', label: 'Discovery & Scoping', status: 'complete' },
                     { week: 'Week 2', label: 'SIS Integration & Setup', status: 'complete' },
-                    { week: 'Week 3', label: 'Go-Live & Staff Training', status: 'active' },
+                    { week: 'Week 3', label: 'Staff Training & UAT', status: 'active' },
+                    { week: 'Week 4', label: 'Go-Live & Monitoring', status: 'upcoming' },
                   ].map((step, i) => (
                     <div key={i} className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold ${
@@ -1200,11 +1411,14 @@ const CampusAssistLanding: React.FC = () => {
                   ))}
                 </div>
 
-                {/* CTA */}
-                <div className="mt-8 p-5 rounded-xl bg-white/5 border border-white/10">
+                {/* Gated Pricing CTA */}
+                <div className="mt-10 p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
                   <div className="text-center">
+                    <p className="text-sm text-white/70 mb-3">
+                      Flexible pilot pricing tailored to your institution's size and needs
+                    </p>
                     <a
-                      href="mailto:hello@campusassist.co.uk?subject=Pilot%20Pricing%20%26%20Procurement%20Guide%20Request"
+                      href="mailto:hello@campusassist.co.uk?subject=Pricing%20%26%20Procurement%20Guide%20Request"
                       className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
                     >
                       Request Pricing & Procurement Guide
@@ -1342,7 +1556,7 @@ const CampusAssistLanding: React.FC = () => {
         </motion.p>
 
         <motion.p variants={fadeInUp} custom={2.5} className="text-base text-neutral-400 mb-10 max-w-xl mx-auto">
-          Pilots start from <span className="font-semibold text-neutral-600">£15,000</span>—below the formal tender threshold.
+          We'll tailor a pilot to your institution's size, budget, and goals.
           Retain just one student and the platform has already paid for itself.
         </motion.p>
 
@@ -1424,10 +1638,10 @@ const CampusAssistLanding: React.FC = () => {
           <div>
             <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Resources</h4>
             <ul className="space-y-2">
-              {['Results & ROI', 'Procurement Guide', 'Security Overview', 'Contact Us'].map((item, i) => (
+              {['Impact Simulator', 'Procurement Guide', 'Security Overview', 'Contact Us'].map((item, i) => (
                 <li key={item}>
                   <button
-                    onClick={() => scrollToSection(['results', 'procurement', 'trust', 'cta'][i])}
+                    onClick={() => scrollToSection(['impact-simulator', 'procurement', 'trust', 'cta'][i])}
                     className="text-sm text-white/40 hover:text-white/70 transition-colors"
                   >
                     {item}
@@ -1462,6 +1676,7 @@ const CampusAssistLanding: React.FC = () => {
       <Hero />
       <SocialProofBar />
       <BentoGrid />
+      <ImpactSimulator />
       <ProductEcosystem />
       <ProcurementSection />
       <TrustSection />
