@@ -277,8 +277,17 @@ const CampusAssistLanding: React.FC = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
   const [activeHeroTab, setActiveHeroTab] = useState<'student' | 'staff'>('student');
   const [activeCalculatorTab, setActiveCalculatorTab] = useState<'domestic' | 'international'>('domestic');
+  const [demoForm, setDemoForm] = useState({
+    name: '',
+    institution: '',
+    role: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
@@ -294,6 +303,32 @@ const CampusAssistLanding: React.FC = () => {
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setMobileMenuOpen(false);
+  };
+
+  const openDemoModal = () => setDemoModalOpen(true);
+  const closeDemoModal = () => setDemoModalOpen(false);
+
+  const updateDemoField = (field: keyof typeof demoForm, value: string) => {
+    setDemoForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const submitDemoForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    const subject = encodeURIComponent('Demo Request - Campus Assist');
+    const body = encodeURIComponent(
+      [
+        `Name: ${demoForm.name}`,
+        `Institution: ${demoForm.institution}`,
+        `Role: ${demoForm.role}`,
+        `Work Email: ${demoForm.email}`,
+        `Phone: ${demoForm.phone || 'Not provided'}`,
+        '',
+        'Message:',
+        demoForm.message || 'No additional context provided.',
+      ].join('\n')
+    );
+    window.location.href = `mailto:hello@campusassist.co.uk?subject=${subject}&body=${body}`;
+    closeDemoModal();
   };
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -370,7 +405,7 @@ const CampusAssistLanding: React.FC = () => {
               Sign In
             </button>
             <button
-              onClick={() => scrollToSection('cta')}
+              onClick={openDemoModal}
               className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 hover:scale-105 transition-all duration-200"
             >
               Book Demo
@@ -489,7 +524,7 @@ const CampusAssistLanding: React.FC = () => {
 
             <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-12">
               <button
-                onClick={() => scrollToSection('cta')}
+                onClick={openDemoModal}
                 className="group inline-flex items-center gap-3 px-8 py-4 text-base font-semibold rounded-2xl bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-2xl shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105 transition-all duration-300"
               >
                 Book a 30-Minute Demo
@@ -1628,13 +1663,13 @@ const CampusAssistLanding: React.FC = () => {
         </motion.p>
 
         <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a
-            href="mailto:hello@campusassist.co.uk?subject=Demo%20Request%20-%20Campus%20Assist"
+          <button
+            onClick={openDemoModal}
             className="group inline-flex items-center gap-3 px-10 py-4 text-base font-semibold rounded-2xl bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-2xl shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105 transition-all duration-300"
           >
             Book a 30-Minute Demo
             <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </a>
+          </button>
           <a
             href="mailto:hello@campusassist.co.uk?subject=Procurement%20Guide%20Request%20-%20Campus%20Assist"
             className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded-2xl text-primary-700 border-2 border-primary-200 hover:border-primary-300 hover:bg-primary-50 transition-all duration-200"
@@ -1815,6 +1850,125 @@ const CampusAssistLanding: React.FC = () => {
       <OneStudentGuarantee />
       <FinalCTA />
       <Footer />
+
+      <AnimatePresence>
+        {demoModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[70] bg-neutral-950/60 backdrop-blur-sm p-4 sm:p-6 flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.98 }}
+              className="w-full max-w-2xl rounded-3xl bg-white border border-neutral-200 shadow-2xl"
+            >
+              <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-100">
+                <div>
+                  <h3 className="text-xl font-bold text-neutral-900">Book a 30-Minute Demo</h3>
+                  <p className="text-sm text-neutral-500">Share your details and we will prepare a tailored walkthrough.</p>
+                </div>
+                <button
+                  onClick={closeDemoModal}
+                  className="w-9 h-9 rounded-xl border border-neutral-200 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50 transition-colors"
+                  aria-label="Close demo form"
+                >
+                  <X className="h-4 w-4 mx-auto" />
+                </button>
+              </div>
+
+              <form onSubmit={submitDemoForm} className="px-6 py-6 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <label className="space-y-1.5">
+                    <span className="text-sm font-medium text-neutral-700">Your name</span>
+                    <input
+                      required
+                      value={demoForm.name}
+                      onChange={(e) => updateDemoField('name', e.target.value)}
+                      className="w-full rounded-xl border border-neutral-300 px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500"
+                      placeholder="Full name"
+                    />
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-sm font-medium text-neutral-700">Your university or college</span>
+                    <input
+                      required
+                      value={demoForm.institution}
+                      onChange={(e) => updateDemoField('institution', e.target.value)}
+                      className="w-full rounded-xl border border-neutral-300 px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500"
+                      placeholder="Institution name"
+                    />
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <label className="space-y-1.5">
+                    <span className="text-sm font-medium text-neutral-700">Role</span>
+                    <input
+                      required
+                      value={demoForm.role}
+                      onChange={(e) => updateDemoField('role', e.target.value)}
+                      className="w-full rounded-xl border border-neutral-300 px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500"
+                      placeholder="e.g. Head of Student Services"
+                    />
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-sm font-medium text-neutral-700">Work email</span>
+                    <input
+                      required
+                      type="email"
+                      value={demoForm.email}
+                      onChange={(e) => updateDemoField('email', e.target.value)}
+                      className="w-full rounded-xl border border-neutral-300 px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500"
+                      placeholder="name@university.ac.uk"
+                    />
+                  </label>
+                </div>
+
+                <label className="space-y-1.5 block">
+                  <span className="text-sm font-medium text-neutral-700">Phone (optional)</span>
+                  <input
+                    value={demoForm.phone}
+                    onChange={(e) => updateDemoField('phone', e.target.value)}
+                    className="w-full rounded-xl border border-neutral-300 px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500"
+                    placeholder="+44 ..."
+                  />
+                </label>
+
+                <label className="space-y-1.5 block">
+                  <span className="text-sm font-medium text-neutral-700">Anything specific you want to see?</span>
+                  <textarea
+                    rows={4}
+                    value={demoForm.message}
+                    onChange={(e) => updateDemoField('message', e.target.value)}
+                    className="w-full rounded-xl border border-neutral-300 px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500"
+                    placeholder="Tell us your institution context, continuation challenges, or timeline."
+                  />
+                </label>
+
+                <div className="pt-2 flex flex-col sm:flex-row gap-3 sm:justify-end">
+                  <button
+                    type="button"
+                    onClick={closeDemoModal}
+                    className="px-5 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold text-neutral-600 hover:bg-neutral-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white text-sm font-semibold shadow-lg shadow-primary-500/20 hover:shadow-primary-500/30 transition-all"
+                  >
+                    Reserve My Demo Slot
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
