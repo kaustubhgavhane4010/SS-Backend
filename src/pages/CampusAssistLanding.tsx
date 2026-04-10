@@ -825,7 +825,7 @@ const CampusAssistLanding: React.FC = () => {
                       </div>
                       <div>
                         <p className="text-white font-bold text-sm">One Student ROI</p>
-                        <p className="text-white/40 text-xs">Retain one student and the platform pays for itself</p>
+                        <p className="text-white/40 text-xs">Retain one student and the retention impact is immediate</p>
                       </div>
                     </div>
                   </div>
@@ -907,7 +907,7 @@ const CampusAssistLanding: React.FC = () => {
      SECTION 5: ATTRITION IMPACT SIMULATOR
      Interactive calculator: Domestic / International tabs, student count
      selector. Shows losses, scholarship equivalents, weekly drain.
-     NO pricing. Pure loss quantification with gated ROI report CTA.
+     Pure loss quantification with gated ROI report CTA.
      ───────────────────────────────────────────────────────────────────────── */
   const ImpactSimulator = () => {
     const domesticLoss = 28000;
@@ -1338,8 +1338,7 @@ const CampusAssistLanding: React.FC = () => {
 
   /* ─────────────────────────────────────────────────────────────────────────
      SECTION 7: PROCUREMENT STRATEGY
-     Pricing intentionally hidden — revealed in consultative sales.
-     Focus: speed, low-risk pilot, discretionary budget fit.
+     Focus: speed, low-risk rollout, discretionary budget fit.
      ───────────────────────────────────────────────────────────────────────── */
   const ProcurementSection = () => (
     <Section id="procurement" className="py-24 lg:py-32 bg-white">
@@ -1359,8 +1358,8 @@ const CampusAssistLanding: React.FC = () => {
             </motion.h2>
 
             <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed mb-8">
-              Priced at £25,000 for a departmental pilot, Campus Assist falls below typical UK competitive
-              tender thresholds. Teams can start quickly without a 9-month procurement cycle.
+              Campus Assist is structured for a departmental first rollout, helping teams start without a long,
+              institution-wide procurement cycle.
             </motion.p>
 
             <motion.div variants={fadeInUp} custom={3} className="space-y-5">
@@ -1368,7 +1367,7 @@ const CampusAssistLanding: React.FC = () => {
                 {
                   icon: Timer,
                   title: 'Designed for Discretionary Budgets',
-                  desc: 'Pilot pricing structured to align with how university departments actually approve spend—fast and without red tape.',
+                  desc: 'Department-first rollout model aligns with how university teams approve new initiatives quickly.',
                 },
                 {
                   icon: Zap,
@@ -1442,14 +1441,14 @@ const CampusAssistLanding: React.FC = () => {
                   ))}
                 </div>
 
-                {/* Gated Pricing CTA */}
+                {/* Procurement CTA */}
                 <div className="mt-10 p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
                   <div className="text-center">
                     <p className="text-sm text-white/70 mb-3">
                       Works with Moodle/Blackboard and your SIS, without replacing current infrastructure
                     </p>
                     <a
-                      href="mailto:hello@campusassist.co.uk?subject=Pricing%20%26%20Procurement%20Guide%20Request"
+                      href="mailto:hello@campusassist.co.uk?subject=Procurement%20Guide%20Request"
                       className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
                     >
                       Download the ROI Presentation
@@ -1612,7 +1611,7 @@ const CampusAssistLanding: React.FC = () => {
                     { label: 'Deployment timeline', a: '✓ Under 3 weeks', b: '⚠ Multi-month', c: '✓ Fast but shallow' },
                     { label: 'Early withdrawal prediction', a: '✓ 4-6 week signals', b: '⚠ Variable', c: '✗ No predictive layer' },
                     { label: 'Works with Tribal/Unit4/Moodle', a: '✓ Yes, additive', b: '⚠ Integration work needed', c: '✗ Limited integration' },
-                    { label: 'Procurement-friendly pilot threshold', a: '✓ £25k pilot option', b: '⚠ Often higher', c: '✓ Low cost, low capability' },
+                    { label: 'Procurement-friendly adoption path', a: '✓ Department-first rollout', b: '⚠ Often institution-wide first', c: '✓ Fast to start, limited depth' },
                   ].map((row) => (
                     <tr key={row.label} className="border-b border-white/10 last:border-b-0">
                       <td className="py-3 pr-4 text-white/75">{row.label}</td>
@@ -1653,8 +1652,8 @@ const CampusAssistLanding: React.FC = () => {
         </motion.h2>
 
         <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed mb-4 max-w-2xl mx-auto">
-          Let us show you how many students your institution could retain and how quickly Campus Assist pays for itself.
-          No IT overhead. No tender required.
+          Let us show you how many students your institution could retain and how quickly the impact becomes visible.
+          No IT overhead and no rip-and-replace project.
         </motion.p>
 
         <motion.p variants={fadeInUp} custom={2.5} className="text-base text-neutral-400 mb-10 max-w-xl mx-auto">
@@ -1805,20 +1804,20 @@ const CampusAssistLanding: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] px-6 py-10 lg:px-10">
           <motion.p variants={fadeInUp} className="text-sm font-semibold uppercase tracking-[0.16em] text-primary-300 mb-4">
-            The One-Student Guarantee
+            The One-Student ROI Argument
           </motion.p>
           <motion.h3 variants={fadeInUp} custom={1} className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4">
-            Retain One Student, and Campus Assist Pays for Itself.
+            Retain One Student, and the Business Case Is Clear.
           </motion.h3>
           <motion.p variants={fadeInUp} custom={2} className="text-white/70 max-w-3xl leading-relaxed mb-8">
-            A single domestic student dropout can cost over £28,000 in lost three-year tuition. Our departmental pilot is £25,000.
-            The first retained student covers the cost; every additional student retained is protected revenue.
+            A single domestic student dropout can cost over £28,000 in lost three-year tuition.
+            Even a small improvement in continuation can protect significant institutional revenue.
           </motion.p>
           <motion.div variants={fadeInUp} custom={3} className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { value: '£28k', label: 'Lost per dropout' },
-              { value: '>', label: 'Compared to license cost' },
-              { value: '£25k', label: 'Campus Assist pilot license' },
+              { value: '1', label: 'Student retained can shift outcomes' },
+              { value: '4-6 wks', label: 'Earlier intervention window' },
               { value: '460%', label: 'ROI if 5 students retained' },
             ].map((item) => (
               <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-5 text-center">
