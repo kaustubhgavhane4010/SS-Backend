@@ -1804,21 +1804,21 @@ const CampusAssistLanding: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] px-6 py-10 lg:px-10">
           <motion.p variants={fadeInUp} className="text-sm font-semibold uppercase tracking-[0.16em] text-primary-300 mb-4">
-            The One-Student ROI Argument
+            One Student Can Change the Outcome
           </motion.p>
           <motion.h3 variants={fadeInUp} custom={1} className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4">
-            Retain One Student, and the Business Case Is Clear.
+            Early Intervention Creates Real Student Impact.
           </motion.h3>
           <motion.p variants={fadeInUp} custom={2} className="text-white/70 max-w-3xl leading-relaxed mb-8">
-            A single domestic student dropout can cost over £28,000 in lost three-year tuition.
-            Even a small improvement in continuation can protect significant institutional revenue.
+            Early identification gives your team time to intervene before disengagement becomes withdrawal.
+            Even a small shift in continuation can improve wellbeing outcomes and strengthen institutional performance.
           </motion.p>
           <motion.div variants={fadeInUp} custom={3} className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { value: '£28k', label: 'Lost per dropout' },
-              { value: '1', label: 'Student retained can shift outcomes' },
-              { value: '4-6 wks', label: 'Earlier intervention window' },
-              { value: '460%', label: 'ROI if 5 students retained' },
+              { value: '1 student', label: 'Retained can shift cohort trajectory' },
+              { value: '4-6 wks', label: 'Earlier visibility window' },
+              { value: 'Actionable alerts', label: 'Prioritised support team outreach' },
+              { value: 'Audit-ready', label: 'Intervention logs for reporting' },
             ].map((item) => (
               <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-5 text-center">
                 <p className="text-3xl font-extrabold text-white">{item.value}</p>
