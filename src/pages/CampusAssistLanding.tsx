@@ -373,7 +373,7 @@ const CampusAssistLanding: React.FC = () => {
               onClick={() => scrollToSection('cta')}
               className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 hover:scale-105 transition-all duration-200"
             >
-              Request Demo
+              Book Demo
               <ArrowRight className="h-4 w-4" />
             </button>
 
@@ -461,26 +461,30 @@ const CampusAssistLanding: React.FC = () => {
 
       {/* Hero Content — Two-Column: Copy + Split-View */}
       <motion.div style={{ opacity: heroOpacity, scale: heroScale }} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 w-full">
+        <motion.div variants={fadeInUp} custom={0} className="mb-6 rounded-xl border border-amber-300/30 bg-amber-300/10 px-4 py-3">
+          <p className="text-sm text-amber-100">
+            <span className="font-semibold">Under OFS enhanced monitoring?</span> Campus Assist helps demonstrate proactive student-retention intervention.
+          </p>
+        </motion.div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left: Copy */}
           <div>
             <motion.div variants={fadeInUp} custom={0} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary-500/30 bg-primary-500/10 backdrop-blur-sm mb-8">
               <div className="w-2 h-2 rounded-full bg-primary-400 animate-pulse" />
-              <span className="text-primary-300 text-sm font-medium">AI-Powered Student Success</span>
+              <span className="text-primary-300 text-sm font-medium">UK Higher Education Retention Intelligence</span>
             </motion.div>
 
             <motion.h1 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold text-white leading-[1.1] tracking-tight mb-6">
-              The Unified AI Support & Retention Platform
+              Catch At-Risk Students
               <br />
               <span className="bg-gradient-to-r from-primary-400 via-primary-300 to-blue-200 bg-clip-text text-transparent">
-                for Higher Education
+                4-6 Weeks Before They Withdraw
               </span>
             </motion.h1>
 
             <motion.p variants={fadeInUp} custom={2} className="text-lg text-white/60 leading-relaxed max-w-xl mb-10">
-              Combine 24/7 AI-powered student support with predictive retention intelligence
-              that flags at-risk students before they disengage. Your staff gets early warnings;
-              your students get instant help. One lightweight overlay—no rip-and-replace required.
+              Campus Assist is the UK's GDPR-compliant AI layer that predicts withdrawal early,
+              without replacing Tribal, Unit4, or Moodle.
             </motion.p>
 
             <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-12">
@@ -488,14 +492,14 @@ const CampusAssistLanding: React.FC = () => {
                 onClick={() => scrollToSection('cta')}
                 className="group inline-flex items-center gap-3 px-8 py-4 text-base font-semibold rounded-2xl bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-2xl shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105 transition-all duration-300"
               >
-                Request a Demo
+                Book a 30-Minute Demo
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
                 onClick={() => scrollToSection('impact-simulator')}
                 className="group inline-flex items-center gap-3 px-8 py-4 text-base font-semibold rounded-2xl text-white/90 border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all duration-300"
               >
-                See Your Attrition Cost
+                Calculate Your Attrition Cost
                 <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform text-white/40" />
               </button>
             </motion.div>
@@ -503,9 +507,9 @@ const CampusAssistLanding: React.FC = () => {
             {/* Compact trust badges */}
             <motion.div variants={fadeIn} custom={4} className="flex flex-wrap items-center gap-4">
               {[
-                { icon: Lock, label: 'UK GDPR Compliant' },
-                { icon: Scale, label: 'OfS B3 Aligned' },
-                { icon: ShieldCheck, label: 'DPIA Ready' },
+                { icon: Lock, label: 'UK GDPR Article 9 compliant' },
+                { icon: Layers, label: 'Integrates with Tribal, Unit4 & Moodle' },
+                { icon: Timer, label: 'Go live in under 3 weeks' },
               ].map(({ icon: Icon, label }, i) => (
                 <div key={i} className="flex items-center gap-1.5 text-white/30">
                   <Icon className="h-3.5 w-3.5" />
@@ -513,6 +517,9 @@ const CampusAssistLanding: React.FC = () => {
                 </div>
               ))}
             </motion.div>
+            <motion.p variants={fadeIn} custom={5} className="mt-4 text-xs text-white/40">
+              Built from 2 years of discovery research across 8 UK institutions.
+            </motion.p>
           </div>
 
           {/* Right: Split-View Interface Mockup */}
@@ -688,13 +695,18 @@ const CampusAssistLanding: React.FC = () => {
     <Section className="py-12 bg-white border-b border-neutral-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.p variants={fadeIn} className="text-center text-sm font-medium text-neutral-400 uppercase tracking-[0.15em] mb-8">
-          Designed for institutions using
+          Trusted impact benchmarks for UK institutions
         </motion.p>
-        <motion.div variants={fadeIn} custom={1} className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
-          {['Tribal SITS', 'Canvas', 'Moodle', 'Ellucian Banner', 'Microsoft 365', 'UCAS'].map((name, i) => (
-            <div key={i} className="flex items-center gap-2 text-neutral-400 hover:text-neutral-600 transition-colors">
-              <Layers className="h-5 w-5" />
-              <span className="text-sm font-semibold tracking-wide">{name}</span>
+        <motion.div variants={fadeIn} custom={1} className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          {[
+            { value: '60%+', label: 'Support queries resolved by AI' },
+            { value: '4-6 wks', label: 'Earlier than traditional withdrawal indicators' },
+            { value: '£28,000', label: 'Revenue protected per student retained' },
+            { value: '< 3 weeks', label: 'From contract signing to go-live' },
+          ].map((stat, i) => (
+            <div key={i} className="rounded-2xl border border-neutral-200 bg-white px-4 py-5 text-center">
+              <p className="text-2xl font-extrabold text-primary-700">{stat.value}</p>
+              <p className="mt-1 text-xs text-neutral-500">{stat.label}</p>
             </div>
           ))}
         </motion.div>
@@ -730,7 +742,7 @@ const CampusAssistLanding: React.FC = () => {
 
         {/* Bento Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* METRIC 1: 80% Ticket Deflection — Large card */}
+          {/* METRIC 1: 60%+ Ticket Deflection — Large card */}
           <motion.div variants={scaleIn} custom={0} className="md:col-span-2 lg:col-span-2 group">
             <div className="relative h-full bg-white rounded-2xl border border-neutral-200/70 p-8 lg:p-10 hover:shadow-xl hover:shadow-primary-900/5 transition-all duration-500 overflow-hidden">
               {/* Background accent */}
@@ -753,7 +765,7 @@ const CampusAssistLanding: React.FC = () => {
                   </div>
                   <div className="hidden sm:block text-right">
                     <div className="text-6xl lg:text-7xl font-extrabold text-primary-600">
-                      <AnimatedCounter target={80} suffix="%" />
+                      <AnimatedCounter target={60} suffix="%" />
                     </div>
                     <p className="text-sm text-primary-600/60 font-medium">of queries resolved<br/>without human input</p>
                   </div>
@@ -762,7 +774,7 @@ const CampusAssistLanding: React.FC = () => {
                 {/* Mobile: show number inline */}
                 <div className="sm:hidden mb-4">
                   <span className="text-5xl font-extrabold text-primary-600">
-                    <AnimatedCounter target={80} suffix="%" />
+                    <AnimatedCounter target={60} suffix="%" />
                   </span>
                   <span className="text-sm text-primary-600/60 font-medium ml-2">queries auto-resolved</span>
                 </div>
@@ -772,13 +784,13 @@ const CampusAssistLanding: React.FC = () => {
                   <div className="flex-1 h-3 bg-neutral-100 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
-                      whileInView={{ width: '80%' }}
+                      whileInView={{ width: '60%' }}
                       viewport={{ once: true }}
                       transition={{ duration: 1.5, ease: EASE_CURVE, delay: 0.3 }}
                       className="h-full bg-gradient-to-r from-primary-500 to-primary-400 rounded-full"
                     />
                   </div>
-                  <span className="text-xs text-neutral-400 font-medium whitespace-nowrap">Target: 80%+</span>
+                  <span className="text-xs text-neutral-400 font-medium whitespace-nowrap">Target: 60%+</span>
                 </div>
               </div>
             </div>
@@ -912,16 +924,17 @@ const CampusAssistLanding: React.FC = () => {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-200/50 mb-6">
               <TrendingDown className="h-4 w-4 text-red-500" />
-              <span className="text-red-700 text-sm font-semibold">The Financial Reality</span>
+              <span className="text-red-700 text-sm font-semibold">The £1.3 Billion Crisis</span>
             </motion.div>
             <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-neutral-900 leading-tight mb-6">
-              How Much is Student
+              Every Dropout Costs Your Institution
               <br />
-              <span className="text-red-500">Attrition Really Costing You?</span>
+              <span className="text-red-500">£28,000. Are You Counting?</span>
             </motion.h2>
             <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed">
-              Every student who leaves represents far more than lost tuition fees. See the true
-              financial impact—then let us show you how Campus Assist's retention intelligence pays for itself.
+              UK universities lost an estimated £1.3 billion in tuition revenue to student attrition last year.
+              Under OFS Condition B3, missing continuation thresholds can trigger public naming and penalties.
+              Campus Assist helps you intervene before a student decides to leave.
             </motion.p>
           </div>
 
@@ -946,6 +959,14 @@ const CampusAssistLanding: React.FC = () => {
               </div>
 
               <div className="p-8 lg:p-12">
+                <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4">
+                  <p className="text-sm font-semibold text-amber-800">
+                    Is your institution under OFS monitoring pressure?
+                  </p>
+                  <p className="mt-1 text-sm text-amber-700/90">
+                    Enter your student numbers to quantify annual attrition exposure and see what recovering even 10 students means for your budget.
+                  </p>
+                </div>
                 {/* Cost Breakdown */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                   {/* Dropout Cost Card */}
@@ -990,7 +1011,7 @@ const CampusAssistLanding: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2 pt-4 mt-4 border-t border-amber-200/50">
                       <BookOpen className="h-4 w-4 text-amber-500" />
-                      <span className="text-xs text-amber-600 font-medium">Source: OfS & HESA published data 2023-24</span>
+                      <span className="text-xs text-amber-600 font-medium">Source: OFS & HESA published data 2023-24</span>
                     </div>
                   </div>
                 </div>
@@ -1077,7 +1098,7 @@ const CampusAssistLanding: React.FC = () => {
                         href="mailto:hello@campusassist.co.uk?subject=Custom%20ROI%20Report%20Request%20-%20Campus%20Assist"
                         className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105 transition-all duration-300 text-sm"
                       >
-                        Get Your Custom ROI Report
+                        Show Me the Revenue at Risk
                         <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                       </a>
                       <p className="text-xs text-primary-600/60">
@@ -1095,8 +1116,8 @@ const CampusAssistLanding: React.FC = () => {
   };
 
   /* ─────────────────────────────────────────────────────────────────────────
-     SECTION 6: THREE-PILLAR PRODUCT ECOSYSTEM
-     Pillars: Digital Front Desk | Smart Triage & Safeguarding | Retention Risk Engine
+    SECTION 6: THREE-PILLAR PRODUCT ECOSYSTEM
+    Pillars: Digital Front Desk | Early Warning Dashboard | UK GDPR by Design
      Uses "Proprietary Sentiment Analysis" and "Passive Engagement Data" language.
      ───────────────────────────────────────────────────────────────────────── */
   const ProductEcosystem = () => (
@@ -1115,16 +1136,16 @@ const CampusAssistLanding: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto mb-20">
           <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-100 border border-primary-200/50 mb-6">
             <Layers className="h-4 w-4 text-primary-600" />
-            <span className="text-primary-700 text-sm font-semibold">The Platform</span>
+            <span className="text-primary-700 text-sm font-semibold">Two Products. One Platform.</span>
           </motion.div>
           <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-neutral-900 leading-tight mb-6">
-            Three Pillars of
+            For Students: Instant Answers.
             <br />
-            <span className="bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">Student Success</span>
+            <span className="bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">For Staff: Early Warnings.</span>
           </motion.h2>
           <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed">
-            A unified platform that connects student-facing 24/7 support with automated safeguarding triage
-            and staff-facing predictive analytics—all from a single lightweight overlay.
+            Campus Assist combines always-on student support, early withdrawal prediction, and UK-first compliance
+            so teams can act earlier without replacing existing systems.
           </motion.p>
         </div>
 
@@ -1143,9 +1164,8 @@ const CampusAssistLanding: React.FC = () => {
               </div>
               <h3 className="text-xl font-bold text-neutral-900 mb-3">The Digital Front Desk</h3>
               <p className="text-neutral-500 mb-6 leading-relaxed">
-                Mobile-first AI chat providing instant, autonomous support in 40+ languages.
-                Students get immediate answers to accommodation, finance, EC forms, and timetabling queries—
-                no phone queues, no office hours.
+                24/7 AI support that resolves timetable queries, deadline extensions, and payment questions instantly,
+                so students get help at 2am and your team focuses on complex cases.
               </p>
 
               {/* Mock Chat Interface */}
@@ -1171,14 +1191,14 @@ const CampusAssistLanding: React.FC = () => {
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
-                {['24/7 Available', '40+ Languages', 'Mobile-First'].map((tag) => (
+                {['Resolves 60%+ tier-1 queries', 'Mobile-first, always on', 'Trained on UK HE interactions'].map((tag) => (
                   <span key={tag} className="px-2.5 py-1 text-[11px] font-medium bg-primary-50 text-primary-700 rounded-full">{tag}</span>
                 ))}
               </div>
             </div>
           </motion.div>
 
-          {/* PILLAR 2: Smart Triage & Safeguarding — SAFEGUARDING */}
+          {/* PILLAR 2: Early Warning Dashboard — STAFF-FACING */}
           <motion.div variants={fadeInUp} custom={1} className="group relative">
             <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-rose-400/20 to-rose-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
             <div className="relative bg-white rounded-2xl border border-neutral-200/70 p-8 h-full hover:shadow-xl hover:shadow-rose-900/5 transition-all duration-500 hover:-translate-y-1">
@@ -1189,40 +1209,49 @@ const CampusAssistLanding: React.FC = () => {
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center mb-6 shadow-lg shadow-rose-500/25">
                 <Heart className="h-7 w-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">Smart Triage & Safeguarding</h3>
+              <h3 className="text-xl font-bold text-neutral-900 mb-3">Early Warning Dashboard</h3>
               <p className="text-neutral-500 mb-6 leading-relaxed">
-                When proprietary sentiment analysis detects distress, self-harm language, or complex welfare needs,
-                Campus Assist automatically escalates to your human Wellbeing or Registry team—with full context.
+                Identify students at risk of withdrawal 4-6 weeks before missed deadlines and failed modules,
+                with multi-signal risk scores and auditable intervention logs for OFS reporting.
               </p>
 
-              {/* Mock Triage Flow */}
-              <div className="bg-neutral-50 rounded-xl p-4 border border-neutral-100">
-                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-neutral-100">
-                  <Shield className="h-3.5 w-3.5 text-rose-500" />
-                  <span className="text-xs font-semibold text-neutral-600">Triage Alert</span>
+              {/* Annotated dashboard mockup */}
+              <div className="relative bg-neutral-900 rounded-xl p-4 border border-neutral-700 overflow-hidden">
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-neutral-700">
+                  <BarChart3 className="h-3.5 w-3.5 text-rose-300" />
+                  <span className="text-xs font-semibold text-neutral-200">Risk Dashboard</span>
                   <div className="ml-auto">
-                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 animate-pulse">URGENT</span>
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-red-500/25 text-red-200">LIVE ALERTS</span>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-2 p-2.5 rounded-lg bg-red-50 border border-red-100">
-                    <AlertTriangle className="h-3.5 w-3.5 text-red-500 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-[11px] text-red-800 font-semibold">Distress Detected — Student Alex M.</p>
-                      <p className="text-[10px] text-red-600 mt-1">Sentiment score dropped to 15. Language patterns indicate significant emotional distress.</p>
+                <div className="space-y-2 mb-3">
+                  {[
+                    { name: 'Alex M.', risk: 'Critical', score: 22, color: 'bg-red-500' },
+                    { name: 'Priya K.', risk: 'High', score: 41, color: 'bg-amber-500' },
+                    { name: 'James L.', risk: 'Medium', score: 60, color: 'bg-yellow-500' },
+                  ].map((student) => (
+                    <div key={student.name} className="flex items-center gap-2 rounded-lg bg-neutral-800 px-2 py-2">
+                      <span className="text-[10px] text-neutral-200 w-16 truncate">{student.name}</span>
+                      <div className="flex-1 h-1.5 rounded-full bg-neutral-700 overflow-hidden">
+                        <div className={`h-full ${student.color}`} style={{ width: `${student.score}%` }} />
+                      </div>
+                      <span className="text-[9px] text-neutral-300">{student.risk}</span>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2 p-2 rounded-lg bg-blue-50 border border-blue-100">
-                    <Users className="h-3.5 w-3.5 text-blue-600" />
-                    <p className="text-[10px] text-blue-700 font-medium">
-                      → Auto-escalated to Wellbeing Team with full conversation context
-                    </p>
-                  </div>
+                  ))}
+                </div>
+                <div className="absolute top-14 right-2 rounded-md bg-white px-2 py-1 shadow-lg text-[9px] font-semibold text-neutral-700">
+                  Risk score updates in real time
+                </div>
+                <div className="absolute bottom-16 left-2 rounded-md bg-white px-2 py-1 shadow-lg text-[9px] font-semibold text-neutral-700">
+                  1-click alert to wellbeing team
+                </div>
+                <div className="absolute bottom-2 right-2 rounded-md bg-white px-2 py-1 shadow-lg text-[9px] font-semibold text-neutral-700">
+                  Auditable intervention log
                 </div>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
-                {['Human Handoff', 'Welfare Alerts', 'Full Context'].map((tag) => (
+                {['Automated wellbeing alerts', 'Multi-signal risk scores', 'Auditable intervention logs'].map((tag) => (
                   <span key={tag} className="px-2.5 py-1 text-[11px] font-medium bg-rose-50 text-rose-700 rounded-full">{tag}</span>
                 ))}
               </div>
@@ -1238,12 +1267,12 @@ const CampusAssistLanding: React.FC = () => {
               </div>
 
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center mb-6 shadow-lg shadow-amber-500/25">
-                <BarChart3 className="h-7 w-7 text-white" />
+                <Lock className="h-7 w-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">Retention Risk Engine</h3>
+              <h3 className="text-xl font-bold text-neutral-900 mb-3">UK GDPR by Design</h3>
               <p className="text-neutral-500 mb-6 leading-relaxed">
-                Predictive engagement scores derived from VLE logins, passive engagement data, and
-                proprietary sentiment analysis. Flag at-risk students proactively—weeks before they disengage.
+                Built for Article 9 special category data from day one, not retrofitted from a US FERPA model.
+                Your deployment stays isolated, controlled, and ready for DPIA review.
               </p>
 
               {/* Mock Dashboard Preview */}
@@ -1276,7 +1305,7 @@ const CampusAssistLanding: React.FC = () => {
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
-                {['Proprietary AI', 'VLE Data', 'Predictive Scores'].map((tag) => (
+                {['Differential privacy controls', 'Data stays institution-controlled', 'Full DPIA at onboarding'].map((tag) => (
                   <span key={tag} className="px-2.5 py-1 text-[11px] font-medium bg-amber-50 text-amber-700 rounded-full">{tag}</span>
                 ))}
               </div>
@@ -1324,15 +1353,14 @@ const CampusAssistLanding: React.FC = () => {
             </motion.div>
 
             <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl font-extrabold text-neutral-900 leading-tight mb-6">
-              From First Call to
+              No 18-Month IT Project.
               <br />
-              <span className="bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">Go-Live in Weeks</span>
+              <span className="bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">Go Live in 3 Weeks.</span>
             </motion.h2>
 
             <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed mb-8">
-              Campus Assist offers flexible pilot pricing designed to fit within existing
-              departmental budgets. No lengthy tender cycles, no 6-month procurement delays—
-              Deans and department heads can get started quickly with a low-risk pilot.
+              Priced at £25,000 for a departmental pilot, Campus Assist falls below typical UK competitive
+              tender thresholds. Teams can start quickly without a 9-month procurement cycle.
             </motion.p>
 
             <motion.div variants={fadeInUp} custom={3} className="space-y-5">
@@ -1364,6 +1392,9 @@ const CampusAssistLanding: React.FC = () => {
                 </div>
               ))}
             </motion.div>
+            <motion.p variants={fadeInUp} custom={4} className="mt-6 text-sm text-neutral-500">
+              Need a walkthrough first? <a href="#platform" className="font-semibold text-primary-700 hover:text-primary-800">See how it works →</a>
+            </motion.p>
           </div>
 
           {/* Right: Visual Card */}
@@ -1386,10 +1417,10 @@ const CampusAssistLanding: React.FC = () => {
                 {/* Timeline */}
                 <div className="space-y-6">
                   {[
-                    { week: 'Week 1', label: 'Discovery & Scoping', status: 'complete' },
-                    { week: 'Week 2', label: 'SIS Integration & Setup', status: 'complete' },
-                    { week: 'Week 3', label: 'Staff Training & UAT', status: 'active' },
-                    { week: 'Week 4', label: 'Go-Live & Monitoring', status: 'upcoming' },
+                    { week: 'Week 1', label: 'Discovery & Configuration', status: 'complete' },
+                    { week: 'Week 2', label: 'Integration & Testing', status: 'complete' },
+                    { week: 'Week 3', label: 'Staff Training & Soft Launch', status: 'active' },
+                    { week: 'Week 4+', label: 'Live & Monitoring', status: 'upcoming' },
                   ].map((step, i) => (
                     <div key={i} className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold ${
@@ -1415,13 +1446,13 @@ const CampusAssistLanding: React.FC = () => {
                 <div className="mt-10 p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
                   <div className="text-center">
                     <p className="text-sm text-white/70 mb-3">
-                      Flexible pilot pricing tailored to your institution's size and needs
+                      Works with Moodle/Blackboard and your SIS, without replacing current infrastructure
                     </p>
                     <a
                       href="mailto:hello@campusassist.co.uk?subject=Pricing%20%26%20Procurement%20Guide%20Request"
                       className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
                     >
-                      Request Pricing & Procurement Guide
+                      Download the ROI Presentation
                       <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </a>
                     <p className="text-[11px] text-white/30 mt-3">
@@ -1431,6 +1462,39 @@ const CampusAssistLanding: React.FC = () => {
                 </div>
               </div>
             </div>
+          </motion.div>
+        </div>
+      </div>
+    </Section>
+  );
+
+  const DiscoveryProofSection = () => (
+    <Section className="py-16 bg-slate-50 border-y border-neutral-200/60">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          <motion.div variants={fadeInUp} className="lg:col-span-1 rounded-2xl border border-neutral-200 bg-white p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-700">In Discovery With</p>
+            <p className="mt-2 text-2xl font-extrabold text-neutral-900">Tier-2 UK Universities</p>
+            <p className="mt-2 text-sm text-neutral-500">
+              Pilot discussions underway with multiple institutions facing continuation and wellbeing pressure.
+            </p>
+          </motion.div>
+          <motion.div variants={fadeInUp} custom={1} className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              {
+                quote: 'We need earlier signals, not end-of-term surprises when intervention is already too late.',
+                role: 'Head of Student Services, Post-92 University',
+              },
+              {
+                quote: 'If this works with our existing systems and supports OFS reporting, it removes the biggest blockers.',
+                role: 'Director of Student Experience, UK HE Institution',
+              },
+            ].map((item, i) => (
+              <div key={i} className="rounded-2xl border border-neutral-200 bg-white p-6">
+                <p className="text-sm text-neutral-700 leading-relaxed">"{item.quote}"</p>
+                <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-neutral-500">{item.role}</p>
+              </div>
+            ))}
           </motion.div>
         </div>
       </div>
@@ -1476,7 +1540,7 @@ const CampusAssistLanding: React.FC = () => {
             },
             {
               icon: Scale,
-              title: 'OfS Condition B3 Aligned',
+              title: 'OFS Condition B3 Aligned',
               desc: 'Directly supports Office for Students Condition B3 metrics for student outcomes, continuation rates, and completion.',
               badge: 'Regulatory',
             },
@@ -1488,7 +1552,7 @@ const CampusAssistLanding: React.FC = () => {
             },
             {
               icon: Globe,
-              title: 'SIS-Agnostic Integration',
+              title: 'Works With Your Existing Systems',
               desc: 'Seamlessly integrates with Ellucian Banner, Tribal SITS, and other major Student Information Systems via secure APIs.',
               badge: 'Integration',
             },
@@ -1524,6 +1588,44 @@ const CampusAssistLanding: React.FC = () => {
             </motion.div>
           ))}
         </div>
+
+        {/* Competitor comparison */}
+        <motion.div variants={fadeInUp} custom={7} className="mt-14">
+          <div className="rounded-2xl border border-white/15 bg-white/[0.04] backdrop-blur-sm p-6 lg:p-8">
+            <div className="mb-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-200/80">Comparison</p>
+              <h3 className="text-2xl font-extrabold text-white mt-2">Why UK Institutions Choose Campus Assist</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[680px] border-collapse">
+                <thead>
+                  <tr className="border-b border-white/15 text-left">
+                    <th className="py-3 pr-4 text-xs uppercase tracking-wider text-white/60">Capability</th>
+                    <th className="py-3 px-4 text-xs uppercase tracking-wider text-white">Campus Assist</th>
+                    <th className="py-3 px-4 text-xs uppercase tracking-wider text-white/70">US Platforms</th>
+                    <th className="py-3 pl-4 text-xs uppercase tracking-wider text-white/70">Generic Chatbots</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm">
+                  {[
+                    { label: 'UK GDPR Article 9 readiness', a: '✓ Built in', b: '⚠ Often FERPA-led', c: '✗ Not purpose-built' },
+                    { label: 'Deployment timeline', a: '✓ Under 3 weeks', b: '⚠ Multi-month', c: '✓ Fast but shallow' },
+                    { label: 'Early withdrawal prediction', a: '✓ 4-6 week signals', b: '⚠ Variable', c: '✗ No predictive layer' },
+                    { label: 'Works with Tribal/Unit4/Moodle', a: '✓ Yes, additive', b: '⚠ Integration work needed', c: '✗ Limited integration' },
+                    { label: 'Procurement-friendly pilot threshold', a: '✓ £25k pilot option', b: '⚠ Often higher', c: '✓ Low cost, low capability' },
+                  ].map((row) => (
+                    <tr key={row.label} className="border-b border-white/10 last:border-b-0">
+                      <td className="py-3 pr-4 text-white/75">{row.label}</td>
+                      <td className="py-3 px-4 text-emerald-300 font-semibold">{row.a}</td>
+                      <td className="py-3 px-4 text-amber-200">{row.b}</td>
+                      <td className="py-3 pl-4 text-rose-200">{row.c}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </Section>
   );
@@ -1551,13 +1653,12 @@ const CampusAssistLanding: React.FC = () => {
         </motion.h2>
 
         <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed mb-4 max-w-2xl mx-auto">
-          Join the next generation of UK universities using proprietary sentiment analysis to
-          identify at-risk students early, improve OfS B3 metrics, and protect the revenue your institution depends on.
+          Let us show you how many students your institution could retain and how quickly Campus Assist pays for itself.
+          No IT overhead. No tender required.
         </motion.p>
 
         <motion.p variants={fadeInUp} custom={2.5} className="text-base text-neutral-400 mb-10 max-w-xl mx-auto">
-          We'll tailor a pilot to your institution's size, budget, and goals.
-          Retain just one student and the platform has already paid for itself.
+          No commitment. No IT team needed for the call. We will run a live walkthrough tailored to your institution size.
         </motion.p>
 
         <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -1565,7 +1666,7 @@ const CampusAssistLanding: React.FC = () => {
             href="mailto:hello@campusassist.co.uk?subject=Demo%20Request%20-%20Campus%20Assist"
             className="group inline-flex items-center gap-3 px-10 py-4 text-base font-semibold rounded-2xl bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-2xl shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105 transition-all duration-300"
           >
-            Request Your Demo
+            Book a 30-Minute Demo
             <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </a>
           <a
@@ -1573,7 +1674,7 @@ const CampusAssistLanding: React.FC = () => {
             className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded-2xl text-primary-700 border-2 border-primary-200 hover:border-primary-300 hover:bg-primary-50 transition-all duration-200"
           >
             <FileCheck className="h-5 w-5" />
-            Get Procurement Guide
+            Download the ROI Presentation
           </a>
         </motion.div>
 
@@ -1582,7 +1683,7 @@ const CampusAssistLanding: React.FC = () => {
           {[
             { icon: Lock, label: 'UK GDPR Compliant' },
             { icon: ShieldCheck, label: 'DPIA Ready' },
-            { icon: Scale, label: 'OfS B3 Aligned' },
+            { icon: Scale, label: 'OFS B3 Aligned' },
             { icon: CloudCog, label: 'Cloud-Native' },
           ].map(({ icon: Icon, label }, i) => (
             <div key={i} className="flex items-center gap-2 text-neutral-400">
@@ -1624,7 +1725,7 @@ const CampusAssistLanding: React.FC = () => {
           <div>
             <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Platform</h4>
             <ul className="space-y-2">
-              {['Digital Front Desk', 'Smart Triage', 'Retention Risk Engine', 'Staff Dashboard'].map((item) => (
+              {['Digital Front Desk', 'Early Warning Dashboard', 'UK GDPR by Design', 'Staff Dashboard'].map((item) => (
                 <li key={item}>
                   <button onClick={() => scrollToSection('platform')} className="text-sm text-white/40 hover:text-white/70 transition-colors">
                     {item}
@@ -1667,6 +1768,70 @@ const CampusAssistLanding: React.FC = () => {
     </footer>
   );
 
+  const ComplianceSection = () => (
+    <Section className="py-20 bg-white border-y border-neutral-100">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-4xl mx-auto">
+          <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 border border-primary-200/60 mb-6">
+            <Lock className="h-4 w-4 text-primary-600" />
+            <span className="text-primary-700 text-sm font-semibold">Data Protection</span>
+          </motion.div>
+          <motion.h2 variants={fadeInUp} custom={1} className="text-3xl sm:text-4xl font-extrabold text-neutral-900 leading-tight mb-5">
+            Your Student Data Never Leaves Your Institution.
+          </motion.h2>
+          <motion.p variants={fadeInUp} custom={2} className="text-lg text-neutral-500 leading-relaxed">
+            Campus Assist runs within your university-controlled cloud environment. We process behavioural metadata,
+            never personal records or academic content. No centralised storage, no third-party sharing, and every deployment is isolated.
+          </motion.p>
+        </div>
+        <motion.div variants={fadeInUp} custom={3} className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {[
+            'UK GDPR Article 9 Compliant',
+            'Cyber Essentials Ready',
+            'DPIA Provided at Onboarding',
+            'OFS Condition B3 Aligned',
+          ].map((badge) => (
+            <div key={badge} className="rounded-xl bg-neutral-50 border border-neutral-200 px-4 py-3 text-sm font-semibold text-neutral-700 text-center">
+              {badge}
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    </Section>
+  );
+
+  const OneStudentGuarantee = () => (
+    <Section className="py-20" style={{ background: DESIGN_TOKENS.colors.navyDeep }}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] px-6 py-10 lg:px-10">
+          <motion.p variants={fadeInUp} className="text-sm font-semibold uppercase tracking-[0.16em] text-primary-300 mb-4">
+            The One-Student Guarantee
+          </motion.p>
+          <motion.h3 variants={fadeInUp} custom={1} className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4">
+            Retain One Student, and Campus Assist Pays for Itself.
+          </motion.h3>
+          <motion.p variants={fadeInUp} custom={2} className="text-white/70 max-w-3xl leading-relaxed mb-8">
+            A single domestic student dropout can cost over £28,000 in lost three-year tuition. Our departmental pilot is £25,000.
+            The first retained student covers the cost; every additional student retained is protected revenue.
+          </motion.p>
+          <motion.div variants={fadeInUp} custom={3} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { value: '£28k', label: 'Lost per dropout' },
+              { value: '>', label: 'Compared to license cost' },
+              { value: '£25k', label: 'Campus Assist pilot license' },
+              { value: '460%', label: 'ROI if 5 students retained' },
+            ].map((item) => (
+              <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-5 text-center">
+                <p className="text-3xl font-extrabold text-white">{item.value}</p>
+                <p className="mt-1 text-xs text-white/60">{item.label}</p>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </Section>
+  );
+
   /* ═══════════════════════════════════════════════════════════════════════
      RENDER
      ═══════════════════════════════════════════════════════════════════════ */
@@ -1674,12 +1839,15 @@ const CampusAssistLanding: React.FC = () => {
     <div className="antialiased">
       <Header />
       <Hero />
-      <SocialProofBar />
-      <BentoGrid />
       <ImpactSimulator />
       <ProductEcosystem />
+      <SocialProofBar />
+      <BentoGrid />
+      <DiscoveryProofSection />
       <ProcurementSection />
+      <ComplianceSection />
       <TrustSection />
+      <OneStudentGuarantee />
       <FinalCTA />
       <Footer />
     </div>
