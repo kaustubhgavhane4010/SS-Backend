@@ -1467,39 +1467,6 @@ const CampusAssistLanding: React.FC = () => {
     </Section>
   );
 
-  const DiscoveryProofSection = () => (
-    <Section className="py-16 bg-slate-50 border-y border-neutral-200/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-          <motion.div variants={fadeInUp} className="lg:col-span-1 rounded-2xl border border-neutral-200 bg-white p-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-700">In Discovery With</p>
-            <p className="mt-2 text-2xl font-extrabold text-neutral-900">Tier-2 UK Universities</p>
-            <p className="mt-2 text-sm text-neutral-500">
-              Pilot discussions underway with multiple institutions facing continuation and wellbeing pressure.
-            </p>
-          </motion.div>
-          <motion.div variants={fadeInUp} custom={1} className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              {
-                quote: 'We need earlier signals, not end-of-term surprises when intervention is already too late.',
-                role: 'Head of Student Services, Post-92 University',
-              },
-              {
-                quote: 'If this works with our existing systems and supports OFS reporting, it removes the biggest blockers.',
-                role: 'Director of Student Experience, UK HE Institution',
-              },
-            ].map((item, i) => (
-              <div key={i} className="rounded-2xl border border-neutral-200 bg-white p-6">
-                <p className="text-sm text-neutral-700 leading-relaxed">"{item.quote}"</p>
-                <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-neutral-500">{item.role}</p>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </div>
-    </Section>
-  );
-
   /* ─────────────────────────────────────────────────────────────────────────
      SECTION 7: TRUST & FUTURE-PROOFING
      Background: Oxford Blue (#0F2847) with glass cards and constellation
@@ -1842,7 +1809,6 @@ const CampusAssistLanding: React.FC = () => {
       <ProductEcosystem />
       <SocialProofBar />
       <BentoGrid />
-      <DiscoveryProofSection />
       <ProcurementSection />
       <ComplianceSection />
       <TrustSection />
