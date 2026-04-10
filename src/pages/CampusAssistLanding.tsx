@@ -484,7 +484,7 @@ const CampusAssistLanding: React.FC = () => {
 
             <motion.p variants={fadeInUp} custom={2} className="text-lg text-white/60 leading-relaxed max-w-xl mb-10">
               Campus Assist is the UK's GDPR-compliant AI layer that predicts withdrawal early,
-              without replacing Tribal, Unit4, or Moodle.
+              without replacing legacy or traditional systems.
             </motion.p>
 
             <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-12">
@@ -508,7 +508,7 @@ const CampusAssistLanding: React.FC = () => {
             <motion.div variants={fadeIn} custom={4} className="flex flex-wrap items-center gap-4">
               {[
                 { icon: Lock, label: 'UK GDPR Article 9 compliant' },
-                { icon: Layers, label: 'Integrates with Tribal, Unit4 & Moodle' },
+                { icon: Layers, label: 'Integrates with legacy and traditional systems' },
                 { icon: Timer, label: 'Go live in under 3 weeks' },
               ].map(({ icon: Icon, label }, i) => (
                 <div key={i} className="flex items-center gap-1.5 text-white/30">
@@ -861,7 +861,7 @@ const CampusAssistLanding: React.FC = () => {
               <p className="text-lg font-semibold text-neutral-700 mb-3">Weeks to Go-Live</p>
               <p className="text-neutral-500 text-sm leading-relaxed">
                 Cloud-native. No on-premise installation. No infrastructure changes.
-                Campus Assist layers on top of SITS, Canvas, and Moodle via secure API integration.
+                Campus Assist layers on top of your existing systems via secure API integration.
               </p>
 
               <div className="mt-6 flex items-center gap-2">
@@ -1445,7 +1445,7 @@ const CampusAssistLanding: React.FC = () => {
                 <div className="mt-10 p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
                   <div className="text-center">
                     <p className="text-sm text-white/70 mb-3">
-                      Works with Moodle/Blackboard and your SIS, without replacing current infrastructure
+                      Works with your existing systems, without replacing current infrastructure
                     </p>
                     <a
                       href="mailto:hello@campusassist.co.uk?subject=Procurement%20Guide%20Request"
@@ -1552,7 +1552,7 @@ const CampusAssistLanding: React.FC = () => {
             {
               icon: Globe,
               title: 'Works With Your Existing Systems',
-              desc: 'Seamlessly integrates with Ellucian Banner, Tribal SITS, and other major Student Information Systems via secure APIs.',
+              desc: 'Seamlessly integrates with major student information and learning systems via secure APIs.',
               badge: 'Integration',
             },
             {
@@ -1610,7 +1610,7 @@ const CampusAssistLanding: React.FC = () => {
                     { label: 'UK GDPR Article 9 readiness', a: '✓ Built in', b: '⚠ Often FERPA-led', c: '✗ Not purpose-built' },
                     { label: 'Deployment timeline', a: '✓ Under 3 weeks', b: '⚠ Multi-month', c: '✓ Fast but shallow' },
                     { label: 'Early withdrawal prediction', a: '✓ 4-6 week signals', b: '⚠ Variable', c: '✗ No predictive layer' },
-                    { label: 'Works with Tribal/Unit4/Moodle', a: '✓ Yes, additive', b: '⚠ Integration work needed', c: '✗ Limited integration' },
+                    { label: 'Works with legacy and traditional systems', a: '✓ Yes, additive', b: '⚠ Integration work needed', c: '✗ Limited integration' },
                     { label: 'Procurement-friendly adoption path', a: '✓ Department-first rollout', b: '⚠ Often institution-wide first', c: '✓ Fast to start, limited depth' },
                   ].map((row) => (
                     <tr key={row.label} className="border-b border-white/10 last:border-b-0">
